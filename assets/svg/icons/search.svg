@@ -1,0 +1,8 @@
+<svg id="search" xmlns="http://www.w3.org/2000/svg" width="23px" height="23px" viewBox="0 0 23 23">
+    <path id="Kontur_9234" data-name="Kontur 9234"
+            d="M12.017,3.967a8.05,8.05,0,1,0,8.05,8.05A8.05,8.05,0,0,0,12.017,3.967Zm-10.35,8.05a10.35,10.35,0,1,1,10.35,10.35A10.35,10.35,0,0,1,1.667,12.017Z"
+            transform="translate(-1.667 -1.667)" fill="#acb1b4" fill-rule="evenodd" />
+    <path id="Kontur_9235" data-name="Kontur 9235"
+            d="M13.378,13.378a1.15,1.15,0,0,1,1.626,0l5,5a1.15,1.15,0,0,1-1.626,1.626l-5-5A1.15,1.15,0,0,1,13.378,13.378Z"
+            transform="translate(2.656 2.656)" fill="#acb1b4" fill-rule="evenodd" />
+</svg>

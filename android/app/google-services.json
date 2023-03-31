@@ -1,0 +1,103 @@
+{
+  "project_info": {
+    "project_number": "25433428043",
+    "firebase_url": "https://ozim-7af19-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "ozim-7af19",
+    "storage_bucket": "ozim-7af19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25433428043:android:b332986e5395f29f21bdce",
+        "android_client_info": {
+          "package_name": "com.ozim.platform"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "25433428043-446ionf1p6840oq5fda46bahp6bp7lm0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ozim.platform",
+            "certificate_hash": "b2ca448398de195e572284841474914176ac1c12"
+          }
+        },
+        {
+          "client_id": "25433428043-4qjvgk1dgu19r9i3hrcpe0t87n4qas6o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ozim.platform",
+            "certificate_hash": "beb652f2bc5af0acf9b18ff9d782832f1178b860"
+          }
+        },
+        {
+          "client_id": "25433428043-76pfpfchde4as59dvqpsomq11vjc6et8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ozim.platform",
+            "certificate_hash": "4f8e7ba9b9a40596134b25141e4bbed60f14d146"
+          }
+        },
+        {
+          "client_id": "25433428043-a6j2eb5bj3gqmh0d51b5fhkq5pikumaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ozim.platform",
+            "certificate_hash": "5b7e9380bdcb74d00782a88b5762520055d395d7"
+          }
+        },
+        {
+          "client_id": "25433428043-b7o42rorf1389hop520uq1vcgb1gc0eh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ozim.platform",
+            "certificate_hash": "8d6c582084e065049e81e318e9d98212db028d1a"
+          }
+        },
+        {
+          "client_id": "25433428043-fe9v0h5a5b0cg17o3btsk6kohmfnuian.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ozim.platform",
+            "certificate_hash": "14ea80ab5cfe37198459c8ccad78175013629f3b"
+          }
+        },
+        {
+          "client_id": "25433428043-k0t1j7alsv02e6pfct851iqno0rchkbj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ozim.platform",
+            "certificate_hash": "7cc5461e6c4789f207fec4bdfc0de2b93abd6e25"
+          }
+        },
+        {
+          "client_id": "25433428043-sc6u0ud7685o41mll0s071q3uurn1tc0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7zuaUC0jdriBu9ciQfyHGQ3QkpBhqids"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "25433428043-sc6u0ud7685o41mll0s071q3uurn1tc0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "25433428043-e640555sknsdmuvgu1llq13dg6arvmka.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ozim.platform"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,147 @@
+name: charity_app
+description: A new Flutter application.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.9+10
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  http: ^0.13.3
+  intl: ^0.17.0
+  toast: ^0.3.0
+  shared_preferences: ^2.0.5
+  modal_bottom_sheet: ^2.0.0
+  url_launcher: ^6.0.9
+  convex_bottom_bar: ^3.0.0
+  carousel_slider: ^4.2.1
+  tab_indicator_styler: ^2.0.0
+  cached_network_image: ^3.1.0
+
+
+
+  notification_permissions: ^0.6.1
+  image_picker: ^0.8.0+3
+  mask_text_input_formatter: ^2.0.0
+  logger: ^1.0.0
+
+  # flutter_html: ^2.2.1
+  flutter_html: ^3.0.0-alpha.6
+  path_provider: ^2.0.2
+  flutter_local_notifications: ^13.0.0
+
+  flutter_cache_manager: ^3.1.2
+  pdf_viewer_plugin: ^2.0.1
+  hive: ^2.0.4
+  hive_flutter: ^1.1.0
+  image_cropper: ^3.0.1
+  crypto: ^3.0.1
+  uni_links: ^0.5.1
+
+  firebase_remote_config: ^3.0.14
+  firebase_core: ^2.7.1
+  firebase_auth: ^4.2.10
+  cloud_firestore: ^4.4.4
+  firebase_messaging: ^14.2.6
+  firebase_database: ^10.0.15
+  firebase_storage: ^11.0.15
+  google_sign_in: ^6.0.2
+
+
+  # Provider + Stack pattern
+  provider: ^6.0.2
+  get_it: ^7.2.0
+  auto_route: ^5.0.4
+  injectable: ^2.1.0
+  stacked: ^3.2.0
+  stacked_services: ^1.0.0
+
+  # Network
+  connectivity: ^3.0.6
+
+  #UI plugin
+  auto_size_text: ^3.0.0
+  theme_provider: ^0.5.0
+  flutter_datetime_picker: ^1.5.1
+
+  #Animation Plugin
+  lottie: ^2.2.0
+
+  # Icon Plugin
+  flutter_vector_icons: ^2.0.0
+  ionicons: ^0.2.2
+  cupertino_icons: ^1.0.2
+  flutter_svg: ^2.0.4
+  modal_progress_hud_nsn: ^0.3.0
+
+  #chat
+  flutter_chat_ui: ^1.1.6
+  flutter_firebase_chat_core: ^1.1.0
+  uuid: ^3.0.4
+  file_picker: ^5.2.6
+  share: ^2.0.4
+  sign_in_with_apple: ^4.3.0
+
+  # iap
+  # in_app_purchase: ^3.1.5
+  flutter_inapp_purchase: ^5.4.1
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.12.0
+  flutter_test:
+    sdk: flutter
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: 'assets/launcher/ios_launcher.png'
+  image_path_android: 'assets/launcher/android_launcher.png'
+
+flutter:
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/font/Montserrat-Regular.ttf
+          weight: 300
+        - asset: assets/font/Montserrat-Medium.ttf
+          weight: 400
+        - asset: assets/font/Montserrat-SemiBold.ttf
+          weight: 500
+        - asset: assets/font/Montserrat-Bold.ttf
+          weight: 700
+    - family: HelveticaNeue
+      fonts:
+        - asset: assets/font/HelveticaNeueCyr-Medium.ttf
+          weight: 400
+        - asset: assets/font/HelveticaNeueCyr-Bold.ttf
+          weight: 700
+    - family:  CustomIcons
+      fonts:
+        - asset: assets/font/CustomIcons.ttf
+
+  assets:
+      - assets/
+      - assets/lottie/
+      - assets/strings/
+      - assets/strings/uz.json
+      - assets/strings/ru.json
+      - assets/svg/
+      - assets/image/
+      - assets/svg/services/
+      - assets/svg/auth/
+      - assets/svg/icons/
+      - assets/launcher/
+
+  uses-material-design: true
+
+

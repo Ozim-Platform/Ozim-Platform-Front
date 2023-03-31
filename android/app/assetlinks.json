@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ozim.platform",
+      "sha256_cert_fingerprints":
+      ["50:20:68:72:D7:AE:21:70:10:8F:D8:6C:37:77:0B:B7:5C:31:5C:0B:76:C3:A5:E4:4C:4F:55:97:DA:92:F6:76",
+      "BF:B2:49:A2:8E:C2:0C:D2:AB:93:5D:9B:5A:8B:13:11:07:4C:A7:F8:2C:A7:6D:50:01:E3:AB:37:90:21:BD:FD",
+      "91:65:1F:D2:69:5C:95:77:F5:C1:4A:20:3A:8E:14:89:92:00:44:F4:48:1A:26:D4:E2:C8:A3:0A:C7:1E:BF:51"]
+    }
+  }
+]

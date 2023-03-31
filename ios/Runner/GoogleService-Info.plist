@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>25433428043-e640555sknsdmuvgu1llq13dg6arvmka.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.25433428043-e640555sknsdmuvgu1llq13dg6arvmka</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>25433428043-5j1ra2pd00ts1b1kvm7kjihsl7bl8u3b.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBW6EGNo-EH4Of2MDZTXbqsdHxH2AFEGVY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>25433428043</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ozim.platform</string>
+	<key>PROJECT_ID</key>
+	<string>ozim-7af19</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ozim-7af19.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:25433428043:ios:bae414e0b99b6e8d21bdce</string>
+	<key>DATABASE_URL</key>
+	<string>https://ozim-7af19-default-rtdb.europe-west1.firebasedatabase.app</string>
+</dict>
+</plist>
