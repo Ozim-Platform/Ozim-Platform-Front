@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -86,7 +87,7 @@ class _ChildTypeWidgetState extends State<ChildTypeWidget> {
                 child: icon,
               ),
               Text(
-                widget.type,
+                getTranslated(context,widget.type),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,

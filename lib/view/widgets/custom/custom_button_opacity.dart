@@ -7,6 +7,7 @@
  *
  */
 
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/cupertino.dart';
 
 class CustomButtonOpacity extends StatelessWidget {
@@ -15,14 +16,15 @@ class CustomButtonOpacity extends StatelessWidget {
 
   const CustomButtonOpacity({Key key, this.onPressed, this.title})
       : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPressed,
       child: SizedBox(
         height: 60.0,
-        width: MediaQuery.of(context).size.width,
+        
+        width: SizeConfig.screenWidth,
         child: CupertinoButton(
           padding: const EdgeInsets.only(
             top: 13.0,

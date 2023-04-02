@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -278,8 +279,8 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
                 trailing: widget.trailing ?? RotationTransition(
                   turns: _iconTurns,
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width>350? 24 : 18,
-                    height: MediaQuery.of(context).size.height>600? 24 : 18,
+                    width: SizeConfig.screenWidth>350? 24 : 18,
+                    height: SizeConfig.screenHeight>600? 24 : 18,
                     child: SvgPicture.asset(
                       'assets/svg/icons/down.svg',
                       fit: BoxFit.scaleDown,

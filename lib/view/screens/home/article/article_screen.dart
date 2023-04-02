@@ -44,7 +44,7 @@ class _ArticleScreenState extends State<ArticleScreen>
         buildMethod: getSecondMainUI,
         controller: _tabController,
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.initModel(widget.category);
       },
       viewModelBuilder: () => ArticleViewModel(),

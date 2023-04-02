@@ -21,6 +21,7 @@ class Child {
 
   Child.fromJson(Map<String, dynamic> json) {
     if (json['new_questionnaires'] is List == false) {
+      // if user has new questionaires
       var newQuestionairesJsonList = json['new_questionnaires']
           as Map<String, dynamic>; // value here is a Map
       var questionareList =
@@ -29,28 +30,41 @@ class Child {
         (element) {
           element.forEach(
             (element1) {
-              newQuestionnaires
-                  .add(QuestionnaireData.fromJson(element1, json['id']));
+              newQuestionnaires.add(
+                QuestionnaireData.fromJson(
+                  element1,
+                  json['id'],
+                ),
+              );
             },
           );
         },
       );
     }
 
-    // if (json['results'] is List == false) {
-    //   var resultsJsonList = json['results'] as Map<String, dynamic>;
-    //   results = [];
-    //   resultsJsonList.forEach(
-    //     (key, value) {
-    //       value = value as List<dynamic>;
-    //       value.forEach(
-    //         (element) {
-    //           results.add(QuestionnaireData.fromJson(element, json['id']));
-    //         },
-    //       );
-    //     },
-    //   );
-    // }
+    if (json['results'] is List == false) {
+      var resultsJsonList = json['results'] as Map<String, dynamic>;
+
+      resultsJsonList.forEach(
+        (key, value) {
+          value.forEach(
+            (mapOfQuestionaireData) {
+              QuestionnaireData currentQuestonaireWithResultData =
+                  QuestionnaireData.fromJson(
+                      mapOfQuestionaireData["questionnaire"], childId);
+              currentQuestonaireWithResultData.questionaireAnswers =
+                  QuestionaireAnswers.fromJson(
+                mapOfQuestionaireData["answers"],
+                childId,
+              );
+
+              results.add(currentQuestonaireWithResultData);
+            },
+          );
+        },
+      );
+
+    }
 
     childId = json['id'];
     name = json['name'];

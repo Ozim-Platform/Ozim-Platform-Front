@@ -14,7 +14,8 @@ class QuestionnaireData {
   bool inBookmarks;
   String bookmarkFolder;
   int createdAt;
-  QuestionaireAnswers questionaireAnswers;
+  QuestionaireAnswers
+      questionaireAnswers; // these questionaire answers which we got from the backend
 
   QuestionnaireData({
     this.id,
@@ -30,42 +31,43 @@ class QuestionnaireData {
     this.inBookmarks,
     this.bookmarkFolder,
     this.createdAt,
+    this.questionaireAnswers,
   });
 
   QuestionnaireData.fromJson(Map<String, dynamic> json, int childId) {
-    Map<dynamic, dynamic> questionsJson = json['questions'];
-
-    int i = 0;
-
     List<QuestionPageData> _questionList = [];
-    Map<dynamic, dynamic> questions = questionsJson["questions"];
 
-    Map<dynamic, dynamic> answers = questionsJson["answers"];
+    if (json['questions'] is List == false) {
+      for (int i = 0; i < json['questions'].length; i++) {
+        // allJsonQuestions = <"questions", <map with questions for each page and ranges>>
+        Map<String, dynamic> allJsonQuestions = json["questions"];
 
-    QuestionaireAnswers questionaireAnswers = QuestionaireAnswers.fromJson(
-      answers,
-      childId,
-    );
+        // <map with questions for each page and ranges> = Map<String,Map<dynamic>>
 
-    questions.forEach(
-      (key, value) {
-        QuestionPageData tempQuestion = QuestionPageData.fromJson(value, i);
+        //  Map<String,Map<dynamic>> = Map<title,<Map<String,dynamic>>>
+
+        // QuestionPageData is generated from this Map<title,<Map<String,dynamic>>>
+        String keyOfCurrent = allJsonQuestions.keys.elementAt(i);
+        Map<String, dynamic> currentQuestionPageDataJson =
+            allJsonQuestions[keyOfCurrent];
+
+        // this is what is passed to the QuestionPageData.fromJson();
+
+        // <Map<String,dynamic>> = dynamic => List<String>
+        //                         dynamic => Map<String,Map<String,String>>
+
+        // List<String> = list of string questions in one page
+
+        QuestionPageData tempQuestion = QuestionPageData.fromJson(
+          currentQuestionPageDataJson,
+          i,
+          keyOfCurrent,
+        );
+
         _questionList.add(tempQuestion);
-        i++;
-      },
-    );
+      }
+    }
 
-    answers.entries.map(
-      (question) {
-        QuestionPageData tempQuestion =
-            QuestionPageData.fromJson(question.value, i);
-        _questionList.add(tempQuestion);
-        i++;
-      },
-    ).toList();
-
-    QuestionaireAnswers.fromJson(json['answers'], childId);
-    
     id = json['id'];
     age = json['age'];
     childId = childId;
@@ -94,13 +96,20 @@ class QuestionPageData {
     this.ranges,
     this.questionIndex,
   });
-  factory QuestionPageData.fromJson(
-      Map<dynamic, dynamic> questionJson, int questionIndex) {
+
+  factory QuestionPageData.fromJson(Map<dynamic, dynamic> questionJson,
+      int questionIndex, String currentKey) {
+    //  Map<String,Map<dynamic>> = Map<title,<Map<String,dynamic>>>
+
+    // <Map<String,dynamic>> = dynamic => List<String>
+    //                         dynamic => Map<String,Map<String,String>>
+
     return QuestionPageData(
-      questions: questionJson['questions'],
+      title: currentKey,
+      questions: questionJson["questions"],
       questionIndex: questionIndex,
-      ranges: questionJson['ranges'] != null
-          ? Map<String, String>.from(questionJson['ranges'])
+      ranges: questionJson["ranges"] != null
+          ? Map<String, String>.from(questionJson["ranges"])
           : null,
     );
   }
@@ -108,15 +117,16 @@ class QuestionPageData {
 
 class QuestionaireAnswers {
   int childId;
+  int questionnaireId;
   List<QuestionaireAnswer> answers = [];
 
   QuestionaireAnswers({this.childId, this.answers});
 
   Map<String, dynamic> toJson(QuestionaireAnswers answer) {
     // preprocessing our answer such that it will be in the right order
-    answer.answers.sort(
-      (a, b) => a.questionIndex.compareTo(b.questionIndex),
-    );
+    // answer.answers.sort(
+    //   (a, b) => a.questionIndex.compareTo(b.questionIndex),
+    // );
 
     var answersToSubmit = [];
     answer.answers.forEach(
@@ -136,9 +146,15 @@ class QuestionaireAnswers {
     int childId,
   ) {
     List<QuestionaireAnswer> answers = [];
+    int i = 0;
+
     jsonData.forEach(
       (key, value) {
-        answers.add(QuestionaireAnswer.fromJson(value, key));
+        answers.add(
+          // what are we passing as value here when locally storing it?
+          QuestionaireAnswer.fromJson(key, value, i),
+        );
+        i++;
       },
     );
 
@@ -147,18 +163,66 @@ class QuestionaireAnswers {
       answers: answers,
     );
   }
+
+  factory QuestionaireAnswers.fromLocal(
+    Map<dynamic, dynamic> jsonData,
+    int childId,
+  ) {
+    List<QuestionaireAnswer> answers = [];
+    int i = 0;
+    jsonData.forEach((key, value) {
+      if (key == "answers") {
+        jsonData["answers"].forEach(
+          (answer) {
+            answers.add(
+              QuestionaireAnswer.fromJson(
+                  i.toString(), answer.values.elementAt(1), i),
+            );
+            i++;
+          },
+        );
+      }
+    });
+
+    return QuestionaireAnswers(
+      childId: childId,
+      answers: answers,
+    );
+  }
+
+  Map<String, dynamic> toSaveLocally(int questionnaireId) {
+    var answersToSave = [];
+
+    answers.forEach(
+      (element) {
+        answersToSave.add(
+          element.toSaveLocally(),
+        );
+      },
+    );
+
+    return {
+      "questionnaire_id": questionnaireId,
+      "child_id": childId,
+      "answers": answersToSave,
+    };
+  }
 }
 
 class QuestionaireAnswer {
   int questionIndex;
+  String questionaireTitle;
+  // List of either AnswerWithoutComment or AnswerWithComment
   var answers;
 
   QuestionaireAnswer({
     this.questionIndex,
     this.answers,
+    this.questionaireTitle,
   });
 
-  factory QuestionaireAnswer.withAnswerType(int questionIndex) {
+  factory QuestionaireAnswer.withAnswerType(
+      int questionIndex, String questionaireTitle) {
     // our questionare has 5 questions with numerical answers and 1 question with text answers it is static
 
     if (questionIndex == 5) {
@@ -166,17 +230,22 @@ class QuestionaireAnswer {
       // creating a list of five answers with comments
 
       for (int i = 0; i <= 5; i++) {
-        answerList.add(AnswerWithComment());
+        answerList.add(
+          AnswerWithComment(),
+        );
       }
 
       return QuestionaireAnswer(
+        questionaireTitle: questionaireTitle,
         questionIndex: questionIndex,
         answers: answerList,
       );
     } else {
       List answerList = [];
       for (int i = 0; i <= 5; i++) {
-        answerList.add(AnswerWithoutComment());
+        answerList.add(
+          AnswerWithoutComment(),
+        );
       }
       return QuestionaireAnswer(
         questionIndex: questionIndex,
@@ -185,22 +254,34 @@ class QuestionaireAnswer {
     }
   }
 
-  factory QuestionaireAnswer.fromJson(Map<String, dynamic> json,int questionIndex) {
-    final Map<String, dynamic> answerList = json;
-
+  factory QuestionaireAnswer.fromJson(
+      String key, Map<String, dynamic> json, int _questionIndex) {
     var answers = [];
-    json.forEach(
-      (key, value) {
-        if (questionIndex == 5) {
-          // if the question is the last one, it will have a comment
-          answers.add(AnswerWithComment.fromJson(value));
-        } else {
-          answers.add(AnswerWithoutComment.fromJson(value));
-        }
-      },
-    );
+    // its value is either list, or
+    if (_questionIndex == 5) {
+      final List<dynamic> answerList = json["answers"];
 
-    return QuestionaireAnswer(answers: answers);
+      answerList.forEach((element) {
+        answers.add(
+          AnswerWithComment.fromJson(
+            element,
+          ),
+        );
+      },);
+    } else {
+      final List<dynamic> answerList = json["answers"];
+      
+      answerList.forEach((element) {
+        answers.add(
+          AnswerWithoutComment.fromJson(
+            element,
+          ),
+        );
+      });
+    }
+
+    return QuestionaireAnswer(
+        questionaireTitle: json.keys.first, answers: answers);
   }
 
   List<dynamic> toJson() {
@@ -210,14 +291,70 @@ class QuestionaireAnswer {
     for (int i = 0; i < answers.length; i++) {
       if (questionIndex == 5) {
         // will return a {"value": false, "comment": "Комментарии"},
-        answerList.add(answers[i].toJson());
+        answerList.add(
+          answers[i].toJson(),
+        );
       } else {
         // should return a list of answer values
-        answerList.add(answers[i].value);
+        answerList.add(
+          answers[i].value,
+        );
       }
     }
 
     return answerList;
+  }
+
+  Map<String, dynamic> toSaveLocally() {
+    Map<String, dynamic> answerToReturn;
+
+    final List<dynamic> answerList = [];
+
+    // Convert the map to a list, making sure the answers are in order
+    for (int i = 0; i < answers.length; i++) {
+      if (answers[i] == null) {
+        break;
+      }
+      if (questionIndex == 5) {
+        // will return a {"value": false, "comment": "Комментарии"},
+        answerList.add(
+          answers[i].toJson(),
+        );
+      } else {
+        // should return a list of answer values
+        answerList.add(
+          answers[i].value,
+        );
+      }
+    }
+
+    return {
+      "questionIndex": questionIndex,
+      // some of the titles were null, therefore, I decided to save according to the index
+      questionIndex.toString(): {
+        "answers": answerList,
+      },
+    };
+  }
+
+  QuestionaireAnswer fromLocalStorage() {
+    // get the data from local storage
+    // convert it to a QuestionaireAnswer
+    // return it
+
+    return QuestionaireAnswer(
+      questionIndex: questionIndex,
+      answers: answers,
+    );
+  }
+
+  bool isComplete() {
+    for (int i = 0; i < answers.length; i++) {
+      if (answers[i].value == null) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
@@ -226,9 +363,9 @@ class AnswerWithoutComment {
 
   AnswerWithoutComment({this.value});
 
-  factory AnswerWithoutComment.fromJson(Map<String, dynamic> json) {
+  factory AnswerWithoutComment.fromJson(int value) {
     return AnswerWithoutComment(
-      value: json['value'],
+      value: value,
     );
   }
 }
@@ -241,8 +378,8 @@ class AnswerWithComment {
 
   factory AnswerWithComment.fromJson(Map<String, dynamic> json) {
     return AnswerWithComment(
-      value: json['value'],
-      comment: json['comment'],
+      value: json != null ? json["value"] : null,
+      comment: json != null ? json["comment"] : null,
     );
   }
 

@@ -26,6 +26,7 @@ class CustomRadioWidget<T> extends StatelessWidget {
       label: title,
       checked: value == groupValue,
       child: InkWell(
+        splashColor: Colors.transparent,
         onTap: () {
           onChanged(this.value);
         },

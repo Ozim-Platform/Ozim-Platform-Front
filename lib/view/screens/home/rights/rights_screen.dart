@@ -43,7 +43,7 @@ class _RightScreenState extends State<RightScreen>
         buildMethod: getSecondMainUI,
         controller: _tabController,
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.initModel(widget.category);
       },
       viewModelBuilder: () => RightViewModel(),

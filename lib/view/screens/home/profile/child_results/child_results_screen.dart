@@ -1,6 +1,7 @@
 import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/all_questionaires_screen.dart';
+import 'package:charity_app/view/screens/home/questionnaire/results/all_questionaire_results_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -88,15 +89,15 @@ class ChildPreview extends StatelessWidget {
       child: Container(
         height: 116,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFFFFFFFFFF),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding:
-                  EdgeInsets.only(left: 22, right: 20, top: 21, bottom: 10),
+              padding: const EdgeInsets.only(
+                  left: 22, right: 20, top: 21, bottom: 10),
               child: Row(
                 children: [
                   SvgPicture.asset(
@@ -106,7 +107,7 @@ class ChildPreview extends StatelessWidget {
                     height: 40,
                     // width: 35,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   Column(
@@ -116,8 +117,8 @@ class ChildPreview extends StatelessWidget {
                         child.name,
                         style: TextStyle(
                             color: child.isGirl
-                                ? Color(0XFFF08390)
-                                : Color(0XFF6CBBD9),
+                                ? const Color(0XFFF08390)
+                                : const Color(0XFF6CBBD9),
                             fontSize: 18,
                             fontWeight: FontWeight.w700),
                       ),
@@ -138,7 +139,9 @@ class ChildPreview extends StatelessWidget {
               height: 45,
               padding: EdgeInsets.only(left: 14, right: 14),
               decoration: BoxDecoration(
-                color: child.isGirl ? Color(0XFFF08390) : Color(0XFF6CBBD9),
+                color: child.isGirl
+                    ? const Color(0XFFF08390)
+                    : const Color(0XFF6CBBD9),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -147,7 +150,7 @@ class ChildPreview extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  InkWell(
+                  InkWell(splashColor: Colors.transparent,
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -161,24 +164,32 @@ class ChildPreview extends StatelessWidget {
                       "Пройти тест",
                       style: TextStyle(
                         color: child.newQuestionnaires.isNotEmpty
-                            ? Colors.white
-                            : Color.fromARGB(153, 255, 255, 255),
+                            ? const Color(0xFFFFFFFFFFF)
+                            : const Color.fromARGB(153, 255, 255, 255),
                       ),
                     ),
                   ),
                   Container(
                     width: 1,
                     height: 20,
-                    color: Colors.white,
+                    color: const Color(0xFFFFFFFFFFF),
                   ),
-                  InkWell(
-                      onTap: () {},
+                  InkWell(splashColor: Colors.transparent,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => AllQuestionareResultsScreen(
+                              child: child,
+                            ),
+                          ),
+                        );
+                      },
                       child: Text(
                         "Смотреть результаты",
                         style: TextStyle(
                           color: child.results.isNotEmpty
-                              ? Colors.white
-                              : Color.fromARGB(153, 255, 255, 255),
+                              ? const Color(0xFFFFFFFFFFF)
+                              : const Color.fromARGB(153, 255, 255, 255),
                         ),
                       )),
                 ],

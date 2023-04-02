@@ -33,12 +33,14 @@ class FavouriteDetailScreen extends StatelessWidget {
           appBar: widgetAppBarTitle(context),
           body: Column(
             children: <Widget>[
-              Text(getTranslated(context, 'favourite'), style: AppThemeStyle.headerWhite),
+              Text(getTranslated(context, 'favourite'),
+                  style: AppThemeStyle.headerWhite),
               SizedBox(height: SizeConfig.calculateBlockVertical(30)),
               Expanded(
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
-                      topLeft: const Radius.circular(40), topRight: const Radius.circular(40)),
+                      topLeft: const Radius.circular(40),
+                      topRight: const Radius.circular(40)),
                   child: Container(
                     width: SizeConfig.screenWidth,
                     color: AppColor.greyDisabled,
@@ -53,7 +55,7 @@ class FavouriteDetailScreen extends StatelessWidget {
           ),
         ),
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.getFavourite(folder.toString());
       },
       viewModelBuilder: () => FavouriteDetailViewModel(),
@@ -73,10 +75,10 @@ class FavouriteDetailScreen extends StatelessWidget {
             return Container(
               child: Column(
                 children: [
-                  InkWell(
+                  InkWell(splashColor: Colors.transparent,
                     onTap: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => BottomBarDetail(data: data)));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BottomBarDetail(data: data)));
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
@@ -92,14 +94,17 @@ class FavouriteDetailScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(25.0),
                               image: DecorationImage(
                                 image: data.authorPhoto == null
-                                    ? AssetImage('assets/image/article_image.png')
+                                    ? AssetImage(
+                                        'assets/image/article_image.png')
                                     : CachedNetworkImageProvider(
-                                        Constants.MAIN_HTTP + data.authorPhoto.path),
+                                        Constants.MAIN_HTTP +
+                                            data.authorPhoto.path),
                                 fit: BoxFit.fill,
                               ),
                             ),
                           ),
-                          SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(10)),
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.all(10),
@@ -111,7 +116,9 @@ class FavouriteDetailScreen extends StatelessWidget {
                                     style: AppThemeStyle.resendCodeStyle,
                                     textAlign: TextAlign.start,
                                   ),
-                                  SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                                  SizedBox(
+                                      height: SizeConfig.calculateBlockVertical(
+                                          10)),
                                   Text(
                                     data.description,
                                     style: AppThemeStyle.titleFormStyle,
@@ -124,7 +131,9 @@ class FavouriteDetailScreen extends StatelessWidget {
                           Align(
                               alignment: Alignment.bottomRight,
                               child: Icon(
-                                data.inBookmarks == false ? Icons.bookmark_outline : Icons.bookmark,
+                                data.inBookmarks == false
+                                    ? Icons.bookmark_outline
+                                    : Icons.bookmark,
                                 color: AppColor.primary,
                               ))
                         ],

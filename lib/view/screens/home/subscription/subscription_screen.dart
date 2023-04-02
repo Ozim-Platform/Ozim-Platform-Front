@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/view/screens/home/subscription/subscription_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -8,27 +7,21 @@ import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 
-class SubscriptionScreen extends StatefulWidget {
+class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({Key key}) : super(key: key);
-
-  @override
-  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
-}
-
-class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        // toolbarHeight: 50,
+        elevation: 0.0,
+      ),
       body: Column(
         children: [
-          SubscriptionImageWidget(),
-          SubscriptionTextWidget(),
-          Spacer(),
+          const SubscriptionImageWidget(),
+          const SubscriptionTextWidget(),
+          const Spacer(),
           SubscriptionPriceWidget(),
         ],
       ),
@@ -42,7 +35,7 @@ class SubscriptionImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
         child: SvgPicture.asset(
           "assets/svg/subscription.svg",
         ));
@@ -65,7 +58,7 @@ class SubscriptionTextWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "  Подписка дает вам полный доступ",
+            getTranslated(context, "subscription_text_widget_1"),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w500,
@@ -76,7 +69,7 @@ class SubscriptionTextWidget extends StatelessWidget {
             height: 10,
           ),
           Text(
-            "\u2022 к отслеживанию развития ребенка;",
+            getTranslated(context, "subscription_text_widget_2"),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w400,
@@ -84,7 +77,7 @@ class SubscriptionTextWidget extends StatelessWidget {
             ),
           ),
           Text(
-            "\u2022 самым новым статьям и видео по раннему развитию и вмешательству;",
+            getTranslated(context, "subscription_text_widget_3"),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w400,
@@ -92,7 +85,7 @@ class SubscriptionTextWidget extends StatelessWidget {
             ),
           ),
           Text(
-            "\u2022 обмену баллов на услуги и товары для детей.,",
+            getTranslated(context, "subscription_text_widget_4"),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w400,
@@ -131,7 +124,7 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
           return CircularProgressIndicator();
         } else
           return Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(40),
                 topRight: Radius.circular(40),
@@ -144,7 +137,7 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                     children: [
                       ListView.builder(
                         shrinkWrap: true,
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 16, left: 16, right: 16, bottom: 16),
                         itemCount: model.subscriptions.length,
                         itemBuilder: (context, index) {
@@ -155,22 +148,23 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                         },
                       ),
                       Container(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 16, left: 100, right: 100, bottom: 16),
-                        margin: EdgeInsets.only(
+                        margin: const EdgeInsets.only(
                             top: 16, left: 16, right: 16, bottom: 16),
                         decoration: BoxDecoration(
-                          color: Color(0XFFF1BC62),
+                          color: const Color(0XFFF1BC62),
                           borderRadius: BorderRadius.circular(27.5),
                         ),
-                        child: InkWell(
-                          onTap: () {
-                            model.purchaseSubscription();
+                        child: InkWell(splashColor: Colors.transparent,
+                          onTap: ()async {
+                            await model.purchaseSubscription();
+                            Navigator.of(context).pop();
                           },
                           child: Text(
-                            "Продолжить",
+                            getTranslated(context, "continue"),
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: "Inter",
                               color: Colors.white,
                               fontSize: 16,
@@ -182,7 +176,7 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          InkWell(
+                          InkWell(splashColor: Colors.transparent,
                             onTap: () {
                               Navigator.of(context).pop();
                               // dispose viewmodel
@@ -192,8 +186,8 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "Пропустить",
-                                  style: TextStyle(
+                                  getTranslated(context, "skip"),
+                                  style: const TextStyle(
                                     fontFamily: "Helvetica Neue",
                                     color: Colors.white,
                                     fontSize: 15,
@@ -203,20 +197,17 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                               ),
                             ),
                           ),
-                          InkWell(
+                          InkWell(splashColor: Colors.transparent,
                             onTap: () async {
                               // trigger a callback function from a viewmodel
                               await model.restorePurchases();
-                              log("Восстановить покупки");
                             },
                             child: Padding(
-                              // padding: const EdgeInsets.all(8.0),
-                              padding: const EdgeInsets.all(32.0),
-
+                              padding: EdgeInsets.all(32.0),
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  "Восстановить покупки",
+                                  getTranslated(context, "restore_purchase"),
                                   style: TextStyle(
                                     fontFamily: "Helvetica Neue",
                                     color: Colors.white,
@@ -238,12 +229,10 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
 }
 
 class Subscription extends StatefulWidget {
-  final bool isSelected;
   final IAPItem subscriptionItem;
   SubscriptionViewModel model;
   Subscription({
     Key key,
-    this.isSelected,
     this.subscriptionItem,
     this.model,
   }) : super(key: key);
@@ -253,7 +242,6 @@ class Subscription extends StatefulWidget {
 }
 
 class _SubscriptionState extends State<Subscription> {
-  bool _isSelected = false;
   @override
   void initState() {
     super.initState();
@@ -261,7 +249,7 @@ class _SubscriptionState extends State<Subscription> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return InkWell(splashColor: Colors.transparent,
       onTap: () {
         widget.model.selectSubscription(
           widget.subscriptionItem,
@@ -273,33 +261,42 @@ class _SubscriptionState extends State<Subscription> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
+              alignment: Alignment.center,
               width: 24,
               height: 24,
               decoration: BoxDecoration(
+                shape: BoxShape.circle,
                 color: (widget.model.selectedSubscription ==
                         widget.subscriptionItem)
-                    ? Color(0XFFF1BC62)
+                    ? Color(
+                        0XFFF1BC62,
+                      )
                     : Colors.transparent,
                 border: Border.all(
                   width: 2,
-                  color: Color(0XFFFFFFFF),
+                  color: Color(
+                    0XFFFFFFFF,
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(
-                child: _isSelected
-                    ? Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      )
-                    : SizedBox(),
-              ),
+              child:
+                  widget.model.selectedSubscription == widget.subscriptionItem
+                      ? Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 22,
+                        )
+                      : SizedBox(),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16.0),
+              padding: const EdgeInsets.only(
+                left: 16.0,
+              ),
               child: Text(
-                getTranslated(context,
-                        widget.subscriptionItem.subscriptionPeriodAndroid) +
+                getTranslated(
+                      context,
+                      widget.subscriptionItem.subscriptionPeriodAndroid,
+                    ) +
                     " / т " +
                     widget.subscriptionItem.price,
                 style: TextStyle(

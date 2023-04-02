@@ -41,7 +41,7 @@ class _DiagnoseScreenState extends State<DiagnoseScreen>
         buildMethod: getSecondMainUI,
         controller: _tabController,
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.initModel(widget.category);
       },
       viewModelBuilder: () => DiagnosisViewModel(),

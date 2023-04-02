@@ -25,21 +25,22 @@ class Partner {
   int id;
   String name;
   String title;
-  bool isPaid;
+  // bool isPaid;
   String description;
   int price;
   ImageData image;
   List<ImageData> images;
-
+  bool exchangedPoints;
   Partner({
     this.id,
     this.name,
     this.title,
-    this.isPaid,
+    // this.isPaid,
     this.description,
     this.price,
     this.image,
     this.images,
+    this.exchangedPoints,
   });
 
   factory Partner.fromJson(Map<String, dynamic> json) {
@@ -60,11 +61,12 @@ class Partner {
       id: json['id'],
       name: json['name'],
       title: json['title'],
-      isPaid: json['is_paid'],
+      // isPaid: json['is_paid'],
       description: json['description'],
       price: json['price'],
       image: ImageData.fromJson(imageJson),
       images: imageList,
+      exchangedPoints: json["is_changed"],
     );
   }
 }

@@ -33,7 +33,7 @@ class _ChatScreen extends State<ChatScreen> {
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),
-            InkWell(
+            InkWell(splashColor: Colors.transparent,
               onTap: () {},
               child: Padding(
                 padding: const EdgeInsets.only(left: 30),

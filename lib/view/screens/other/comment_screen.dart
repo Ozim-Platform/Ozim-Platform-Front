@@ -32,7 +32,9 @@ class CommentDetailsModel {
 }
 
 class CommentScreen extends StatelessWidget {
-  CommentScreen(this.instance, this.data, {Key key, @required this.detailsModel}) : super(key: key);
+  CommentScreen(this.instance, this.data,
+      {Key key, @required this.detailsModel})
+      : super(key: key);
 
   final instance;
   final Data data;
@@ -86,7 +88,8 @@ class CommentScreen extends StatelessWidget {
               Expanded(
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
-                      topLeft: const Radius.circular(40), topRight: const Radius.circular(40)),
+                      topLeft: const Radius.circular(40),
+                      topRight: const Radius.circular(40)),
                   child: Container(
                     width: SizeConfig.screenWidth,
                     color: Color.fromRGBO(244, 244, 244, 1),
@@ -96,7 +99,8 @@ class CommentScreen extends StatelessWidget {
               ),
             ],
           ),
-          bottomNavigationBar: Column(mainAxisSize: MainAxisSize.min, children: [
+          bottomNavigationBar:
+              Column(mainAxisSize: MainAxisSize.min, children: [
             ConvexAppBar(
               elevation: 0.2,
               style: TabStyle.fixedCircle,
@@ -108,7 +112,8 @@ class CommentScreen extends StatelessWidget {
                 TabItem(
                     icon: Semantics(
                   label: getTranslated(context, 'create_comment'),
-                  child: Icon(CustomIcons.sending, size: 25, color: Colors.white),
+                  child:
+                      Icon(CustomIcons.sending, size: 25, color: Colors.white),
                 )),
               ],
               initialActiveIndex: 0,
@@ -118,7 +123,7 @@ class CommentScreen extends StatelessWidget {
           ]),
         );
       },
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.getComment();
       },
       viewModelBuilder: () => CommentViewModel(instance, data),
@@ -196,7 +201,8 @@ class CommentsAndReplyBuilder extends StatelessWidget {
     if (parent) {
       return ListView.builder(
           controller: model.mainScrollControlller,
-          padding: parent ? EdgeInsets.symmetric(vertical: 20) : EdgeInsets.zero,
+          padding:
+              parent ? EdgeInsets.symmetric(vertical: 20) : EdgeInsets.zero,
           shrinkWrap: true,
           physics: BouncingScrollPhysics(),
           itemCount: comments.length,
@@ -204,7 +210,8 @@ class CommentsAndReplyBuilder extends StatelessWidget {
             DataComment dataComment = comments[i];
             if (model.commentsAndReplyKeys[dataComment.id] == null) {
               model.commentsAndReplyKeys[dataComment.id] =
-                  GlobalKey<_MainBuilderCommentState>(debugLabel: dataComment.id.toString());
+                  GlobalKey<_MainBuilderCommentState>(
+                      debugLabel: dataComment.id.toString());
             }
             final Widget comment = MainBuilderComment(
               articleid,
@@ -231,7 +238,8 @@ class CommentsAndReplyBuilder extends StatelessWidget {
           DataComment dataComment = comments[i];
           if (model.commentsAndReplyKeys[dataComment.id] == null) {
             model.commentsAndReplyKeys[dataComment.id] =
-                GlobalKey<_MainBuilderCommentState>(debugLabel: dataComment.id.toString());
+                GlobalKey<_MainBuilderCommentState>(
+                    debugLabel: dataComment.id.toString());
           }
           return MainBuilderComment(
             articleid,
@@ -304,8 +312,8 @@ class _MainBuilderCommentState extends State<MainBuilderComment> {
 
   _writePrivateMessage() {
     model.setWritting(hint: 'private_message');
-    model.setSendCallback((String message) =>
-        model.startConversation(message: message, context: context, receiver: _user));
+    model.setSendCallback((String message) => model.startConversation(
+        message: message, context: context, receiver: _user));
   }
 
   @override
@@ -341,7 +349,8 @@ class _MainBuilderCommentState extends State<MainBuilderComment> {
                       alignment: Alignment.topCenter,
                       children: [
                         //if (_hasReplies && !_showReplies) ...buildSubCards(dataComment),
-                        buildCard(dataComment, showReplies: _hasReplies && !_showReplies),
+                        buildCard(dataComment,
+                            showReplies: _hasReplies && !_showReplies),
                       ],
                     ),
                     if (_hasReplies)
@@ -351,7 +360,8 @@ class _MainBuilderCommentState extends State<MainBuilderComment> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: Text(
                             !_showReplies
-                                ? getTranslated(context, 'show_answers') + ' ($_repliesCount)'
+                                ? getTranslated(context, 'show_answers') +
+                                    ' ($_repliesCount)'
                                 : getTranslated(context, 'hide_answers'),
                             style: AppThemeStyle.ligtherText,
                           ),
@@ -509,7 +519,7 @@ class _MainBuilderCommentState extends State<MainBuilderComment> {
                         focusable: true,
                         label: getTranslated(context, "reply_vo"),
                         button: true,
-                        child: InkWell(
+                        child: InkWell(splashColor: Colors.transparent,
                           onTap: answerForComment,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
@@ -621,7 +631,8 @@ class _CommentTextField extends StatelessWidget {
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
-                contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                contentPadding:
+                    const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 border: InputBorder.none,
                 hintText: getTranslated(context, hint),
                 hintStyle: AppThemeStyle.normalText,
@@ -637,7 +648,7 @@ class _CommentTextField extends StatelessWidget {
         if (sending)
           CupertinoActivityIndicator()
         else
-          InkWell(
+          InkWell(splashColor: Colors.transparent,
             onTap: () {
               callback(_textController.text);
               _textController.text = '';

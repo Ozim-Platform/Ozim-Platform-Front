@@ -50,7 +50,7 @@ class SubscriptionViewModel extends BaseViewModel {
       PurchasedItem purchasedItem = await _inAppPurchaseDataRepository
           .buySubscription(_selectedSubscription);
       isLoading = false;
-
+      
       notifyListeners();
       return purchasedItem;
     } else {

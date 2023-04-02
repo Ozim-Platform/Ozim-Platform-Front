@@ -114,7 +114,7 @@ class _BottomBarDetailState extends State<BottomBarDetail>
           ),
         );
       },
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.initContext(context, widget.data);
         model.view();
       },
@@ -132,7 +132,7 @@ class _BottomBarDetailState extends State<BottomBarDetail>
       progressIndicator: CupertinoActivityIndicator(),
       child: Scaffold(
         backgroundColor: AppColor.primary,
-        
+
         // appBar: widgetAppBarTitle(context),
         body: Column(
           children: <Widget>[

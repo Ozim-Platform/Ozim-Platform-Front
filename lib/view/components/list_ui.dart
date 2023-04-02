@@ -17,6 +17,7 @@ class _TextFieldState extends State<ListUI> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashColor: Colors.transparent,
       onTap: widget.onTap,
       child: Padding(
         padding: const EdgeInsets.only(

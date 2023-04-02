@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:charity_app/model/forum/forum_detail.dart';
+import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/partner.dart';
-import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/constants.dart';
 import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/view/components/locked_card_overlay.dart';
@@ -14,6 +15,7 @@ import 'package:charity_app/view/screens/home/subscription/subscription_screen.d
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart';
 import 'package:stacked/stacked.dart';
 
 class ExchangePointsScreen extends StatefulWidget {
@@ -49,6 +51,7 @@ class _ExchangePointsScreenState extends State<ExchangePointsScreen> {
             );
           }
           return ListView(
+            physics: NeverScrollableScrollPhysics(),
             children: [
               MyPointsWidget(points: model.points),
               const ExchangePonintsInformationWidget(),
@@ -69,7 +72,6 @@ class MyPointsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 40, bottom: 40, left: 95, right: 95),
-      // height: 100,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -81,7 +83,7 @@ class MyPointsWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              "My points",
+              getTranslated(context, "my_points").toUpperCase(),
               style: TextStyle(
                 fontFamily: "Helvetica Neue",
                 color: Colors.white,
@@ -121,11 +123,14 @@ class ExchangePonintsInformationWidget extends StatelessWidget {
       child: Card(
         child: ExpandablePanel(
           disableBackgroundColor: false,
-          headerTitle: "Как получить баллы",
+          headerTitle: getTranslated(
+            context,
+            "how_to_get_points",
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Text(
-              '''Вы можете получать баллы за активность в приложении. Баллы начисляются за:\n\n \u2022 просмотр видео (до конца)\n \u2022 прохождение опросника\n \u2022 создание темы в форуме\n \u2022 комментарии к статьям\n \u2022 поделиться материалом\n \u2022 оценка услугодателя\n \u2022 лайк статьи\n''',
+              getTranslated(context, "information_on_getting_points"),
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 color: Color(0XFF777F83),
@@ -151,14 +156,18 @@ class _PartnersListState extends State<PartnersList> {
   @override
   Widget build(BuildContext context) {
     return ExpandablePanel(
-      headerTitle: 'Как обменять баллы',
+      headerTitle: getTranslated(context, "how_to_exchange_points"),
       disableBackgroundColor: true,
       child: _buildListView(),
     );
   }
 
   Widget _buildListView() {
-    return ListView.builder(
+    return ListView.separated(
+      separatorBuilder: (context, index) => SizedBox(
+        height: 10,
+      ),
+      physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
       padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
@@ -188,45 +197,37 @@ class _ExpandablePanelState extends State<ExpandablePanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: widget.disableBackgroundColor == true
-            ? Color(0XFFF6F6FA)
-            : Colors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _isExpanded = !_isExpanded;
-              });
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(
-                    widget.headerTitle,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0XFF777F83),
-                    ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  widget.headerTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Color(0XFF777F83),
                   ),
                 ),
-                Icon(
-                  _isExpanded ? Icons.expand_less : Icons.expand_more,
-                ),
-              ],
-            ),
+              ),
+              Icon(
+                _isExpanded ? Icons.expand_less : Icons.expand_more,
+              ),
+            ],
           ),
-          if (_isExpanded) widget.child,
-        ],
-      ),
+        ),
+        if (_isExpanded) widget.child,
+      ],
     );
   }
 }
@@ -247,93 +248,154 @@ class _CardBuilderState extends State<ResourcesCardBuilder> {
   Partner get data => widget.data;
 
   @override
+  initState() {
+    super.initState();
+
+    InAppPurchaseDataRepository().hasActiveSubscription.addListener(
+      () {
+        setState(
+          () {},
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
+    return Container(
+      height: 75,
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(
+          15.0,
+        ),
+      ),
+      child: ColorFiltered(
+        colorFilter: data.exchangedPoints == true
+            ? ColorFilter.mode(
+                Colors.grey,
+                BlendMode.saturation,
+              )
+            : ColorFilter.mode(
+                Colors.transparent,
+                BlendMode.saturation,
               ),
-              color: Colors.white,
-              child: Container(
-                padding: const EdgeInsets.only(right: 5),
-                height: 75,
-                child: Row(
-                  children: [
-                    Container(
-                      child: Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [
-                          // fix the position of the badge
-                          SvgPicture.asset(
-                            'assets/svg/icons/article_badge.svg',
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(
+                  15,
+                ),
+              ),
+              height: 75,
+              child: Row(
+                children: [
+                  Container(
+                    child: Stack(
+                      alignment: Alignment.centerLeft,
+                      children: [
+                        Container(
+                          height: 75.0,
+                          width: 75.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                              15.0,
+                            ),
+                            image: DecorationImage(
+                              image: data.image != null
+                                  ? CachedNetworkImageProvider(
+                                      Constants.MAIN_HTTP + data.image.path)
+                                  : (data.image == null
+                                      ? AssetImage(
+                                          'assets/image/article_image.png')
+                                      : CachedNetworkImageProvider(
+                                          Constants.MAIN_HTTP +
+                                              data.image.path)),
+                              fit: BoxFit.fill,
+                            ),
                           ),
-                          Container(
-                            height: 75.0,
-                            width: 75.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              image: DecorationImage(
-                                image: data.image != null
-                                    ? CachedNetworkImageProvider(
-                                        Constants.MAIN_HTTP + data.image.path)
-                                    : (data.image == null
-                                        ? AssetImage(
-                                            'assets/image/article_image.png')
-                                        : CachedNetworkImageProvider(
-                                            Constants.MAIN_HTTP +
-                                                data.image.path)),
-                                fit: BoxFit.fill,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        10.0,
+                        10.0,
+                        40.0,
+                        10.0,
+                      ),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              data.name != null
+                                  ? data.name
+                                  : (data.title != null ? data.title : ''),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                                color: Color(0XFF6B6F72),
                               ),
+                              textAlign: TextAlign.start,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Spacer(),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              data.title != null
+                                  ? data.title
+                                  : (data.name != null ? data.name : ''),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: Color(0XFF6B6F72),
+                              ),
+                              textAlign: TextAlign.start,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 40.0, 10.0),
-                        child: Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                data.name != null
-                                    ? data.name
-                                    : (data.title != null ? data.title : ''),
-                                style: AppThemeStyle.subHeader,
-                                textAlign: TextAlign.start,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                data.title != null
-                                    ? data.title
-                                    : (data.name != null ? data.name : ''),
-                                style: AppThemeStyle.subHeader,
-                                textAlign: TextAlign.start,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                  ),
+                  Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 12.0,
+                        ),
+                        child: Text(
+                          data.price.toString(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            // color: Colors.white,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            InkWell(
+            // Align(
+            //     alignment: Alignment.centerRight,
+            //     child: SvgPicture.asset("assets/svg/partner_rectangle.svg")),
+
+            InkWell(splashColor: Colors.transparent,
               onTap: () {
-                if (data.isPaid == false) {
+                if (InAppPurchaseDataRepository().hasActiveSubscription.value ==
+                    true) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => PartnerScreen(partner: data),
@@ -347,18 +409,23 @@ class _CardBuilderState extends State<ResourcesCardBuilder> {
                   );
                 }
               },
-              child: IgnorePointer(
-                  child: data.isPaid == true
+              // child: Container(
+              //   height: 75,
+              //   width: double.infinity,
+              //   color: Colors.transparent,
+              // ),
+              child:
+                  InAppPurchaseDataRepository().hasActiveSubscription.value !=
+                          true
                       ? LockedCardOverlay()
                       : SizedBox(
                           height: 75,
                           width: double.infinity,
-                        )),
+                        ),
             ),
           ],
         ),
-        SizedBox(height: SizeConfig.calculateBlockVertical(10)),
-      ],
+      ),
     );
   }
 }

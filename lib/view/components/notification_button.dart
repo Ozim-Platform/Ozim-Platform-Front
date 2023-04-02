@@ -51,6 +51,7 @@ class _NotificationButtonState extends State<NotificationButton> {
     return Semantics(
       label: getTranslated(context, "notifications"),
       child: InkWell(
+        splashColor: Colors.transparent,
         onTap: () {
           resetBox();
           Navigator.of(context).push(

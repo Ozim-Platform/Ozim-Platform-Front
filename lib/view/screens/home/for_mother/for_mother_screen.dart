@@ -43,7 +43,7 @@ class _ForMotherScreenState extends State<ForMotherScreen>
         buildMethod: getSecondMainUI,
         controller: _tabController,
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.initModel(widget.category);
       },
       viewModelBuilder: () => For_ParentViewModel(),

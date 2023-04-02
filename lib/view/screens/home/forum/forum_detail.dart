@@ -26,7 +26,11 @@ class ForumDetailScreen extends StatefulWidget {
   final ForumSubCategory forumSubCategory;
 
   const ForumDetailScreen(
-      {Key key, this.title, this.subcategory, this.disposeCallback, this.forumSubCategory})
+      {Key key,
+      this.title,
+      this.subcategory,
+      this.disposeCallback,
+      this.forumSubCategory})
       : super(key: key);
 
   @override
@@ -88,7 +92,8 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
               Expanded(
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
-                      topLeft: const Radius.circular(40), topRight: const Radius.circular(40)),
+                      topLeft: const Radius.circular(40),
+                      topRight: const Radius.circular(40)),
                   child: Container(
                     width: SizeConfig.screenWidth,
                     color: Colors.white,
@@ -113,7 +118,9 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
                                 color: AppThemeStyle.primaryColor,
                                 borderRadius: BorderRadius.circular(25)),
                           ),
-                          Expanded(child: BuilderList(category: widget.subcategory, model: model)),
+                          Expanded(
+                              child: BuilderList(
+                                  category: widget.subcategory, model: model)),
                         ],
                       ),
                     ),
@@ -130,6 +137,7 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
           bottomNavigationBar: Container(
             color: Colors.transparent,
             child: Column(mainAxisSize: MainAxisSize.min, children: [
+              // TODO: EXAMINE this widget
               ConvexAppBar(
                 elevation: 0.2,
                 style: TabStyle.reactCircle,
@@ -139,19 +147,26 @@ class _ForumDetailScreenState extends State<ForumDetailScreen> {
                 height: 25,
                 items: [
                   TabItem(
-                      icon: Semantics(
-                          label: getTranslated(context, 'create_post'),
-                          child: Icon(Icons.add, size: 25, color: Colors.white))),
+                    icon: Semantics(
+                      label: getTranslated(context, 'create_post'),
+                      child: const Icon(
+                        Icons.add,
+                        size: 25,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
                 initialActiveIndex: 0,
-                onTap: (int i) => {model.showModalForNewForum(context, widget.subcategory)},
+                onTap: (int i) =>
+                    {model.showModalForNewForum(context, widget.subcategory)},
               ),
               Container(height: 16.0, color: Colors.white),
             ]),
           ),
         ),
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.forumSubCategory = widget.forumSubCategory;
         model.getForumCategory(widget.subcategory);
       },
@@ -308,7 +323,8 @@ class _BuilderListState extends State<BuilderList> {
     // print(viewModel.forumDetail);
 
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         if (page < pages) {
           page++;
           _getMoreData(widget.category, page);
@@ -386,7 +402,8 @@ class _BuilderListState extends State<BuilderList> {
     if (viewModel.isLoading) {
       return Container();
     } else {
-      if (viewModel.forumDetail.data != null && viewModel.forumDetail.data.length > 0) {
+      if (viewModel.forumDetail.data != null &&
+          viewModel.forumDetail.data.length > 0) {
         page = viewModel.forumDetail.page;
         pages = viewModel.forumDetail.pages;
         return ListView.builder(
@@ -440,7 +457,8 @@ class _BuilderListState extends State<BuilderList> {
                           userUrl: data?.user?.avatar,
                           size: 50,
                         ),
-                        SizedBox(width: SizeConfig.calculateBlockHorizontal(10)),
+                        SizedBox(
+                            width: SizeConfig.calculateBlockHorizontal(10)),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,20 +469,24 @@ class _BuilderListState extends State<BuilderList> {
                                 textAlign: TextAlign.start,
                                 style: AppThemeStyle.ligtherSmallerText,
                               ),
-                              SizedBox(height: SizeConfig.calculateBlockVertical(5)),
+                              SizedBox(
+                                  height: SizeConfig.calculateBlockVertical(5)),
                               Text(
                                 data.title != null ? data.title : '',
                                 style: AppThemeStyle.subHeader,
                                 textAlign: TextAlign.start,
                               ),
-                              SizedBox(height: SizeConfig.calculateBlockVertical(5)),
+                              SizedBox(
+                                  height: SizeConfig.calculateBlockVertical(5)),
                               Text(
                                 data.description,
                                 textAlign: TextAlign.start,
                                 style: AppThemeStyle.normalText,
                                 maxLines: 3,
                               ),
-                              SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                              SizedBox(
+                                  height:
+                                      SizeConfig.calculateBlockVertical(10)),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -479,10 +501,12 @@ class _BuilderListState extends State<BuilderList> {
                                               fit: BoxFit.scaleDown,
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 3),
+                                              padding: const EdgeInsets.only(
+                                                  left: 3),
                                               child: Text(
                                                 _commentCount(data.comments),
-                                                style: AppThemeStyle.titleListGrey,
+                                                style:
+                                                    AppThemeStyle.titleListGrey,
                                               ),
                                             )
                                           ],
@@ -491,7 +515,8 @@ class _BuilderListState extends State<BuilderList> {
                                   _buildComment(data.comments),
                                 ],
                               ),
-                              SizedBox(height: SizeConfig.calculateBlockVertical(5)),
+                              SizedBox(
+                                  height: SizeConfig.calculateBlockVertical(5)),
                             ],
                           ),
                         ),

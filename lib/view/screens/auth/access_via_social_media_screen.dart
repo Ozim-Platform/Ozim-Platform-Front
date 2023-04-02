@@ -85,8 +85,8 @@ class _AccessViaSocialMediaScreen extends State<AccessViaSocialMediaScreen> {
             alignment: Alignment.center,
             children: <Widget>[
               SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
+                height: SizeConfig.screenHeight,
+                width: SizeConfig.screenWidth,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -228,6 +228,7 @@ class _AccessViaSocialMediaScreen extends State<AccessViaSocialMediaScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
                     child: InkWell(
+                      splashColor: Colors.transparent,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (BuildContext context) =>

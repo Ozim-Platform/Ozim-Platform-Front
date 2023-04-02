@@ -52,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(width: 30),
-                    InkWell(
+                    InkWell(splashColor: Colors.transparent,
                         onTap: () {
                           model.pickFile();
                         },
@@ -62,12 +62,13 @@ class SettingsScreen extends StatelessWidget {
                               )
                             : Semantics(
                                 label: getTranslated(context, 'add_user_photo'),
-                                child: BlurredAvatar(imageUrl: model.imageUrl, size: 70.0))),
+                                child: BlurredAvatar(
+                                    imageUrl: model.imageUrl, size: 70.0))),
                     SizedBox(width: 10),
-                    InkWell(
+                    InkWell(splashColor: Colors.transparent,
                       onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) => ChangeUsernameScreen()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ChangeUsernameScreen()));
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,13 +78,15 @@ class SettingsScreen extends StatelessWidget {
                             textAlign: TextAlign.start,
                             style: AppThemeStyle.listStyle,
                           ),
-                          SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(10)),
                           Text(
                             getTranslated(context, 'change_username'),
                             textAlign: TextAlign.start,
                             style: AppThemeStyle.titleListPrimary,
                           ),
-                          SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(10)),
                         ],
                       ),
                     ),
@@ -147,7 +150,8 @@ class SettingsScreen extends StatelessWidget {
                             textAlign: TextAlign.start,
                             style: AppThemeStyle.subtitleList,
                           ),
-                          SizedBox(height: SizeConfig.calculateBlockVertical(20)),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(20)),
                           CupertinoSwitch(
                               value: model.newComment,
                               activeColor: AppColor.primary,
@@ -164,7 +168,8 @@ class SettingsScreen extends StatelessWidget {
                             textAlign: TextAlign.start,
                             style: AppThemeStyle.subtitleList,
                           ),
-                          SizedBox(height: SizeConfig.calculateBlockVertical(20)),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(20)),
                           CupertinoSwitch(
                               value: model.replyComment,
                               activeColor: AppColor.primary,
@@ -181,7 +186,8 @@ class SettingsScreen extends StatelessWidget {
                             textAlign: TextAlign.start,
                             style: AppThemeStyle.subtitleList,
                           ),
-                          SizedBox(height: SizeConfig.calculateBlockVertical(20)),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(20)),
                           CupertinoSwitch(
                               value: model.permissionNotification,
                               activeColor: AppColor.primary,
@@ -198,7 +204,7 @@ class SettingsScreen extends StatelessWidget {
           ),
         );
       },
-      onModelReady: (model) => {model.setContext(context)},
+      onViewModelReady: (model) => {model.setContext(context)},
       viewModelBuilder: () => SettingsViewModel(model),
     );
   }

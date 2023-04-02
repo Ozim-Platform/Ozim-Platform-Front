@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-
 class CabinetServiceButton extends StatelessWidget {
   final String title;
   final String iconPath;
@@ -40,8 +39,8 @@ class CabinetServiceButton extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 14.0),
               child: Theme(
-                  data:
-                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
                   child: Row(
                     children: [
                       Padding(

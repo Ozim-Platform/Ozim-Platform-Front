@@ -33,7 +33,7 @@ class SearchScreen extends StatelessWidget {
         model: model,
         buildMethod: getSecondMainUI,
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.initData();
       },
       viewModelBuilder: () => SearchViewModel(article, service, diagnosis),

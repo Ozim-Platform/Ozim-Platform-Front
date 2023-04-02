@@ -29,7 +29,7 @@ class ResourceScreen extends StatelessWidget {
         model: model,
         buildMethod: getMainUI,
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.getLinks(category);
       },
       viewModelBuilder: () => ResourceViewModel(),
@@ -54,13 +54,13 @@ class ResourceScreen extends StatelessWidget {
             itemBuilder: (context, i) {
               LinksData data = list[i];
               return Padding(
-                padding:
-                    const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 10, bottom: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    InkWell(
+                    InkWell(splashColor: Colors.transparent,
                       onTap: () => model.launchURL(data.link.trim(), context),
                       child: Text(
                         data.name != null ? data.name : data.link,

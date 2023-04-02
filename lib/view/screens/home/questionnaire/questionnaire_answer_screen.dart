@@ -1,22 +1,25 @@
 import 'dart:developer';
 
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/questionnaire.dart';
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/utils/toast_utils.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
-import 'package:charity_app/view/widgets/app_bar_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:charity_app/view/screens/home/questionnaire/questionaire_appbar.dart';
 
 class QuestionaireAnswerScreen extends StatefulWidget {
   QuestionnaireData data;
   List<QuestionaireAnswer> questionaireAnswers;
   QuestionnaireViewModel model;
-  QuestionaireAnswerScreen(
-      {Key key,
-      @required this.data,
-      @required this.questionaireAnswers,
-      @required this.model})
-      : super(key: key);
+  QuestionaireAnswerScreen({
+    Key key,
+    @required this.data,
+    @required this.questionaireAnswers,
+    @required this.model,
+  }) : super(key: key);
 
   @override
   State<QuestionaireAnswerScreen> createState() =>
@@ -27,12 +30,13 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widgetAppBarTitle(context,
-          title: "Опросник",
-          hasLeading: true,
-          color: Color(0XFFF1BC62), onPressed: () {
-        Navigator.of(context).pop();
-      }),
+      appBar: customAppbarForQuestionaire(
+        context: context,
+        appBarTitle: '',
+        appBarIncome: "Опросник",
+      ),
+
+      backgroundColor: Colors.white,
       body: ListView.builder(
         padding: EdgeInsets.all(16),
         itemCount: widget.data.questionList.length + 2,
@@ -65,8 +69,8 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
           } else if (index == 6) {
             return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                Align(
+                  alignment: Alignment.centerLeft,
                   child: Text(
                     "General",
                     style: TextStyle(
@@ -86,19 +90,42 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
             );
           } else {
             return InkWell(
+              splashColor: Colors.transparent,
               onTap: () async {
+                CupertinoAlertDialog(
+                  title: const Text("points_exchange_confirmation"),
+                  actions: <CupertinoDialogAction>[
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        getTranslated(context, 'no'),
+                      ),
+                    ),
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        getTranslated(context, 'no'),
+                      ),
+                    ),
+                  ],
+                );
                 bool status = await widget.model.submitQuestionnaire(context);
                 if (status == true) {
-                  ToastUtils.toastInfoGeneral("success", context);
+                  ToastUtils.toastSuccessGeneral("success", context);
+                  Navigator.of(context).pop();
                 } else {
-                  ToastUtils.toastInfoGeneral("error", context);
+                  ToastUtils.toastErrorGeneral("error", context);
                 }
               },
               child: Container(
                 margin: EdgeInsets.only(bottom: 16, left: 32, right: 32),
                 child: Center(
                   child: Text(
-                    "Send to email",
+                    getTranslated(context, "send_results_to_email"),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
@@ -146,7 +173,7 @@ class ResultSlider extends StatelessWidget {
 
     _paddingValue = (_paddingValue /
         60 *
-        MediaQuery.of(context).size.width /
+        SizeConfig.screenWidth /
         MediaQuery.of(context)
             .devicePixelRatio); // -32 because of padding at the parent widget with value 32
 
@@ -158,7 +185,7 @@ class ResultSlider extends StatelessWidget {
           children: [
             Container(
               height: 20,
-              width: MediaQuery.of(context).size.width,
+              width: SizeConfig.screenWidth,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -174,7 +201,7 @@ class ResultSlider extends StatelessWidget {
                           width: double.parse(
                                   question.ranges.values.elementAt(index)) /
                               60 *
-                              MediaQuery.of(context).size.width,
+                              SizeConfig.screenWidth,
                           color: colors[index],
                         );
                       },

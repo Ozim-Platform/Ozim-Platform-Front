@@ -461,6 +461,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ],
                           ),
                           InkWell(
+                            splashColor: Colors.transparent,
                             onTap: model.dataAgreeClick,
                             child: Row(
                               children: [
@@ -519,7 +520,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         if (widget.username != null) {
           model.initStates(
             widget.username,

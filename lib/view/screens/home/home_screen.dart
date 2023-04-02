@@ -1,5 +1,6 @@
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/utils/constants.dart';
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/view/screens/home/home_without_drawer_screen.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,6 +38,8 @@ class _HomeScreen extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, model, child) {
         if (model.isLoadingCategory || model.isLoadingBanner) {

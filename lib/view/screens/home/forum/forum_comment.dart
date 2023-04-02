@@ -98,7 +98,7 @@ class ForumCommentScreen extends StatelessWidget {
           ),
         ),
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         // model.getForumCategory(subcategory);
       },
       viewModelBuilder: () => ForumCommentViewModel(),

@@ -5,6 +5,7 @@ import 'package:charity_app/providers/locator.dart';
 import 'package:charity_app/service/network_service.dart';
 import 'package:charity_app/service/network_status.dart';
 import 'package:charity_app/utils/constants.dart';
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/utils/utils.dart';
 import 'package:charity_app/view/screens/auth/splash_screen.dart';
 import 'package:charity_app/view/theme/my_themes.dart';
@@ -24,9 +25,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox<int>(HiveBoxes.countBox);
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  //   statusBarColor: Colors.transparent,
+  // ));
+  
   SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -37,7 +39,7 @@ void main() async {
     app: app,
   );
 
-
+  // await initNotices(_onSelectNotification);
   await initFCM();
   setupLocator();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
@@ -48,8 +50,7 @@ void main() async {
       MyApp(),
     ),
   );
-    // InAppPurchaseDataRepository();
-
+  
 }
 
 Future<dynamic> _onSelectNotification(String json) async {

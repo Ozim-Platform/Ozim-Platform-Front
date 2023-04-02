@@ -71,7 +71,8 @@ class ForumScreen extends StatelessWidget {
               Expanded(
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
-                      topLeft: const Radius.circular(40), topRight: const Radius.circular(40)),
+                      topLeft: const Radius.circular(40),
+                      topRight: const Radius.circular(40)),
                   child: Container(
                     width: SizeConfig.screenWidth,
                     color: AppColor.greyDisabled,
@@ -101,7 +102,7 @@ class ForumScreen extends StatelessWidget {
           ),*/
         ),
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.fetchAllData();
       },
       viewModelBuilder: () => ForumViewModel(),
@@ -141,8 +142,9 @@ class ForumScreen extends StatelessWidget {
                     physics: ClampingScrollPhysics(),
                     itemBuilder: (context, i) {
                       return Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 5),
-                        child: InkWell(
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, top: 10, bottom: 5),
+                        child: InkWell(splashColor: Colors.transparent,
                           onTap: () {
                             ForumSubCategory forum = list[i];
                             Navigator.of(context)
@@ -161,7 +163,8 @@ class ForumScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
@@ -192,25 +195,30 @@ class ForumScreen extends StatelessWidget {
                                           " " +
                                           getTranslated(context, 'theme'),
                                       textAlign: TextAlign.start,
-                                      style: AppThemeStyle.ligtherSmallerText.copyWith(
-                                          // fontFamily: 'Arial',
-                                          ),
+                                      style: AppThemeStyle.ligtherSmallerText
+                                          .copyWith(
+                                              // fontFamily: 'Arial',
+                                              ),
                                     ),
                                   ),
                                   if (list[i].last_comment != null)
                                     Text(
                                       getTranslated(context, 'last_message') +
                                           ' ' +
-                                          dateFormatter2(DateTime.fromMillisecondsSinceEpoch(
-                                              list[i].last_comment * 1000)),
+                                          dateFormatter2(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  list[i].last_comment * 1000)),
                                       textAlign: TextAlign.start,
-                                      style: AppThemeStyle.ligtherSmallerText.copyWith(
-                                          // fontFamily: 'Arial',
-                                          ),
+                                      style: AppThemeStyle.ligtherSmallerText
+                                          .copyWith(
+                                              // fontFamily: 'Arial',
+                                              ),
                                     ),
                                 ],
                               ),
-                              SizedBox(height: SizeConfig.calculateBlockVertical(5.0)),
+                              SizedBox(
+                                  height:
+                                      SizeConfig.calculateBlockVertical(5.0)),
                               Divider(
                                 thickness: 1,
                                 color: Constants.ligtherMainTextColor,

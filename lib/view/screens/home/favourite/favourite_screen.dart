@@ -13,19 +13,22 @@ class FavouriteScreen extends StatefulWidget {
   final List<Data> folders;
   final bool needBackArrow;
 
-  const FavouriteScreen({Key key, this.folders, this.needBackArrow = false}) : super(key: key);
+  const FavouriteScreen({Key key, this.folders, this.needBackArrow = false})
+      : super(key: key);
 
   @override
   _FavouriteScreenState createState() => _FavouriteScreenState();
 }
 
-class _FavouriteScreenState extends State<FavouriteScreen> with SingleTickerProviderStateMixin {
+class _FavouriteScreenState extends State<FavouriteScreen>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
   void initState() {
     if (widget.folders != null) {
-      _tabController = TabController(length: widget.folders.length, vsync: this);
+      _tabController =
+          TabController(length: widget.folders.length, vsync: this);
     }
     super.initState();
   }
@@ -64,14 +67,15 @@ class _FavouriteScreenState extends State<FavouriteScreen> with SingleTickerProv
               children: List<Widget>.generate(
                 model.folders.length,
                 (int index) {
-                  return getSecondMainUI(context, model, model.folders[index].name, model.folders);
+                  return getSecondMainUI(
+                      context, model, model.folders[index].name, model.folders);
                 },
               ),
             ),
           ),
         );
       },
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.init();
         model.getFavourite();
       },
@@ -79,7 +83,8 @@ class _FavouriteScreenState extends State<FavouriteScreen> with SingleTickerProv
     );
   }
 
-  getSecondMainUI(context, FavouriteViewModel viewmodel, String category, List folders) {
+  getSecondMainUI(
+      context, FavouriteViewModel viewmodel, String category, List folders) {
     return CustomRecordList<FavouriteViewModel>(
       model: viewmodel,
       category: category,

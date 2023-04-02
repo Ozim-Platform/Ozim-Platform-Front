@@ -18,8 +18,8 @@ class WelcomeScreen extends StatelessWidget {
           children: <Widget>[
             Image.asset(
               "assets/image/main_background.png",
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              width: SizeConfig.screenWidth,
+              height: SizeConfig.screenHeight,
               fit: BoxFit.cover,
             ),
             SafeArea(

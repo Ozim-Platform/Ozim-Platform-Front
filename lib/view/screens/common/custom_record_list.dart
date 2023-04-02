@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_app/custom_icons_icons.dart';
+import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/data.dart';
 import 'package:charity_app/persistance/api_provider.dart';
@@ -195,6 +196,13 @@ class _CardBuilderState extends State<CardBuilder> {
 
   bool _swiped = false;
 
+  @override
+  initState() {
+    InAppPurchaseDataRepository().hasActiveSubscription.addListener(() {
+      setState(() {});
+    });
+  }
+
   swipedLeft() {
     setState(() {
       _swiped = true;
@@ -222,8 +230,11 @@ class _CardBuilderState extends State<CardBuilder> {
           alignment: Alignment.centerRight,
           children: [
             InkWell(
+              splashColor: Colors.transparent,
               onTap: () {
-                if (data.isPaid == false) {
+                if (data.isPaid == false ||
+                    InAppPurchaseDataRepository().hasActiveSubscription.value ==
+                        true) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => BottomBarDetail(
@@ -299,9 +310,15 @@ class _CardBuilderState extends State<CardBuilder> {
                       ),
                     ),
                   ),
+
                   // TODO: Check if paid, and whether user has a subscription
-                  (data.isPaid == true)
+                  (data.isPaid == true &&
+                          InAppPurchaseDataRepository()
+                                  .hasActiveSubscription
+                                  .value ==
+                              false)
                       ? InkWell(
+                        splashColor: Colors.transparent,
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -324,12 +341,12 @@ class _CardBuilderState extends State<CardBuilder> {
                 onForceUpdateList: widget.onForceUpdateList,
               ),
             ),
-            // SwipedContainerFavorite(
-            //   _swiped,
-            //   widget.onForceUpdateList,
-            //   swipedRight,
-            //   data: data,
-            // ),
+            SwipedContainerFavorite(
+              _swiped,
+              widget.onForceUpdateList,
+              swipedRight,
+              data: data,
+            ),
           ],
         ),
         Padding(

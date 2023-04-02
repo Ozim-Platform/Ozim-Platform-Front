@@ -30,6 +30,7 @@ class _ColumnMessage extends State<ColumnMessage> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashColor: Colors.transparent,
       onTap: widget.onTap,
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 6),
@@ -68,7 +69,7 @@ class _ColumnMessage extends State<ColumnMessage> {
                 Visibility(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Color.fromRGBO(254, 205, 131, 1),
+                      color: const Color.fromRGBO(254, 205, 131, 1),
                       borderRadius: const BorderRadius.all(const Radius.circular(20)),
                     ),
                     child: Padding(

@@ -176,6 +176,7 @@ class _PermissionForNotification extends State<PermissionForNotification>
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(20)),
                             InkWell(
+                              splashColor: Colors.transparent,
                               onTap: () {
                                 _userData.setFirstTime(false);
                                 Navigator.of(context).pushAndRemoveUntil(

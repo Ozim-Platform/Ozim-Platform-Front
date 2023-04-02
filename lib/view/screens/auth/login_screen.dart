@@ -295,6 +295,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(
                               height: SizeConfig.calculateBlockVertical(15)),
                           InkWell(
+                            splashColor: Colors.transparent,
                             onTap: () {
                               _forgotPassword(context, model);
                             },

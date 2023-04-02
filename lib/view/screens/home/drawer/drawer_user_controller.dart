@@ -152,7 +152,7 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                       ),
                       //alternative touch(user Interface) for widget.screen, for example, drawer is close we need to tap on a few home screen area and close the drawer
                       if (scrollOffset == 1.0)
-                        InkWell(
+                        InkWell(splashColor: Colors.transparent,
                           onTap: () {
                             onDrawerClick();
                           },
@@ -166,7 +166,7 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                           height: AppBar().preferredSize.height,
                           child: Material(
                             color: Colors.transparent,
-                            child: InkWell(
+                            child: InkWell(splashColor: Colors.transparent,
                               borderRadius: BorderRadius.circular(
                                   AppBar().preferredSize.height),
                               child: Center(

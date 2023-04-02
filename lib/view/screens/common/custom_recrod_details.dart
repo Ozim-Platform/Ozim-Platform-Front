@@ -57,7 +57,7 @@ class _CustomRecordDetailsState extends State<CustomRecordDetails> {
       padding: EdgeInsets.symmetric(vertical: 20),
       physics: BouncingScrollPhysics(),
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        width: SizeConfig.screenWidth,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

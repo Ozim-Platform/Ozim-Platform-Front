@@ -1,3 +1,4 @@
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/view/screens/home/profile/add_child/add_child_viewmodel.dart';
 import 'package:charity_app/view/screens/home/profile/add_child/components/child_type_widget.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
@@ -36,7 +37,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "YOUR CHILD",
+                    getTranslated(context, "your_child"),
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 20,
@@ -74,7 +75,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 SizedBox(
                   height: 16,
                 ),
-                InkWell(
+                InkWell(splashColor: Colors.transparent,
                   onTap: () async {
                     DateTime _dateTime = await showDatePicker(
                       context: context,
@@ -85,7 +86,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
                       lastDate: DateTime.now().add(
                         Duration(days: 365 * 10),
                       ),
-                      locale: Locale("kk"),
+                      locale: await getLocale(),
                     );
                     // set the value inside the view model
                     model.setBirthDate(_dateTime);
@@ -106,7 +107,7 @@ class _AddChildScreenState extends State<AddChildScreen> {
                       // get the value from the viewmodel
                       model.birthDate != null
                           ? (model.birthDate.toString()).substring(0, 10)
-                          : "Date",
+                          : getTranslated(context, "date_of_birth"),
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -144,31 +145,44 @@ class ChildNameInputWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
-          Radius.circular(25),
+          Radius.circular(
+            25,
+          ),
         ),
         color: Colors.white,
         border: Border.all(
           width: 1.0,
-          color: Color(0XFFCECECE),
+          color: Color(
+            0XFFCECECE,
+          ),
         ),
       ),
       child: TextField(
         controller: _controller,
-        onChanged: (value) => model.setName(value),
+        onChanged: (value) => model.setName(
+          value,
+        ),
         obscureText: false,
         decoration: InputDecoration(
           fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(25),
+              Radius.circular(
+                25,
+              ),
             ),
             borderSide: BorderSide.none,
           ),
-          hintText: "Name",
+          hintText: getTranslated(
+            context,
+            "name",
+          ),
           hintStyle: TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 16,
-            color: Color(0XFFADB1B3),
+            color: Color(
+              0XFFADB1B3,
+            ),
           ),
         ),
       ),
@@ -184,16 +198,30 @@ class SaveChildWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 48, right: 48, top: 20, bottom: 20),
-      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(
+        left: 48,
+        right: 48,
+        top: 20,
+        bottom: 20,
+      ),
+      padding: EdgeInsets.all(
+        16,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
-          Radius.circular(25),
+          Radius.circular(
+            25,
+          ),
         ),
-        color: Color(0XFF79BCB7),
+        color: Color(
+          0XFF79BCB7,
+        ),
       ),
       child: Text(
-        "Save",
+        getTranslated(
+          context,
+          "save",
+        ),
         style: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 16,

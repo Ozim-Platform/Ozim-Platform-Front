@@ -34,7 +34,7 @@ class ServiceProviderScreen extends StatelessWidget {
         model: model,
         buildMethod: getMainUI,
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.initModel(category);
       },
       viewModelBuilder: () => ServiceProviderViewModel(),
@@ -81,7 +81,7 @@ class BuildListServices extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: list.length,
-      shrinkWrap: true,
+      // shrinkWrap: true,
       physics: BouncingScrollPhysics(),
       itemBuilder: (context, i) {
         var data = list[i];
@@ -483,7 +483,7 @@ class _ServiceCardState extends State<ServiceCard> {
                                     child: Padding(
                                         padding:
                                             const EdgeInsets.only(left: 10),
-                                        child: InkWell(
+                                        child: InkWell(splashColor: Colors.transparent,
                                             onTap: () async {
                                               if (await launcher.canLaunch(
                                                   widget.data.link)) {

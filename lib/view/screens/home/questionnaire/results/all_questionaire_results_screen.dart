@@ -1,24 +1,31 @@
 import 'package:charity_app/model/child/child.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
-import 'package:charity_app/view/screens/home/questionnaire/questionnaire_screen.dart';
+import 'package:charity_app/view/screens/home/questionnaire/questionnaire_answer_screen.dart';
+import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
 import 'package:flutter/material.dart';
 
-class AllQuesionaresScreen extends StatefulWidget {
+class AllQuestionareResultsScreen extends StatefulWidget {
   Child child;
-  AllQuesionaresScreen({Key key, this.child}) : super(key: key);
+  AllQuestionareResultsScreen({Key key, this.child}) : super(key: key);
 
   @override
-  State<AllQuesionaresScreen> createState() => _AllQuesionaresScreenState();
+  State<AllQuestionareResultsScreen> createState() =>
+      _AllQuesionareResultsScreenState();
 }
 
-class _AllQuesionaresScreenState extends State<AllQuesionaresScreen> {
+class _AllQuesionareResultsScreenState
+    extends State<AllQuestionareResultsScreen> {
   AppBar appBar;
   @override
   void initState() {
-    profileScreenAppBar(context, true).then((value) => setState(() {
+    profileScreenAppBar(context, true).then(
+      (value) => setState(
+        () {
           appBar = value;
-        },),);
+        },
+      ),
+    );
     super.initState();
   }
 
@@ -29,7 +36,7 @@ class _AllQuesionaresScreenState extends State<AllQuesionaresScreen> {
       appBar: appBar,
       body: Container(
         child: ListView.builder(
-          itemCount: widget.child.newQuestionnaires.length + 1,
+          itemCount: widget.child.results.length + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
               return const Padding(
@@ -45,8 +52,8 @@ class _AllQuesionaresScreenState extends State<AllQuesionaresScreen> {
                 ),
               );
             }
-            return QuestionarePreview(
-              questionnaireData: widget.child.newQuestionnaires[index - 1],
+            return QuestionareAnswerPreview(
+              questionnaireData: widget.child.results[index - 1],
               childId: widget.child.childId,
             );
           },
@@ -57,10 +64,10 @@ class _AllQuesionaresScreenState extends State<AllQuesionaresScreen> {
 }
 
 // TODO: Display all questionnaires for this child
-class QuestionarePreview extends StatelessWidget {
+class QuestionareAnswerPreview extends StatelessWidget {
   QuestionnaireData questionnaireData;
   int childId;
-  QuestionarePreview({Key key, this.questionnaireData, this.childId})
+  QuestionareAnswerPreview({Key key, this.questionnaireData, this.childId})
       : super(key: key);
 
   @override
@@ -69,9 +76,15 @@ class QuestionarePreview extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => QuestionnaireScreen(
+            builder: (context) => QuestionaireAnswerScreen(
+              model: QuestionnaireViewModel(
+                questionnaireData,
+                childId,
+                true,
+              ),
               data: questionnaireData,
-              childId: childId,
+              questionaireAnswers:
+                  questionnaireData.questionaireAnswers.answers,
             ),
           ),
         );

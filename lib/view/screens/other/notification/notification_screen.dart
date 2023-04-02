@@ -337,7 +337,7 @@ class _NotificationScreen extends State<NotificationScreen> {
                 ),
         );
       },
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.init();
       },
       viewModelBuilder: () => NotificationViewModel(),

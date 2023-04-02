@@ -2,22 +2,24 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:charity_app/persistance/api_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
 
-class InAppPurchaseDataRepository {
-  // this is a singleton class, it will be initialized only at launch.
-  // It will get subscription status from sotreAPI and will be used throughout the app
+// this is a singleton class, it will be initialized only at launch.
+// It will get subscription status from sotreAPI and will be used throughout the app
 
+class InAppPurchaseDataRepository {
   FlutterInappPurchase _inAppPurchase = FlutterInappPurchase.instance;
+
   ApiProvider _apiProvider = ApiProvider();
+
+  ValueNotifier<bool> _hasActiveSubscription = ValueNotifier<bool>(false);
+
+  ValueNotifier<bool> get hasActiveSubscription => _hasActiveSubscription;
 
   StreamSubscription _purchaseUpdatedSubscription;
   StreamSubscription _purchaseErrorSubscription;
   StreamSubscription _conectionSubscription;
-
-  bool hasActiveSubscription = false;
-  Stream<bool> subscriptionStatus;
-  
 
   List<String> _subscriptionIds = [];
 
@@ -32,8 +34,10 @@ class InAppPurchaseDataRepository {
     _inAppPurchase = FlutterInappPurchase.instance;
 
     _inAppPurchase.initialize();
+
     _purchaseUpdatedSubscription =
         FlutterInappPurchase.purchaseUpdated.listen((productItem) {
+      checkCurrentSubscription();
       log("purchase-updated: $productItem");
     });
 
@@ -60,17 +64,17 @@ class InAppPurchaseDataRepository {
     if (_isReady == true) {
       List<PurchasedItem> purchasedItems =
           await _inAppPurchase.getAvailablePurchases();
-      purchasedItems.forEach(
-        (element) async {
-          await _inAppPurchase.checkSubscribed(
-            sku: element.productId,
-          );
-        },
-      );
-    } else {
-      await _inAppPurchase.initialize();
-      checkCurrentSubscription();
-      log("InAppPurchase is not ready");
+      for (int i = 0; i < purchasedItems.length; i++) {
+        bool isSubscribed = await _inAppPurchase.checkSubscribed(
+          sku: purchasedItems[i].productId,
+        );
+        if (isSubscribed) {
+          hasActiveSubscription.value = true;
+        }
+      }
+      if (hasActiveSubscription == null) {
+        hasActiveSubscription.value = false;
+      }
     }
     ;
   }
@@ -98,6 +102,8 @@ class InAppPurchaseDataRepository {
   getSubscriptionIds() async {
     _subscriptionIds = await _apiProvider.getSubscriptionIds();
   }
+
+  
 
   restorePurchases() {}
 }

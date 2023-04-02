@@ -23,7 +23,12 @@ class GeneralSearchScreen extends StatefulWidget {
 
 class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
   final TextEditingController search = new TextEditingController();
-  final List<String> listCities = ['Весь Казахстан', 'Нур-Султан', 'Алматы', 'Шымкент'];
+  final List<String> listCities = [
+    'Весь Казахстан',
+    'Нур-Султан',
+    'Алматы',
+    'Шымкент'
+  ];
 
   final List<String> listAreas = [
     'Акмолинская область',
@@ -94,7 +99,8 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
     listAreasValue = List.generate(listAreas.length, (index) => false);
     listAgesValue = List.generate(listAges.length, (index) => false);
     listDiagnosisValue = List.generate(listDiagnosis.length, (index) => false);
-    listOrganisationValue = List.generate(listOrganisation.length, (index) => false);
+    listOrganisationValue =
+        List.generate(listOrganisation.length, (index) => false);
     listServisesValue = List.generate(listServises.length, (index) => false);
   }
 
@@ -269,10 +275,10 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                       hintText: getTranslated(context, 'search_msg'),
                       suffixIcon: IconButton(
                         splashRadius: 25,
-                        icon: Icon(Icons.search,
+                        icon: Icon(
+                          Icons.search,
                           color: const Color(0xFF758084),
                         ),
-
                         onPressed: _startSearching2,
                       ),
                     ),
@@ -328,7 +334,8 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                                             : FontWeight.normal),
                                   ),
                                   value: listCitiesValue[index],
-                                  onChanged: (val) => listCitiesChanged(index, val)),
+                                  onChanged: (val) =>
+                                      listCitiesChanged(index, val)),
                             ],
                           );
                         },
@@ -361,7 +368,8 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                                             : FontWeight.normal),
                                   ),
                                   value: listAreasValue[index],
-                                  onChanged: (val) => listAreasChanged(index, val)),
+                                  onChanged: (val) =>
+                                      listAreasChanged(index, val)),
                             ],
                           );
                         },
@@ -399,11 +407,13 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                               title: Text(
                                 listAges[index],
                                 style: AppThemeStyle.normalText.copyWith(
-                                    fontWeight:
-                                        listAgesValue[index] ? FontWeight.bold : FontWeight.normal),
+                                    fontWeight: listAgesValue[index]
+                                        ? FontWeight.bold
+                                        : FontWeight.normal),
                               ),
                               value: listAgesValue[index],
-                              onChanged: (val) => {listAgesChanged(index, val)});
+                              onChanged: (val) =>
+                                  {listAgesChanged(index, val)});
                         },
                       )
                     ],
@@ -444,7 +454,8 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                                         : FontWeight.normal),
                               ),
                               value: listDiagnosisValue[index],
-                              onChanged: (val) => listDiagnosisChanged(index, val));
+                              onChanged: (val) =>
+                                  listDiagnosisChanged(index, val));
                         },
                       )
                     ],
@@ -485,7 +496,8 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                                         : FontWeight.normal),
                               ),
                               value: listOrganisationValue[index],
-                              onChanged: (val) => {listOrganisationChanged(index, val)});
+                              onChanged: (val) =>
+                                  {listOrganisationChanged(index, val)});
                         },
                       )
                     ],
@@ -526,7 +538,8 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                                         : FontWeight.normal),
                               ),
                               value: listServisesValue[index],
-                              onChanged: (val) => {listServisesChanged(index, val)});
+                              onChanged: (val) =>
+                                  {listServisesChanged(index, val)});
                         },
                       )
                     ],
@@ -543,7 +556,7 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
           ),
         );
       },
-      onModelReady: (model) {},
+      onViewModelReady: (model) {},
       viewModelBuilder: () => GeneralSearchViewModel(),
     );
   }

@@ -102,6 +102,7 @@ class CabinetDrawer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             InkWell(
+                              splashColor: Colors.transparent,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => AboutUseScreen()));
@@ -141,6 +142,7 @@ class CabinetDrawer extends StatelessWidget {
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(5)),
                             InkWell(
+                              splashColor: Colors.transparent,
                               onTap: () {},
                               child: Padding(
                                 padding: EdgeInsets.only(
@@ -207,6 +209,7 @@ class CabinetDrawer extends StatelessWidget {
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(20)),
                             InkWell(
+                              splashColor: Colors.transparent,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => FavouriteScreen(
@@ -237,7 +240,7 @@ class CabinetDrawer extends StatelessWidget {
                             ),
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(5)),
-                            InkWell(
+                            InkWell(splashColor: Colors.transparent,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => FaqScreen()));
@@ -266,7 +269,7 @@ class CabinetDrawer extends StatelessWidget {
                             ),
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(5)),
-                            InkWell(
+                            InkWell(splashColor: Colors.transparent,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
@@ -296,7 +299,7 @@ class CabinetDrawer extends StatelessWidget {
                             ),
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(5)),
-                            InkWell(
+                            InkWell(splashColor: Colors.transparent,
                               onTap: () {
                                 _modalInfo(context, model);
                               },
@@ -332,7 +335,7 @@ class CabinetDrawer extends StatelessWidget {
                 ],
               ),
             ),
-        onModelReady: (model) {
+        onViewModelReady: (model) {
           model.initData();
           model.getBookmarksFolders();
           model.getCategory();
@@ -385,7 +388,7 @@ class CabinetDrawer extends StatelessWidget {
       //   break;
     }
 
-    return InkWell(
+    return InkWell(splashColor: Colors.transparent,
       onTap: () {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => widget));

@@ -1,3 +1,4 @@
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/localization/user_data.dart';
 import 'package:charity_app/view/components/user_image.dart';
 import 'package:charity_app/view/screens/home/profile/add_child/add_child_screen.dart';
@@ -35,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           top: 60,
         ),
         children: [
-          InkWell(
+          InkWell(splashColor: Colors.transparent,
             onTap: () {
               Navigator.push(
                 context,
@@ -45,10 +46,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
             child: ProfileScreenListWidget(
-              type: "results",
+              type: "child_results",
             ),
           ),
-          InkWell(
+          InkWell(splashColor: Colors.transparent,
             onTap: () {
               Navigator.push(
                 context,
@@ -61,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               type: "discussions",
             ),
           ),
-          InkWell(
+          InkWell(splashColor: Colors.transparent,
             onTap: () {
               Navigator.push(
                 context,
@@ -71,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
             child: ProfileScreenListWidget(
-              type: "points",
+              type: "exchange_points",
             ),
           ),
         ],
@@ -82,8 +83,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 class ProfileScreenListWidget extends StatefulWidget {
   final String type;
+  final String text;
 
-  ProfileScreenListWidget({Key key, this.type}) : super(key: key);
+  ProfileScreenListWidget({Key key, this.type, this.text}) : super(key: key);
 
   @override
   State<ProfileScreenListWidget> createState() =>
@@ -94,25 +96,21 @@ class _ProfileScreenListWidgetState extends State<ProfileScreenListWidget> {
   Color color;
 
   SvgPicture icon;
-  String text;
 
   @override
   void initState() {
     switch (widget.type) {
-      case 'results':
+      case 'child_results':
         color = Color(0XFFF1BC62);
         icon = SvgPicture.asset('assets/svg/icons/profile_results.svg');
-        text = "results";
         break;
       case 'discussions':
         color = Color(0XFF6CBBD9);
         icon = SvgPicture.asset('assets/svg/icons/profile_discussion.svg');
-        text = "discussions";
         break;
-      case 'points':
+      case 'exchange_points':
         color = Color(0XFFF08390);
         icon = SvgPicture.asset('assets/svg/icons/profile_points.svg');
-        text = "points";
         break;
     }
     super.initState();
@@ -141,7 +139,7 @@ class _ProfileScreenListWidgetState extends State<ProfileScreenListWidget> {
                 color: color,
               ),
               child: Text(
-                text,
+                getTranslated(context, widget.type).toUpperCase(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: "Helvetica Neue",
@@ -233,7 +231,7 @@ Future<AppBar> profileScreenAppBar(
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 32.0),
-                  child: InkWell(
+                  child: InkWell(splashColor: Colors.transparent,
                     onTap: () {
                       Navigator.push(
                         context,

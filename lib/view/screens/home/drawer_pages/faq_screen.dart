@@ -13,7 +13,6 @@ import 'package:html/parser.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class FaqScreen extends StatelessWidget {
-
   String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
@@ -46,7 +45,7 @@ class FaqScreen extends StatelessWidget {
                       topRight: const Radius.circular(40)),
                   child: Container(
                     width: SizeConfig.screenWidth,
-                    color: Color.fromRGBO(244, 244, 244, 1),
+                    color: const Color.fromRGBO(244, 244, 244, 1),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: mainUI(model),
@@ -58,7 +57,7 @@ class FaqScreen extends StatelessWidget {
           ),
         ),
       ),
-      onModelReady: (model) {
+      onViewModelReady: (model) {
         model.getFaqData();
       },
       viewModelBuilder: () => FaqViewModel(),
