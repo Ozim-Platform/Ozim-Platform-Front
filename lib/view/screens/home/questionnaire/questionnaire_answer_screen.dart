@@ -207,12 +207,6 @@ class ResultSlider extends StatelessWidget {
       },
     );
 
-    _paddingValue = (_paddingValue /
-        60 *
-        SizeConfig.screenWidth /
-        MediaQuery.of(context)
-            .devicePixelRatio); // -32 because of padding at the parent widget with value 32
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: ClipRRect(
@@ -246,14 +240,18 @@ class ResultSlider extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: _paddingValue),
-              child: Icon(
-                Icons.circle,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
+            Row(
+              children: [
+                Container(
+                  width: _paddingValue / 60 * SizeConfig.getFullWidth() - 52,
+                ),
+                Icon(
+                  Icons.circle,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ],
+            )
           ],
         ),
       ),
