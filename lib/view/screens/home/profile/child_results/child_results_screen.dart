@@ -1,4 +1,6 @@
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/persistance/api_provider.dart';
+import 'package:charity_app/utils/formatters.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/all_questionaires_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/results/all_questionaire_results_screen.dart';
@@ -123,7 +125,8 @@ class ChildPreview extends StatelessWidget {
                             fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        child.age.toString(),
+                        
+                        getAgeString(context, ChildAge.fromInteger(child.age),),
                         style: TextStyle(
                           color: Color(0XFF777F83),
                           fontSize: 16,
@@ -150,7 +153,8 @@ class ChildPreview extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  InkWell(splashColor: Colors.transparent,
+                  InkWell(
+                    splashColor: Colors.transparent,
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -161,7 +165,7 @@ class ChildPreview extends StatelessWidget {
                       );
                     },
                     child: Text(
-                      "Пройти тест",
+                      getTranslated(context, "take_test"),
                       style: TextStyle(
                         color: child.newQuestionnaires.isNotEmpty
                             ? const Color(0xFFFFFFFFFFF)
@@ -174,7 +178,8 @@ class ChildPreview extends StatelessWidget {
                     height: 20,
                     color: const Color(0xFFFFFFFFFFF),
                   ),
-                  InkWell(splashColor: Colors.transparent,
+                  InkWell(
+                      splashColor: Colors.transparent,
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -185,7 +190,7 @@ class ChildPreview extends StatelessWidget {
                         );
                       },
                       child: Text(
-                        "Смотреть результаты",
+                        getTranslated(context, "watch_test_results"),
                         style: TextStyle(
                           color: child.results.isNotEmpty
                               ? const Color(0xFFFFFFFFFFF)
@@ -200,4 +205,6 @@ class ChildPreview extends StatelessWidget {
       ),
     );
   }
+
+  
 }

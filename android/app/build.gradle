@@ -44,7 +44,7 @@ android {
         applicationId "com.ozim.platform"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 11
+        versionCode 12
         versionName "1.0.8"
         multiDexEnabled true
     }

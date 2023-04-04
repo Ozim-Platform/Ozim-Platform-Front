@@ -119,7 +119,6 @@ class _AddChildScreenState extends State<AddChildScreen> {
                 InkWell(
                   splashColor: Colors.transparent,
                   onTap: () => model.createChild(context),
-                  // TODO: show toast and navigate to profile screen after success
                   child: SaveChildWidget(),
                 ),
               ],

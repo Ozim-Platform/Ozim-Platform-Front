@@ -5,7 +5,6 @@ import 'package:charity_app/providers/locator.dart';
 import 'package:charity_app/service/network_service.dart';
 import 'package:charity_app/service/network_status.dart';
 import 'package:charity_app/utils/constants.dart';
-import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/utils/utils.dart';
 import 'package:charity_app/view/screens/auth/splash_screen.dart';
 import 'package:charity_app/view/theme/my_themes.dart';
@@ -28,7 +27,7 @@ void main() async {
   // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
   //   statusBarColor: Colors.transparent,
   // ));
-  
+
   SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -50,7 +49,6 @@ void main() async {
       MyApp(),
     ),
   );
-  
 }
 
 Future<dynamic> _onSelectNotification(String json) async {

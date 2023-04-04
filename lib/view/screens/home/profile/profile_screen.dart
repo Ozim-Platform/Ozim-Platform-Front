@@ -1,5 +1,7 @@
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/localization/user_data.dart';
+import 'package:charity_app/model/forum/forum_detail.dart';
+import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/view/components/user_image.dart';
 import 'package:charity_app/view/screens/home/profile/add_child/add_child_screen.dart';
 import 'package:charity_app/view/screens/home/profile/child_results/child_results_screen.dart';
@@ -23,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     profileScreenAppBar(context, false).then((value) => setState(() {
           appBar = value;
-        }));
+        },),);
     super.initState();
   }
 
@@ -36,7 +38,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           top: 60,
         ),
         children: [
-          InkWell(splashColor: Colors.transparent,
+          InkWell(
+            splashColor: Colors.transparent,
             onTap: () {
               Navigator.push(
                 context,
@@ -49,7 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               type: "child_results",
             ),
           ),
-          InkWell(splashColor: Colors.transparent,
+          InkWell(
+            splashColor: Colors.transparent,
             onTap: () {
               Navigator.push(
                 context,
@@ -62,7 +66,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               type: "discussions",
             ),
           ),
-          InkWell(splashColor: Colors.transparent,
+          InkWell(
+            splashColor: Colors.transparent,
             onTap: () {
               Navigator.push(
                 context,
@@ -164,7 +169,9 @@ Future<AppBar> profileScreenAppBar(
 
   String _avatar = await _userData.getAvatar();
 
-  String _userType = await _userData.getUserType();
+  // String _userType = await _userData.getUserType();
+  User user = await ApiProvider().getUser();
+  String _userType = user.type;
 
   return AppBar(
     elevation: 0.0,
@@ -223,7 +230,7 @@ Future<AppBar> profileScreenAppBar(
                           fontWeight: FontWeight.w500,
                           fontFamily: "Helvetica Neue",
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 16,
                         ),
                       ),
                     ],
@@ -231,7 +238,8 @@ Future<AppBar> profileScreenAppBar(
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 32.0),
-                  child: InkWell(splashColor: Colors.transparent,
+                  child: InkWell(
+                    splashColor: Colors.transparent,
                     onTap: () {
                       Navigator.push(
                         context,

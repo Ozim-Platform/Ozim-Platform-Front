@@ -42,7 +42,6 @@ class _CustomRecordDetailsState extends State<CustomRecordDetails> {
 
 
   receivePoints() async {
-    // TODO: we need to check, whether user has watched a video completely or not
     // this is a workaround solution, since we cannot see, whether user had watched a video completely or not
     // we will give him points for watching a video, and if he will watch it again, he will not get any points
     // this is a temporary solution, we will change it later

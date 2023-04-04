@@ -1,6 +1,16 @@
-import 'dart:developer';
-
 import 'package:charity_app/model/questionnaire.dart';
+
+class ChildAge {
+  int years;
+  int months;
+
+  ChildAge({this.years, this.months});
+
+  ChildAge.fromInteger(int age) {
+    years = age ~/ 12;
+    months = age % 12;
+  }
+}
 
 class Child {
   int childId;
@@ -10,6 +20,7 @@ class Child {
   bool isGirl;
   List<QuestionnaireData> results = [];
   List<QuestionnaireData> newQuestionnaires = [];
+  ChildAge childAge;
 
   Child(
       {this.name,
@@ -63,7 +74,6 @@ class Child {
           );
         },
       );
-
     }
 
     childId = json['id'];
@@ -73,5 +83,14 @@ class Child {
     age = json['age'];
     results = results;
     newQuestionnaires = newQuestionnaires;
+  }
+
+  ChildAge getAgeInDateTime() {
+    if (childAge == null) {
+      childAge = ChildAge.fromInteger(
+        age,
+      );
+    }
+    return childAge;
   }
 }

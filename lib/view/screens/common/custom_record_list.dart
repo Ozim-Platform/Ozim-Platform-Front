@@ -311,7 +311,6 @@ class _CardBuilderState extends State<CardBuilder> {
                     ),
                   ),
 
-                  // TODO: Check if paid, and whether user has a subscription
                   (data.isPaid == true &&
                           InAppPurchaseDataRepository()
                                   .hasActiveSubscription

@@ -108,11 +108,12 @@ class ApiProvider {
     var responseJson;
     var token = await getToken();
     try {
+      var language = await getLang();
       final response = await client.get(
         Uri.parse('$baseUrl/user'),
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
-          'language': 'ru',
+          'language': language,
           'authorization': token,
         },
       );
@@ -1426,6 +1427,27 @@ class ApiProvider {
         headers: await getHeaders(),
         body: _body,
       );
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<Response> sendQuestionaireResultsToEmail(
+    int answerId,
+    String email,
+  ) async {
+    Map<String, dynamic> data = {
+      'answer_id': answerId,
+      'email': email,
+    };
+    try {
+      final response = await client.post(
+        Uri.parse('$baseUrl/questionnaire/send'),
+        headers: await getHeaders(),
+        body: json.encode(data),
+      );
+
       return response;
     } catch (e) {
       throw e;

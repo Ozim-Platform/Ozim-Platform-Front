@@ -27,7 +27,6 @@ class _PartnerScreenState extends State<PartnerScreen> {
     widget.partner.images.forEach((element) {
       imgList.add(Constants.MAIN_HTTP + "/" + element.path);
     });
-
     super.initState();
   }
 
@@ -36,7 +35,8 @@ class _PartnerScreenState extends State<PartnerScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        leading: InkWell(splashColor: Colors.transparent,
+        leading: InkWell(
+          splashColor: Colors.transparent,
           onTap: () {
             Navigator.of(context).pop();
           },
@@ -73,7 +73,8 @@ class _PartnerScreenState extends State<PartnerScreen> {
           ],
         ),
       ),
-      floatingActionButton: InkWell(splashColor: Colors.transparent,
+      floatingActionButton: InkWell(
+          splashColor: Colors.transparent,
           onTap: () async {
             _showAlertDialog(context);
           },
@@ -104,7 +105,7 @@ class _PartnerScreenState extends State<PartnerScreen> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text("points_exchange_confirmation"),
+        title: Text(getTranslated(context,"points_exchange_confirmation")),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             onPressed: () {
@@ -125,15 +126,14 @@ class _PartnerScreenState extends State<PartnerScreen> {
                 showCupertinoModalPopup<void>(
                   context: context,
                   builder: (BuildContext context) => CupertinoAlertDialog(
-                    title: const Text("successful_points_exchange"),
+                    title: Text(getTranslated(context, "successful_points_exchange")),
                     actions: <CupertinoDialogAction>[
                       CupertinoDialogAction(
                         onPressed: () {
                           widget.partner.exchangedPoints = true;
-                          Navigator.pop(context);
+                          Navigator.pop(context, true);
                         },
                         child: Text(
-                          // getTranslated(context, 'OK'),
                           "OK",
                         ),
                       ),
@@ -145,14 +145,13 @@ class _PartnerScreenState extends State<PartnerScreen> {
                 showCupertinoModalPopup<void>(
                   context: context,
                   builder: (BuildContext context) => CupertinoAlertDialog(
-                    title: const Text("unsuccessful_points_exchange"),
+                    title: Text(getTranslated(context, "unsuccessful_points_exchange")),
                     actions: <CupertinoDialogAction>[
                       CupertinoDialogAction(
                         onPressed: () {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          // getTranslated(context, 'OK'),
                           "Ok",
                         ),
                       ),

@@ -15,20 +15,31 @@ class ExchangePointsViewModel extends BaseViewModel {
   List<Partner> get partners => _partners;
 
   ExchangePointsViewModel() {
-      setBusy(true);
+    setBusy(true);
   }
 
   Future<void> init() async {
     setBusy(true);
     _isLoading.notifyListeners();
-    await _apiProvider.getUser().then((value) {
-      _points = value.points;
-    });
-    await _apiProvider.fetchAllPartners().then((value) {
-      _partners = value;
-    });
+    
+    await getPoints();
+    await getPartners();
+
     _isLoading.notifyListeners();
     notifyListeners();
     setBusy(false);
+  }
+
+  Future<void> getPoints() {
+    return _apiProvider.getUser().then((value) {
+      _points = value.points;
+      notifyListeners();
+    });
+  }
+
+  Future<void> getPartners() async {
+    return await _apiProvider.fetchAllPartners().then((value) {
+      _partners = value;
+    });
   }
 }

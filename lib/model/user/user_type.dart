@@ -4,7 +4,7 @@ class UserType {
   String name;
   String sysName;
   String language;
-
+  
   UserType({this.name, this.sysName, this.language});
 
   UserType.fromJson(Map<String, dynamic> json) {

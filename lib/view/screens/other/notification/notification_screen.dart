@@ -62,6 +62,13 @@ class _NotificationScreen extends State<NotificationScreen> {
         .collection('chat')
         .doc(_user.email)
         .snapshots();
+    profileScreenAppBar(context, true).then(
+      (value) => (setState(
+        () {
+          appBar = value;
+        },
+      )),
+    );
     _usersStream.forEach((element) {
       Map<String, dynamic> data = element.data();
       if (data != null) {
@@ -75,11 +82,9 @@ class _NotificationScreen extends State<NotificationScreen> {
         }
       }
     });
-    profileScreenAppBar(context, true).then(
-      (value) => appBar = value,
-    );
-    _scrollController.addListener(_onScroll);
     super.initState();
+
+    _scrollController.addListener(_onScroll);
     getComments();
   }
 

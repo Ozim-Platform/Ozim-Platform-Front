@@ -36,6 +36,8 @@ class BottomNavigation extends StatefulWidget {
 class BottomNavigationState extends State<BottomNavigation> {
   static bool rebuild = false;
   GlobalKey globalKey = new GlobalKey(debugLabel: 'btm_app_bar');
+  GlobalKey<ConvexAppBarState> _bottomAppBarKey =
+      GlobalKey<ConvexAppBarState>();
 
   int selectedItem = 0;
   ApiProvider _apiProvider = new ApiProvider();
@@ -45,19 +47,29 @@ class BottomNavigationState extends State<BottomNavigation> {
 
   void _onItemTap(int index) async {
     if (index == 2) {
-      await Navigator.push(
+      var someValue = Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => NotificationScreen(),
         ),
       );
-      selectedItem = 0;
-      index = 0;
-      setState(() {});
-    } else {
-      setState(() {
-        selectedItem = index;
+
+      someValue.then((value) {
+        setState(
+          () {
+            selectedItem = 0;
+            _bottomAppBarKey.currentState.animateTo(
+              0,
+            );
+          },
+        );
       });
+    } else {
+      setState(
+        () {
+          selectedItem = index;
+        },
+      );
     }
   }
 
@@ -99,67 +111,68 @@ class BottomNavigationState extends State<BottomNavigation> {
       builder: (BuildContext context) {
         Color color = Constants.ligtherMainTextColor;
         return Scaffold(
-            body: tabs[selectedItem],
-            bottomNavigationBar: ConvexAppBar(
-              style: TabStyle.reactCircle,
-              top: -20,
-              curve: Curves.easeInOut,
-              curveSize: 75,
-              height: 50,
-              color: AppThemeStyle.colorGrey,
-              activeColor: AppColor.primary,
-              elevation: 0,
-              backgroundColor: Colors.white,
-              items: [
-                TabItem(
-                  icon: Icon(CustomIcons.home,
-                      size: selectedItem == 0 ? 31 : 23,
-                      color: color,
-                      semanticLabel: getTranslated(context, "on_main")),
-                  isIconBlend: true,
+          body: tabs[selectedItem],
+          bottomNavigationBar: ConvexAppBar(
+            key: _bottomAppBarKey,
+            style: TabStyle.reactCircle,
+            top: -20,
+            curve: Curves.easeInOut,
+            curveSize: 75,
+            height: 50,
+            color: AppThemeStyle.colorGrey,
+            activeColor: AppColor.primary,
+            elevation: 0,
+            backgroundColor: Colors.white,
+            onTabNotify: (index) => true,
+            items: [
+              TabItem(
+                icon: Icon(CustomIcons.home,
+                    size: selectedItem == 0 ? 31 : 23,
+                    color: color,
+                    semanticLabel: getTranslated(context, "on_main")),
+                isIconBlend: true,
+              ),
+              TabItem(
+                icon: Icon(CustomIcons.search,
+                    size: selectedItem == 1 ? 27 : 22,
+                    color: color,
+                    semanticLabel: getTranslated(context, "search_vo")),
+                isIconBlend: true,
+              ),
+              TabItem(
+                icon: SvgPicture.asset(
+                  "assets/svg/icons/messenger.svg",
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.scaleDown,
+                  color: color,
                 ),
-                TabItem(
-                  icon: Icon(CustomIcons.search,
-                      size: selectedItem == 2 ? 27 : 22,
-                      color: color,
-                      semanticLabel: getTranslated(context, "search_vo")),
-                  isIconBlend: true,
+                isIconBlend: true,
+              ),
+              TabItem(
+                icon: Icon(CustomIcons.favorite_outline,
+                    size: selectedItem == 3 ? 32 : 26,
+                    color: color,
+                    semanticLabel: getTranslated(context, "favourite")),
+                isIconBlend: true,
+              ),
+              TabItem(
+                icon: SvgPicture.asset(
+                  "assets/svg/icons/profile.svg",
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.scaleDown,
+                  color: color,
                 ),
-                TabItem(
-                  icon: SvgPicture.asset("assets/svg/icons/messenger.svg",
-                      width: 24,
-                      height: 24,
-                      fit: BoxFit.scaleDown,
-                      color: color),
-                  // icon: Icon(Icons.message,
-                  //     size: selectedItem == 2 ? 27 : 22,
-                  //     color: color,
-                  //     semanticLabel: getTranslated(context, "search_vo")),
-                  isIconBlend: true,
-                ),
-                TabItem(
-                  icon: Icon(CustomIcons.favorite_outline,
-                      size: selectedItem == 3 ? 32 : 26,
-                      color: color,
-                      semanticLabel: getTranslated(context, "favourite")),
-                  isIconBlend: true,
-                ),
-                TabItem(
-                  icon: SvgPicture.asset("assets/svg/icons/profile.svg",
-                      width: 24,
-                      height: 24,
-                      fit: BoxFit.scaleDown,
-                      
-                      color: color,),
-                      // semanticLabel: getTranslated(context, "forum"),
-                  isIconBlend: true,
-                ),
-              ],
-              initialActiveIndex: 0,
-              onTap: (int i) => {
-                _onItemTap(i),
-              },
-            ));
+                isIconBlend: true,
+              ),
+            ],
+            initialActiveIndex: 0,
+            onTap: (int i) => {
+              _onItemTap(i),
+            },
+          ),
+        );
       },
     );
   }

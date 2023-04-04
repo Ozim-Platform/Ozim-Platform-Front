@@ -51,7 +51,7 @@ class _ExchangePointsScreenState extends State<ExchangePointsScreen> {
             );
           }
           return ListView(
-            physics: NeverScrollableScrollPhysics(),
+            // physics: NeverScrollableScrollPhysics(),
             children: [
               MyPointsWidget(points: model.points),
               const ExchangePonintsInformationWidget(),
@@ -120,22 +120,33 @@ class ExchangePonintsInformationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 16, right: 16),
-      child: Card(
-        child: ExpandablePanel(
-          disableBackgroundColor: false,
-          headerTitle: getTranslated(
-            context,
-            "how_to_get_points",
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text(
-              getTranslated(context, "information_on_getting_points"),
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                color: Color(0XFF777F83),
+      margin: EdgeInsets.only(left: 16, right: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(
+          15,
+        ),
+      ),
+      child: ExpandablePanel(
+        disableBackgroundColor: false,
+        headerTitle: getTranslated(
+          context,
+          "how_to_get_points",
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Row(
+            children: [
+              Flexible(
+                child: Text(
+                  getTranslated(context, "information_on_getting_points"),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Color(0XFF777F83),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -246,7 +257,7 @@ class ResourcesCardBuilder extends StatefulWidget {
 
 class _CardBuilderState extends State<ResourcesCardBuilder> {
   Partner get data => widget.data;
-
+  ExchangePointsViewModel exchangePointsViewModel;
   @override
   initState() {
     super.initState();
@@ -367,40 +378,46 @@ class _CardBuilderState extends State<ResourcesCardBuilder> {
                       ),
                     ),
                   ),
-                  Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 12.0,
-                        ),
-                        child: Text(
-                          data.price.toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            // color: Colors.white,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
-            // Align(
-            //     alignment: Alignment.centerRight,
-            //     child: SvgPicture.asset("assets/svg/partner_rectangle.svg")),
-
-            InkWell(splashColor: Colors.transparent,
-              onTap: () {
+            Align(
+              alignment: Alignment.centerRight,
+              child: SvgPicture.asset("assets/svg/partner_rectangle.svg"),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  right: 12.0,
+                ),
+                child: Text(
+                  data.price.toString(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            InkWell(
+              splashColor: Colors.transparent,
+              onTap: () async {
                 if (InAppPurchaseDataRepository().hasActiveSubscription.value ==
                     true) {
-                  Navigator.of(context).push(
+                  bool exchangedPoints = await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => PartnerScreen(partner: data),
                     ),
                   );
+
+                  if (exchangedPoints) {
+                    setState(() {
+                      data.exchangedPoints = exchangedPoints;
+                    });
+                    exchangePointsViewModel.getPoints();
+                  }
                 } else {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -409,11 +426,6 @@ class _CardBuilderState extends State<ResourcesCardBuilder> {
                   );
                 }
               },
-              // child: Container(
-              //   height: 75,
-              //   width: double.infinity,
-              //   color: Colors.transparent,
-              // ),
               child:
                   InAppPurchaseDataRepository().hasActiveSubscription.value !=
                           true

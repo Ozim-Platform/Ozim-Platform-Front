@@ -1,14 +1,19 @@
 import 'package:charity_app/localization/language_constants.dart';
+import 'package:charity_app/model/child/child.dart';
 import 'package:charity_app/utils/device_size_config.dart';
+import 'package:charity_app/utils/formatters.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-AppBar customAppbarForQuestionaire(
-    {@required BuildContext context,
-    @required String appBarTitle,
-    @required String appBarIncome,
-    controller}) {
+AppBar customAppbarForQuestionaire({
+  @required BuildContext context,
+  @required String appBarTitle,
+  @required String appBarIncome,
+  controller,
+  VoidCallback callback,
+  int age,
+}) {
   final _size = MediaQuery.of(context).size;
 
   return AppBar(
@@ -39,7 +44,7 @@ AppBar customAppbarForQuestionaire(
       ],
     ),
     leading: CupertinoButton(
-      onPressed: () => Navigator.pop(context),
+      onPressed: () => callback(),
       child: Icon(
         Icons.arrow_back_ios,
         size: 25,
@@ -75,7 +80,7 @@ AppBar customAppbarForQuestionaire(
                 top: 8.0,
               ),
               child: Text(
-                "Результат",
+                getTranslated(context, "questionaire_result"),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color(0XFF778083),
@@ -85,7 +90,13 @@ AppBar customAppbarForQuestionaire(
               ),
             ),
             Text(
-              "для возраста 6 месяцев",
+              getTranslated(context, "for_age") +
+                  " "     +
+                  getAgeString(
+                    context,
+                    ChildAge.fromInteger(age),
+                  ),
+              // "для возраста 6 месяцев",
               style: TextStyle(
                 color: Color(0XFF777F83),
                 fontWeight: FontWeight.w400,

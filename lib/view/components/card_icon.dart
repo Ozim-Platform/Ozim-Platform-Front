@@ -49,9 +49,10 @@ class _CardIcon extends State<CardIcon> {
                 ),
               ),
               Text(
-                Localizations.localeOf(context).languageCode == 'ru'
-                    ? ' ${widget.operation}'
-                    : ' ${getTranslated(context, 'section')}',
+                getTranslated(context, widget.category),
+                // Localizations.localeOf(context).languageCode == 'ru'
+                //     ? ' ${widget.operation}'
+                //     : ' ${getTranslated(context, 'section')}',
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.white,

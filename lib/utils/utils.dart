@@ -30,7 +30,7 @@ class Utils {
     UserData userData = UserData();
     userData.setLang(language);
     Locale _locale = await setLocale(language);
-    // MyApp.setLocale(context, _locale);
+    MyApp.setLocale(context, _locale);
     // BottomNavigationState.rebuild = true;
     Constants.listnablemodels.forEach((element) {
       element.getCategory();

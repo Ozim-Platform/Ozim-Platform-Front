@@ -242,7 +242,7 @@ class _PermissionForNotification extends State<PermissionForNotification>
               _userData.setEmail(value.email ?? ''),
               _userData.setPhoneNumber(value.phone ?? ''),
               _userData.setAvatar(value.avatar ?? ""),
-              // _userData.setUserType(value.points ?? ""),
+              _userData.setUserType(value.type ?? ""),
             })
         .catchError((onError) {
       ToastUtils.toastErrorGeneral("Error $onError", context);

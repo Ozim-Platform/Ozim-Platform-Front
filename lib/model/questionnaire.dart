@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:charity_app/model/child/child.dart';
+
 class QuestionnaireData {
   int id;
   int childId;
@@ -116,11 +118,12 @@ class QuestionPageData {
 }
 
 class QuestionaireAnswers {
+  int answerId;
   int childId;
   int questionnaireId;
   List<QuestionaireAnswer> answers = [];
 
-  QuestionaireAnswers({this.childId, this.answers});
+  QuestionaireAnswers({this.answerId, this.childId, this.answers});
 
   Map<String, dynamic> toJson(QuestionaireAnswers answer) {
     // preprocessing our answer such that it will be in the right order
@@ -159,6 +162,7 @@ class QuestionaireAnswers {
     );
 
     return QuestionaireAnswers(
+      answerId: jsonData["id"],
       childId: childId,
       answers: answers,
     );
@@ -261,16 +265,18 @@ class QuestionaireAnswer {
     if (_questionIndex == 5) {
       final List<dynamic> answerList = json["answers"];
 
-      answerList.forEach((element) {
-        answers.add(
-          AnswerWithComment.fromJson(
-            element,
-          ),
-        );
-      },);
+      answerList.forEach(
+        (element) {
+          answers.add(
+            AnswerWithComment.fromJson(
+              element,
+            ),
+          );
+        },
+      );
     } else {
       final List<dynamic> answerList = json["answers"];
-      
+
       answerList.forEach((element) {
         answers.add(
           AnswerWithoutComment.fromJson(

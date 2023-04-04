@@ -25,7 +25,6 @@ class DemoLocalization {
     // print(_localizedValues['change_username'], level: 2);
     var travel = "";
     _localizedValues.forEach((_key, value) {
-      // //print(key + ' ' + value);
       if (_key == key) {
         travel = value;
       }

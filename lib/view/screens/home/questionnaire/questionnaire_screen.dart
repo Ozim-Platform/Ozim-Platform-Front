@@ -1,6 +1,7 @@
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/utils/device_size_config.dart';
+import 'package:charity_app/utils/toast_utils.dart';
 import 'package:charity_app/view/components/no_data.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_answer_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
@@ -52,7 +53,11 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
             appBar: customAppbarForQuestionaire(
               context: context,
               appBarTitle: '',
-              appBarIncome: "Опросник",
+              appBarIncome: getTranslated(context, "questionnaire"),
+              callback: () => model.currentStep != null
+                  ? model.nextStep()
+                  : Navigator.of(context).pop(),
+              age: widget.data.age,
             ),
             backgroundColor: Colors.white,
             body: Container(
@@ -112,14 +117,13 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                                 context: context,
                                 builder: (BuildContext context) =>
                                     CupertinoAlertDialog(
-                                  title: const Text("questionaire_incomplete"),
+                                  title: Text(getTranslated(context,"questionaire_incomplete")),
                                   actions: <CupertinoDialogAction>[
                                     CupertinoDialogAction(
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
                                       child: Text(
-                                        // getTranslated(context, 'OK'),
                                         "OK",
                                       ),
                                     ),
@@ -345,7 +349,6 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    // getTranslated(context, 'OK'),
                                     "OK",
                                   ),
                                 ),
@@ -353,9 +356,9 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                             ),
                           );
                         } else {
-                          bool success =
+                          bool status =
                               await widget.model.submitQuestionnaire(context);
-                          if (success) {
+                          if (status) {
                             widget.model.nextStep();
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -367,6 +370,8 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                                 ),
                               ),
                             );
+                          } else {
+                            ToastUtils.toastErrorGeneral("error", context);
                           }
                         }
                       },
