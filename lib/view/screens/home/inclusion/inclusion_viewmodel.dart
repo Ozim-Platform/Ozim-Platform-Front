@@ -23,6 +23,8 @@ class InclusionViewModel extends BaseViewModel {
 
   List<Data> get folders => _folders;
 
+  List<Category> _category;
+
   Future<void> initModel(List<Category> category) async {
     _isLoading = true;
     List<Future> futures = [
@@ -43,11 +45,28 @@ class InclusionViewModel extends BaseViewModel {
 
   Future<void> getInclusion(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     _apiProvider
-        .inclusion(category)
+        .inclusion(category, 1)
         .then((value) => {_inclusion = value})
         .catchError((error) {
       print("Error: $error", level: 1);
     }).whenComplete(() => {_isLoading = false, notifyListeners()});
+  }
+
+  Future<void> paginate() {
+    // _isLoading = true;
+    if (_inclusion.page < _inclusion.pages) {
+      _apiProvider
+          .inclusion(_category, _inclusion.page + 1)
+          .then((value) => {
+                _inclusion.data.addAll(value.data),
+                _inclusion.page = value.page,
+                _inclusion.pages = value.pages,
+              })
+          .catchError((error) {
+        print("Error: $error", level: 1);
+      }).whenComplete(() => {_isLoading = false, notifyListeners()});
+    }
   }
 }

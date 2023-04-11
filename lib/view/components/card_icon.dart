@@ -22,7 +22,11 @@ class _CardIcon extends State<CardIcon> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = SizeConfig.screenWidth;
-    // final double iconSize = max(screenWidth / 8, 43);
+    String category = getTranslated(context, widget.category);
+
+    final pattern = RegExp('^Видео уроки\$');
+    String toDisplay =
+        pattern.hasMatch(category) ? category.replaceAll(' ', '\n') : category;
     return InkWell(
       splashColor: Colors.transparent,
       onTap: widget.onTap,
@@ -32,31 +36,22 @@ class _CardIcon extends State<CardIcon> {
             borderRadius: BorderRadius.circular(screenWidth / 23),
             color: colorDecider(widget.category),
           ),
+          padding: EdgeInsets.all(4),
           width: screenWidth / 4,
           height: screenWidth / 4,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
-                ),
-                child: SvgPicture.asset(
-                  widget.iconPath,
-                  // width: iconSize,;
-                  // height: iconSize,
-                ),
+              SvgPicture.asset(
+                widget.iconPath,
               ),
               Text(
-                getTranslated(context, widget.category),
-                // Localizations.localeOf(context).languageCode == 'ru'
-                //     ? ' ${widget.operation}'
-                //     : ' ${getTranslated(context, 'section')}',
+                toDisplay,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                   fontFamily: "Inter",
+                  fontSize: 16,
                 ),
                 textAlign: TextAlign.center,
               ),

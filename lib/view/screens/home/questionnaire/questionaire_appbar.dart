@@ -1,15 +1,16 @@
 import 'package:charity_app/localization/language_constants.dart';
-import 'package:charity_app/model/child/child.dart';
-import 'package:charity_app/utils/device_size_config.dart';
-import 'package:charity_app/utils/formatters.dart';
+// import 'package:charity_app/model/child/child.dart';
+// import 'package:charity_app/utils/device_size_config.dart';
+// import 'package:charity_app/utils/formatters.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-AppBar customAppbarForQuestionaire({
+Widget customAppbarForQuestionaire({
   @required BuildContext context,
   @required String appBarTitle,
   @required String appBarIncome,
+  @required String appBarIncome2,
   controller,
   VoidCallback callback,
   int age,
@@ -24,16 +25,9 @@ AppBar customAppbarForQuestionaire({
     ),
     title: Column(
       children: [
-        Text(
-          appBarTitle,
-          style: TextStyle(
-            fontSize: SizeConfig.calculateTextSize(18),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        if (appBarIncome != null) ...[
+        if (appBarTitle != null) ...[
           Text(
-            appBarIncome,
+            appBarTitle,
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
@@ -53,16 +47,16 @@ AppBar customAppbarForQuestionaire({
       ),
     ),
     bottom: PreferredSize(
-      preferredSize: Size.fromHeight(70.0), // here the desired height
-
+      preferredSize: Size(
+        _size.width,
+        73.0,
+      ),
       child: Container(
-        height: 64.0,
         width: _size.width,
         padding: const EdgeInsets.symmetric(
-          horizontal: 50,
+          horizontal: 32,
         ),
         decoration: BoxDecoration(
-          // color: Color(0XFFf4f4f4),
           color: Colors.white,
           borderRadius: const BorderRadius.only(
             topLeft: const Radius.circular(
@@ -74,13 +68,15 @@ AppBar customAppbarForQuestionaire({
           ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.only(
                 top: 8.0,
+                bottom: 8,
               ),
               child: Text(
-                getTranslated(context, "questionaire_result"),
+                appBarIncome,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color(0XFF778083),
@@ -90,13 +86,8 @@ AppBar customAppbarForQuestionaire({
               ),
             ),
             Text(
-              getTranslated(context, "for_age") +
-                  " "     +
-                  getAgeString(
-                    context,
-                    ChildAge.fromInteger(age),
-                  ),
-              // "для возраста 6 месяцев",
+              appBarIncome2,
+              // textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0XFF777F83),
                 fontWeight: FontWeight.w400,

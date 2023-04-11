@@ -106,7 +106,7 @@ class _AccessViaSocialMediaScreen extends State<AccessViaSocialMediaScreen> {
                             horizontal: 80,
                           ),
                           child: SvgPicture.asset(
-                            'assets/svg/family.svg',
+                            'assets/svg/family (2).svg',
                             width: SizeConfig.calculateBlockHorizontal(318),
                             height: SizeConfig.calculateBlockVertical(318),
                           ),

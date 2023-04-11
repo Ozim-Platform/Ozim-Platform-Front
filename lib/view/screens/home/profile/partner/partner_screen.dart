@@ -5,14 +5,18 @@ import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/constants.dart';
 import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/view/components/custom/custom_html.dart';
+import 'package:charity_app/view/theme/app_color.dart';
+import 'package:charity_app/view/theme/themes.dart';
 import 'package:charity_app/view/widgets/custom/cutom_image_listview.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class PartnerScreen extends StatefulWidget {
   Partner partner;
-  PartnerScreen({Key key, this.partner}) : super(key: key);
+  int userPoints;
+  PartnerScreen({Key key, this.partner, this.userPoints}) : super(key: key);
 
   @override
   State<PartnerScreen> createState() => _PartnerScreenState();
@@ -73,39 +77,69 @@ class _PartnerScreenState extends State<PartnerScreen> {
           ],
         ),
       ),
-      floatingActionButton: InkWell(
-          splashColor: Colors.transparent,
-          onTap: () async {
-            _showAlertDialog(context);
-          },
-          child: Container(
-            padding: const EdgeInsets.all(
-              16,
-            ),
-            margin: const EdgeInsets.all(
-              8,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(
-                0XFF79BCB7,
-              ),
-              borderRadius: BorderRadius.circular(
-                100,
-              ),
-            ),
-            child: SvgPicture.asset(
+      bottomNavigationBar: ConvexAppBar(
+        style: TabStyle.reactCircle,
+        top: -20,
+        curve: Curves.easeInOut,
+        curveSize: 75,
+        height: 50,
+        color: AppThemeStyle.colorGrey,
+        activeColor: AppColor.primary,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        onTabNotify: (index) => true,
+        onTap: (index) {
+          // if (widget.partner.exchangedPoints) {
+          //   _showAlertDialog(context);
+          // } else {
+          if (widget.userPoints >= widget.userPoints) {
+            _showAlertDialogNotEnoughPoints(context);
+          } else {
+            _showAlertDialogExchangeConfirmation(context);
+            // }
+          }
+        },
+        items: [
+          TabItem(
+            icon: SvgPicture.asset(
               'assets/svg/icons/exchange_points.svg',
+              width: 24,
+              height: 24,
+              fit: BoxFit.scaleDown,
             ),
-          )),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          ),
+        ],
+        initialActiveIndex: 0,
+      ),
     );
   }
 
-  void _showAlertDialog(BuildContext context) async {
+  void _showAlertDialogNotEnoughPoints(BuildContext context) async {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(getTranslated(context,"points_exchange_confirmation")),
+        title: Text(getTranslated(context, "unsuccessful_points_exchange")),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            onPressed: () {
+              Navigator.pop(
+                context,
+              );
+            },
+            child: Text(
+              "OK",
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAlertDialogExchangeConfirmation(BuildContext context) async {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(getTranslated(context, "points_exchange_confirmation")),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             onPressed: () {
@@ -126,7 +160,8 @@ class _PartnerScreenState extends State<PartnerScreen> {
                 showCupertinoModalPopup<void>(
                   context: context,
                   builder: (BuildContext context) => CupertinoAlertDialog(
-                    title: Text(getTranslated(context, "successful_points_exchange")),
+                    title: Text(
+                        getTranslated(context, "successful_points_exchange")),
                     actions: <CupertinoDialogAction>[
                       CupertinoDialogAction(
                         onPressed: () {
@@ -145,7 +180,8 @@ class _PartnerScreenState extends State<PartnerScreen> {
                 showCupertinoModalPopup<void>(
                   context: context,
                   builder: (BuildContext context) => CupertinoAlertDialog(
-                    title: Text(getTranslated(context, "unsuccessful_points_exchange")),
+                    title: Text(
+                        getTranslated(context, "unsuccessful_points_exchange")),
                     actions: <CupertinoDialogAction>[
                       CupertinoDialogAction(
                         onPressed: () {

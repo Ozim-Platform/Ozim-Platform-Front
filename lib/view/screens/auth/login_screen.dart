@@ -33,8 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
-    print(_size.height);
-    print(_size.width);
+    // print(_size.height);
+    // print(_size.width);
     final _padding = MediaQuery.of(context).padding;
     final _height =
         _size.height - kToolbarHeight - _padding.bottom - _padding.top;
@@ -51,6 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: Scaffold(
               backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInset: false, // This is the important line!
+
               appBar: widgetAppBarTitle(context),
               body: Container(
                 width: _size.width,
@@ -61,29 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      width: _size.width,
-                      height: _height,
-                      padding: EdgeInsets.fromLTRB(
-                          SizeConfig.calculateBlockHorizontal(10),
-                          0,
-                          SizeConfig.calculateBlockHorizontal(10),
-                          SizeConfig.calculateBlockVertical(33)),
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomLeft,
-                            child: SvgPicture.asset('assets/svg/welcome.svg',
-                                height: SizeConfig.calculateBlockVertical(200)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
                       padding: EdgeInsets.only(
                         left: SizeConfig.calculateBlockHorizontal(25),
                         right: SizeConfig.calculateBlockHorizontal(25),
                       ),
                       child: ListView(
+                        // shrinkWrap: true,
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         // mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -308,53 +293,83 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           SizedBox(
-                              height: SizeConfig.calculateBlockVertical(120)),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  SizeConfig.calculateBlockHorizontal(15.0),
-                            ),
-                            child: BtnUI(
-                              height: SizeConfig.calculateBlockVertical(55),
-                              isLoading: _isLoading,
-                              textColor: Colors.white,
-                              color: AppThemeStyle.primaryColor,
-                              text:
-                                  getTranslated(context, 'enter').toUpperCase(),
-                              onTap: () {
-                                if (_isLoading) return;
-                                if (checkTextFieldEmptyOrNot(context, model)) {
-                                  _signInWithEmailAndPassword(model);
-                                }
-                              },
-                            ),
+                            height: SizeConfig.calculateBlockVertical(160),
                           ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(16)),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  SizeConfig.calculateBlockHorizontal(15.0),
-                            ),
-                            child: BtnUI(
-                              height: SizeConfig.calculateBlockVertical(55),
-                              isLoading: false,
-                              textColor: Colors.white,
-                              color: AppThemeStyle.orangeColor,
-                              text: getTranslated(context, 'register')
-                                  .toUpperCase(),
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => RegisterScreen(),
+                          Center(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        SizeConfig.calculateBlockHorizontal(
+                                            15.0),
                                   ),
-                                );
-                              },
+                                  child: BtnUI(
+                                    height:
+                                        SizeConfig.calculateBlockVertical(55),
+                                    isLoading: _isLoading,
+                                    textColor: Colors.white,
+                                    color: AppThemeStyle.primaryColor,
+                                    text: getTranslated(context, 'enter')
+                                        .toUpperCase(),
+                                    onTap: () {
+                                      if (_isLoading) return;
+                                      if (checkTextFieldEmptyOrNot(
+                                          context, model)) {
+                                        _signInWithEmailAndPassword(model);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                    height:
+                                        SizeConfig.calculateBlockVertical(16)),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        SizeConfig.calculateBlockHorizontal(
+                                            15.0),
+                                  ),
+                                  child: BtnUI(
+                                    height:
+                                        SizeConfig.calculateBlockVertical(55),
+                                    isLoading: false,
+                                    textColor: Colors.white,
+                                    color: AppThemeStyle.orangeColor,
+                                    text: getTranslated(context, 'register')
+                                        .toUpperCase(),
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              RegisterScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: SizeConfig.calculateBlockVertical(50),
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(50)),
                         ],
+                      ),
+                    ),
+                    Container(
+                      width: _size.width,
+                      height: _height,
+                      padding: EdgeInsets.fromLTRB(
+                        SizeConfig.calculateBlockHorizontal(10),
+                        10,
+                        SizeConfig.calculateBlockHorizontal(10),
+                        SizeConfig.calculateBlockVertical(33),
+                      ),
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: SvgPicture.asset('assets/svg/welcome.svg',
+                            height: SizeConfig.calculateBlockVertical(200)),
                       ),
                     ),
                   ],

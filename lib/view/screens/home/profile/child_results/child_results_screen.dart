@@ -1,8 +1,11 @@
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/formatters.dart';
+import 'package:charity_app/view/screens/home/profile/add_child/add_child_screen.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/all_questionaires_screen.dart';
+import 'package:charity_app/view/screens/home/questionnaire/questionnaire_screen.dart';
+import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
 import 'package:charity_app/view/screens/home/questionnaire/results/all_questionaire_results_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -27,9 +30,13 @@ class _ChildResultsScreenState extends State<ChildResultsScreen> {
 
   @override
   void initState() {
-    profileScreenAppBar(context, true).then((value) => setState(() {
+    profileScreenAppBar(context, true).then(
+      (value) => setState(
+        () {
           appBar = value;
-        }));
+        },
+      ),
+    );
     fetchChildrenResults();
     super.initState();
   }
@@ -67,6 +74,19 @@ class _ChildResultsScreenState extends State<ChildResultsScreen> {
     );
   }
 
+  // void paginate() {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+
+  //   _apiProvider.getChildren().then((value) {
+  //     setState(() {
+  //       children.addAll(value);
+  //       _isLoading = false;
+  //     });
+  //   });
+  // }
+
   fetchChildrenResults() async {
     setState(() {
       _isLoading = true;
@@ -97,45 +117,57 @@ class ChildPreview extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: const EdgeInsets.only(
-                  left: 22, right: 20, top: 21, bottom: 10),
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    child.isGirl
-                        ? "assets/svg/icons/girl_result.svg"
-                        : "assets/svg/icons/boy_result.svg",
-                    height: 40,
-                    // width: 35,
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AddChildScreen(
+                      child: child,
+                    ),
                   ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        child.name,
-                        style: TextStyle(
-                            color: child.isGirl
-                                ? const Color(0XFFF08390)
-                                : const Color(0XFF6CBBD9),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        
-                        getAgeString(context, ChildAge.fromInteger(child.age),),
-                        style: TextStyle(
-                          color: Color(0XFF777F83),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.only(
+                    left: 22, right: 20, top: 21, bottom: 10),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      child.isGirl
+                          ? "assets/svg/icons/girl_result.svg"
+                          : "assets/svg/icons/boy_result.svg",
+                      height: 40,
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          child.name,
+                          style: TextStyle(
+                              color: child.isGirl
+                                  ? const Color(0XFFF08390)
+                                  : const Color(0XFF6CBBD9),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          getAgeString(
+                            context,
+                            ChildAge.fromInteger(child.age),
+                          ),
+                          style: TextStyle(
+                            color: Color(0XFF777F83),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             Container(
@@ -156,13 +188,26 @@ class ChildPreview extends StatelessWidget {
                   InkWell(
                     splashColor: Colors.transparent,
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AllQuesionaresScreen(
-                            child: child,
+                      // make a check whether the child has any new questionnaires
+                      if (child.newQuestionnaires.first != null) {
+                        QuestionnaireViewModel questionnaireViewModel =
+                            QuestionnaireViewModel(
+                          passedQuestionnaireData:
+                              child.newQuestionnaires.first,
+                          childId: child.childId,
+                          isResultModel: false,
+                        );
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: ((context) => QuestionnaireScreen(
+                                  childId: child.childId,
+                                  data: child.newQuestionnaires.first,
+                                  viewModel: questionnaireViewModel,
+                                )),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                     child: Text(
                       getTranslated(context, "take_test"),
@@ -170,6 +215,9 @@ class ChildPreview extends StatelessWidget {
                         color: child.newQuestionnaires.isNotEmpty
                             ? const Color(0xFFFFFFFFFFF)
                             : const Color.fromARGB(153, 255, 255, 255),
+                        fontWeight: child.newQuestionnaires.isNotEmpty
+                            ? FontWeight.w500
+                            : FontWeight.normal,
                       ),
                     ),
                   ),
@@ -179,24 +227,30 @@ class ChildPreview extends StatelessWidget {
                     color: const Color(0xFFFFFFFFFFF),
                   ),
                   InkWell(
-                      splashColor: Colors.transparent,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AllQuestionareResultsScreen(
-                              child: child,
-                            ),
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      // make a check whether the child has any results
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AllQuestionareResultsScreen(
+                            child: child,
                           ),
-                        );
-                      },
-                      child: Text(
-                        getTranslated(context, "watch_test_results"),
-                        style: TextStyle(
-                          color: child.results.isNotEmpty
-                              ? const Color(0xFFFFFFFFFFF)
-                              : const Color.fromARGB(153, 255, 255, 255),
                         ),
-                      )),
+                      );
+                    },
+                    child: Text(
+                      getTranslated(context, "watch_test_results"),
+                      style: TextStyle(
+                        color: child.results.isNotEmpty
+                            ? const Color(0xFFFFFFFFFFF)
+                            : const Color.fromARGB(153, 255, 255, 255),
+                        fontWeight: child.results.isNotEmpty
+                            ? FontWeight.w500
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -205,6 +259,4 @@ class ChildPreview extends StatelessWidget {
       ),
     );
   }
-
-  
 }

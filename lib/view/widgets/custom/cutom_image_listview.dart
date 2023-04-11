@@ -7,7 +7,9 @@ import 'package:flutter/src/widgets/placeholder.dart';
 
 class ImageListview extends StatefulWidget {
   final List<String> imgList;
-  const ImageListview({Key key, this.imgList}) : super(key: key);
+  BuildContext context;
+  Function(int index, BuildContext context) goToBanner;
+  ImageListview({Key key, this.imgList, this.context,this.goToBanner}) : super(key: key);
 
   @override
   State<ImageListview> createState() => _ImageListviewState();
@@ -20,8 +22,9 @@ class _ImageListviewState extends State<ImageListview> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
+        Container(
           height: 200,
+          // margin: EdgeInsets.only(left: 16, right: 16),
           child: PageView.builder(
             itemCount: widget.imgList.length,
             onPageChanged: (index) {
@@ -32,15 +35,26 @@ class _ImageListviewState extends State<ImageListview> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  // _goToBanner(index, context);
+                  if(widget.context!=null){
+
+                  widget.goToBanner(index, context);
+                  // pass data to this page
+                  }
                 },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(28),
+                child: Container(
+                  // margin: EdgeInsets.only(left: 16, right: 16, top: 32),
+                  padding: EdgeInsets.only(
+                    left: 24,
+                    right: 24,
                   ),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.imgList[index],
-                    fit: BoxFit.cover,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(28),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.imgList[index],
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               );

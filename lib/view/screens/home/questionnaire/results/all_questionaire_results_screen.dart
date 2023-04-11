@@ -81,9 +81,9 @@ class QuestionareAnswerPreview extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => QuestionaireAnswerScreen(
               model: QuestionnaireViewModel(
-                questionnaireData,
-                childId,
-                true,
+                passedQuestionnaireData:questionnaireData,
+                childId:childId,
+                isResultModel:true,
               ),
               data: questionnaireData,
               questionaireAnswers:
@@ -107,7 +107,6 @@ class QuestionareAnswerPreview extends StatelessWidget {
                 context,
                 ChildAge.fromInteger(questionnaireData.age),
               ),
-
               style: const TextStyle(
                 color: Color(0XFF778083),
                 fontSize: 16,

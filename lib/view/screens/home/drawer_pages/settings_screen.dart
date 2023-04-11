@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/view/components/custom/custom_radio_widget.dart';
@@ -9,6 +12,7 @@ import 'package:charity_app/view/widgets/blurred_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'change_username_screen.dart';
 
@@ -37,7 +41,6 @@ class SettingsScreen extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                // BottomNavigationState.hideBottomBar.value = false;
               },
             ),
           ),
@@ -52,7 +55,8 @@ class SettingsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(width: 30),
-                    InkWell(splashColor: Colors.transparent,
+                    InkWell(
+                        splashColor: Colors.transparent,
                         onTap: () {
                           model.pickFile();
                         },
@@ -65,7 +69,8 @@ class SettingsScreen extends StatelessWidget {
                                 child: BlurredAvatar(
                                     imageUrl: model.imageUrl, size: 70.0))),
                     SizedBox(width: 10),
-                    InkWell(splashColor: Colors.transparent,
+                    InkWell(
+                      splashColor: Colors.transparent,
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ChangeUsernameScreen()));
@@ -196,6 +201,41 @@ class SettingsScreen extends StatelessWidget {
                               }),
                         ],
                       ),
+                      // Row(
+                      //   children: [
+                      //     InkWell(
+                      //       onTap: () {
+                      //         // get user subscription id
+                      //         if (Platform.isAndroid) {
+                      //           launchUrl(
+                      //             Uri.parse(
+                      //                 "https://play.google.com/store/account/subscriptions?sku=${InAppPurchaseDataRepository().sku}&package=com.ozim.platform&pli=1"),
+                      //             // "https://play.google.com/store/account/subscriptions?&package=com.ozim.platform&pli=1"),
+                      //           );
+                      //         } else {
+                      //           launchUrl(
+                      //             Uri.parse(
+                      //                 "https://apps.apple.com/account/subscriptions"),
+                      //           );
+                      //         }
+                      //       },
+                      //       child: Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //         children: [
+                      //           Text(
+                      //             // getTranslated(context, 'unsubscribe'),
+                      //             "отписаться",
+                      //             textAlign: TextAlign.start,
+                      //             style: AppThemeStyle.subtitleList,
+                      //           ),
+                      //           SizedBox(
+                      //             height: SizeConfig.calculateBlockVertical(20),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),

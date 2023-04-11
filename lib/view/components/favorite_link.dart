@@ -55,7 +55,6 @@ class FavoriteLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 60,
       height: 40,
       child: GestureDetector(
         excludeFromSemantics: true,

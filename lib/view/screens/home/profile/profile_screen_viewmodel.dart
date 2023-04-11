@@ -1,9 +1,8 @@
-import 'package:charity_app/model/category.dart';
-import 'package:charity_app/model/common_model.dart';
-import 'package:charity_app/model/data.dart';
-import 'package:charity_app/model/inclusion.dart';
+import 'package:charity_app/data/db/local_questionaires_db.dart';
+import 'package:charity_app/model/child/child.dart';
+import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/persistance/api_provider.dart';
-import 'package:charity_app/utils/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:stacked/stacked.dart';
 
 class ProfileViewModel extends BaseViewModel {
@@ -11,43 +10,92 @@ class ProfileViewModel extends BaseViewModel {
 
   bool _isLoading = false;
 
-  bool get isLoading => _isLoading;
+  ValueNotifier<bool> shouldShowChildQuestionaire = ValueNotifier(false);
 
-  Inclusion _inclusion;
+  List<Child> _children = [];
+  List<Child> get children => _children;
 
-  Inclusion get inclusion => _inclusion;
+  Child childToDisplay;
+  QuestionnaireData questionnaireDataToDisplay;
 
-  CommonModel get instance => _inclusion;
+  // iterate through all children, when meet new questionaire check if we already notified the user about it
+  // if not then notify and save the date of notification
 
-  List<Data> _folders = [];
-
-  List<Data> get folders => _folders;
-
-  Future<void> initModel(List<Category> category) async {
+  Future<void> initModel() async {
     _isLoading = true;
-    List<Future> futures = [
-      getInclusion(category),
-      getBookMarks(),
-    ];
-    Future.wait(futures).whenComplete(() => {notifyListeners()});
+    checkNewQuestionaires();
   }
 
-  Future<void> getBookMarks() async {
-    _apiProvider
-        .getBookMarkFoldersRecord(/*'inclusion'*/)
-        .then((value) => {_folders = value})
-        .catchError((error) {
-      print("Error: $error", level: 1);
-    }).whenComplete(() => {notifyListeners()});
+  // we should check whether a user has child with available questionaire
+  Future<void> checkNewQuestionaires() async {
+    List<Child> children = [];
+
+    children = await _apiProvider.getChildren();
+
+    for (Child child in children) {
+      {
+        if (child.newQuestionnaires.length > 0) {
+          // check if we already notified the user about this new questioanire
+
+          // key would be a child_id and questionnaire_id
+
+          String key = "local_notification_child_" +
+              child.childId.toString() +
+              "questionaire_" +
+              child.newQuestionnaires[0].id.toString();
+
+          var notificationDate =
+              await SharedPreferencesHelper(key: key).readNotificationDate();
+          if (notificationDate != null) {
+            // we already notified the user about this new questionaire
+
+            // calculate the difference between current date and the date of notification
+
+            // if the difference is more than 7 days then notify again
+            Duration differenceBetweenPreviousShow = DateTime.now().difference(
+              DateTime.parse(notificationDate),
+            );
+
+            if (differenceBetweenPreviousShow.compareTo(
+                  Duration(days: 7),
+                ) >=
+                0) {
+              // notify
+
+              // save
+              childToDisplay = child;
+              questionnaireDataToDisplay = child.newQuestionnaires[0];
+              shouldShowChildQuestionaire.value = true;
+              await SharedPreferencesHelper(key: key).saveNotificationDate(
+                DateTime.now().toString(),
+              );
+              break;
+            } else {
+              shouldShowChildQuestionaire.value = false;
+              break;
+            }
+          } else {
+            // notify
+
+            // save
+            childToDisplay = child;
+            questionnaireDataToDisplay = child.newQuestionnaires[0];
+            shouldShowChildQuestionaire.value = true;
+            await SharedPreferencesHelper(key: key)
+                .saveNotificationDate(DateTime.now().toString());
+            break;
+          }
+        }
+      }
+      ;
+    }
+
+    notifyListeners();
   }
 
-  Future<void> getInclusion(List<Category> category) async {
-    _isLoading = true;
-    _apiProvider
-        .inclusion(category)
-        .then((value) => {_inclusion = value})
-        .catchError((error) {
-      print("Error: $error", level: 1);
-    }).whenComplete(() => {_isLoading = false, notifyListeners()});
+  Future<void> doNotShowNotification() {
+    shouldShowChildQuestionaire.value = false;
+
+    notifyListeners();
   }
 }

@@ -13,8 +13,11 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
+        </intent>
     </queries>
-
     <application
         android:label="Ozim Platform"
         android:allowBackup="false"
@@ -50,10 +53,10 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
+                <!-- <data
                     android:scheme="https"
                     android:host="ozimplatform.kz"
-                    android:pathPrefix="/ul/"/>
+                    android:pathPrefix="/ul/"/> -->
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

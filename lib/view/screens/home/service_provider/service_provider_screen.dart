@@ -20,22 +20,36 @@ import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
-class ServiceProviderScreen extends StatelessWidget {
+class ServiceProviderScreen extends StatefulWidget {
   final List<Category> category;
 
   ServiceProviderScreen({Key key, @required this.category}) : super(key: key);
+
+  @override
+  State<ServiceProviderScreen> createState() => _ServiceProviderScreenState();
+}
+
+class _ServiceProviderScreenState extends State<ServiceProviderScreen>
+    with SingleTickerProviderStateMixin {
+  TabController _tabController;
+  @override
+  void initState() {
+    _tabController = TabController(length: widget.category.length, vsync: this);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ServiceProviderViewModel>.reactive(
       builder: (context, model, child) => CustomTabController(
         title: getTranslated(context, 'service_provider'),
-        list: category,
+        list: widget.category,
         model: model,
         buildMethod: getMainUI,
+        controller: _tabController,
       ),
       onViewModelReady: (model) {
-        model.initModel(category);
+        model.initModel(widget.category);
       },
       viewModelBuilder: () => ServiceProviderViewModel(),
     );
@@ -61,7 +75,9 @@ class ServiceProviderScreen extends StatelessWidget {
               updateCallback: model.reloadData,
             ));
       } else {
-        return Container(child: EmptyData());
+        return Container(
+          child: EmptyData(),
+        );
       }
     }
   }
@@ -483,7 +499,8 @@ class _ServiceCardState extends State<ServiceCard> {
                                     child: Padding(
                                         padding:
                                             const EdgeInsets.only(left: 10),
-                                        child: InkWell(splashColor: Colors.transparent,
+                                        child: InkWell(
+                                            splashColor: Colors.transparent,
                                             onTap: () async {
                                               if (await launcher.canLaunch(
                                                   widget.data.link)) {

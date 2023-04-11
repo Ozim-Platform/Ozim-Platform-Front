@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
 import 'package:stacked/stacked.dart';
 
@@ -12,8 +13,7 @@ class SubscriptionViewModel extends BaseViewModel {
   IAPItem _selectedSubscription;
 
   IAPItem get selectedSubscription => _selectedSubscription;
-  // listen for subscription updates 
-
+  // listen for subscription updates
 
   SubscriptionViewModel() {
     setBusy(true);
@@ -35,26 +35,26 @@ class SubscriptionViewModel extends BaseViewModel {
   Future<PurchasedItem> restorePurchases() async {
     isLoading = true;
     notifyListeners();
-    
+
     PurchasedItem purchasedItem =
         await _inAppPurchaseDataRepository.checkCurrentSubscription();
     isLoading = false;
     notifyListeners();
     return purchasedItem;
   }
-  
-  Future<PurchasedItem> purchaseSubscription() async {
+
+  Future<PurchasedItem> purchaseSubscription(BuildContext context) async {
     isLoading = true;
     notifyListeners();
     if (_selectedSubscription != null) {
       PurchasedItem purchasedItem = await _inAppPurchaseDataRepository
           .buySubscription(_selectedSubscription);
       isLoading = false;
-      
+
       notifyListeners();
+      Navigator.of(context).pop();
       return purchasedItem;
     } else {
-      
       log("No subscription selected");
     }
   }

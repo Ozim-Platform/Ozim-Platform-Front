@@ -11,10 +11,17 @@ class CommonModel {
   CommonModel.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
       data = <Data>[];
-      json['data'].forEach((v) {
-        data.add(new Data.fromJson(v));
-      });
+      json['data'].forEach(
+        (v) {
+          data.add(
+            new Data.fromJson(
+              v,
+            ),
+          );
+        },
+      );
     }
+
     page = toInt(json['page']);
     pages = toInt(json['pages']);
   }

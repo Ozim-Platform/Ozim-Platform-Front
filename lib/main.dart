@@ -1,4 +1,3 @@
-import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/persistance/hive_boxes.dart';
 import 'package:charity_app/providers/locator.dart';
@@ -160,7 +159,7 @@ class _MyAppState extends State<MyApp> {
               home: SplashScreen(),
               locale: _locale,
               supportedLocales: [
-                Locale('uz', 'UZ'),
+                Locale('kk', 'KK'),
                 Locale('ru', 'RU'),
               ],
               localizationsDelegates: [

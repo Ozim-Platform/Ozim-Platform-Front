@@ -1,15 +1,18 @@
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/localization/user_data.dart';
-import 'package:charity_app/model/forum/forum_detail.dart';
-import 'package:charity_app/persistance/api_provider.dart';
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/view/components/user_image.dart';
 import 'package:charity_app/view/screens/home/profile/add_child/add_child_screen.dart';
 import 'package:charity_app/view/screens/home/profile/child_results/child_results_screen.dart';
 import 'package:charity_app/view/screens/home/profile/exchange_points/exchange_points_screen.dart';
+import 'package:charity_app/view/screens/home/profile/profile_screen_viewmodel.dart';
+import 'package:charity_app/view/screens/home/questionnaire/questionnaire_screen.dart';
+import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
 import 'package:charity_app/view/screens/other/notification/notification_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
+import 'package:stacked/stacked.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key key}) : super(key: key);
@@ -23,66 +26,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    profileScreenAppBar(context, false).then((value) => setState(() {
-          appBar = value;
-        },),);
     super.initState();
+
+    profileScreenAppBar(context, false).then(
+      (value) => setState(
+        () {
+          appBar = value;
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar,
-      body: ListView(
-        padding: EdgeInsets.only(
-          top: 60,
-        ),
-        children: [
-          InkWell(
-            splashColor: Colors.transparent,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChildResultsScreen(),
-                ),
-              );
-            },
-            child: ProfileScreenListWidget(
-              type: "child_results",
-            ),
-          ),
-          InkWell(
-            splashColor: Colors.transparent,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NotificationScreen(),
-                ),
-              );
-            },
-            child: ProfileScreenListWidget(
-              type: "discussions",
-            ),
-          ),
-          InkWell(
-            splashColor: Colors.transparent,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ExchangePointsScreen(),
-                ),
-              );
-            },
-            child: ProfileScreenListWidget(
-              type: "exchange_points",
-            ),
-          ),
-        ],
-      ),
-    );
+    return ViewModelBuilder<ProfileViewModel>.reactive(
+        viewModelBuilder: () => ProfileViewModel(),
+        onViewModelReady: (model) => model.initModel(),
+        builder: (context, model, snapshot) {
+          return Scaffold(
+            appBar: appBar,
+            body: model.shouldShowChildQuestionaire.value == true
+                ? NewQuestionaireAvailableWidget(
+                    model: model,
+                    // child: model.children[0],
+                  )
+                : ListView(
+                    padding: EdgeInsets.only(
+                      top: 60,
+                    ),
+                    children: [
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChildResultsScreen(),
+                            ),
+                          );
+                        },
+                        child: ProfileScreenListWidget(
+                          type: "child_results",
+                        ),
+                      ),
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationScreen(),
+                            ),
+                          );
+                        },
+                        child: ProfileScreenListWidget(
+                          type: "discussions",
+                        ),
+                      ),
+                      InkWell(
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ExchangePointsScreen(),
+                            ),
+                          );
+                        },
+                        child: ProfileScreenListWidget(
+                          type: "exchange_points",
+                        ),
+                      ),
+                    ],
+                  ),
+          );
+        });
   }
 }
 
@@ -162,16 +180,16 @@ class _ProfileScreenListWidgetState extends State<ProfileScreenListWidget> {
 }
 
 Future<AppBar> profileScreenAppBar(
-    BuildContext context, bool showLeadingIcon) async {
+  BuildContext context,
+  bool showLeadingIcon,
+) async {
   UserData _userData = new UserData();
 
   String _username = await _userData.getUsername();
 
   String _avatar = await _userData.getAvatar();
 
-  // String _userType = await _userData.getUserType();
-  User user = await ApiProvider().getUser();
-  String _userType = user.type;
+  String _userType = await _userData.getUserType();
 
   return AppBar(
     elevation: 0.0,
@@ -260,4 +278,124 @@ Future<AppBar> profileScreenAppBar(
       ),
     ),
   );
+}
+
+class NewQuestionaireAvailableWidget extends StatefulWidget {
+  ProfileViewModel model;
+  NewQuestionaireAvailableWidget({Key key, this.model}) : super(key: key);
+
+  @override
+  State<NewQuestionaireAvailableWidget> createState() =>
+      _NewQuestionaireAvailableWidgetState();
+}
+
+class _NewQuestionaireAvailableWidgetState
+    extends State<NewQuestionaireAvailableWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        margin: EdgeInsets.only(left: 22, right: 22),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset("assets/svg/icons/Group 86.svg"),
+            SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Доступен новый опросник",
+              style: TextStyle(
+                fontFamily: "Helvetica Neue",
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0XFF7B8387),
+              ),
+            ),
+            Text(
+              "для " + widget.model.childToDisplay.name,
+              style: TextStyle(
+                fontFamily: "Helvetica Neue",
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0XFF7B8387),
+              ),
+            ),
+            Container(
+              width: SizeConfig.screenWidth,
+              margin: EdgeInsets.only(
+                left: 22,
+                right: 22,
+                top: 16,
+                bottom: 22,
+              ),
+              padding: EdgeInsets.only(
+                left: 22,
+                right: 22,
+                top: 16,
+                bottom: 16,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(27),
+                color: Color(0XFF79BCB7),
+              ),
+              child: InkWell(
+                onTap: () {
+                  QuestionnaireViewModel questionaireModel =
+                      QuestionnaireViewModel(
+                    passedQuestionnaireData:
+                        widget.model.questionnaireDataToDisplay,
+                    childId: widget.model.childToDisplay.childId,
+                    isResultModel: false,
+                  );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => QuestionnaireScreen(
+                        viewModel: questionaireModel,
+                        data: widget.model.questionnaireDataToDisplay,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  "Перейти",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: "Helvetica Neue",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            InkWell(
+              splashColor: Colors.transparent,
+              onTap: () {
+                // on diabling the notification for the questionnaire
+                widget.model.doNotShowNotification();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Пропустить",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                    color: Color(0xFF777F83),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

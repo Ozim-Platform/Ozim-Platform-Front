@@ -9,7 +9,7 @@ class ExchangePointsViewModel extends BaseViewModel {
 
   int _points;
   List<Partner> _partners = [];
-
+  
   int get points => _points;
 
   List<Partner> get partners => _partners;
@@ -21,7 +21,7 @@ class ExchangePointsViewModel extends BaseViewModel {
   Future<void> init() async {
     setBusy(true);
     _isLoading.notifyListeners();
-    
+
     await getPoints();
     await getPartners();
 
@@ -31,10 +31,17 @@ class ExchangePointsViewModel extends BaseViewModel {
   }
 
   Future<void> getPoints() {
-    return _apiProvider.getUser().then((value) {
-      _points = value.points;
-      notifyListeners();
-    });
+    return _apiProvider.getUser().then(
+      (value) {
+        if (value == null) {
+          _points = 0;
+        } else {
+          _points = value.points;
+        }
+
+        notifyListeners();
+      },
+    );
   }
 
   Future<void> getPartners() async {

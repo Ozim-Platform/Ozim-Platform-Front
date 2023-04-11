@@ -3,16 +3,16 @@ import 'dart:developer';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/utils/device_size_config.dart';
-import 'package:charity_app/view/components/bottom_modal_sheet.dart';
 import 'package:charity_app/view/components/btn_ui_icon.dart';
 import 'package:charity_app/view/components/text_field_ui.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
-import 'package:charity_app/view/screens/other/hide_keyboard_widget.dart';
 import 'package:charity_app/view/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionaire_appbar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:charity_app/model/child/child.dart';
+import 'package:charity_app/utils/formatters.dart';
 
 class QuestionaireAnswerScreen extends StatefulWidget {
   QuestionnaireData data;
@@ -36,15 +36,23 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
     return Scaffold(
       appBar: customAppbarForQuestionaire(
         context: context,
-        appBarTitle: '',
-        appBarIncome: getTranslated(context, "questionnaire"),
+        appBarTitle: getTranslated(context, "questionnaire"),
+        appBarIncome: getTranslated(context, "result"),
+        appBarIncome2: getTranslated(context, "for_age") +
+            " " +
+            getAgeString(
+              context,
+              ChildAge.fromInteger(widget.data.age),
+            ),
         callback: () =>
             Navigator.of(context).popUntil((route) => route.isFirst),
         age: widget.data.age,
       ),
       backgroundColor: Colors.white,
       body: ListView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+
+        // padding: EdgeInsets.all(16),
         itemCount: widget.data.questionList.length + 2,
         itemBuilder: (BuildContext context, index) {
           if (index < 5) {
@@ -75,17 +83,6 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
           } else if (index == 6) {
             return Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    getTranslated(context, "general"),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0XFFF1BC62),
-                    ),
-                  ),
-                ),
                 QuestionWithCommentWidget(
                   questions: widget.data.questionList[5],
                   answers: widget.questionaireAnswers[5],
@@ -103,7 +100,8 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
                 margin: EdgeInsets.only(bottom: 16, left: 32, right: 32),
                 child: Center(
                   child: Text(
-                    getTranslated(context, "send_results_to_email"),
+                    getTranslated(context, "send_results_to_email")
+                        .toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
@@ -148,8 +146,6 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
                       Form(
                         child: TextFieldUI(
                           controller: model.emailController,
-                          // onFieldSubmitted: (_) =>
-                          //     FocusScope.of(context).nextFocus(),
                           inputAction: TextInputAction.done,
                           text: getTranslated(_context, 'email'),
                           hintText:
@@ -271,36 +267,37 @@ class InformationHolderWidget extends StatelessWidget {
           color: Color(0XFF777F83),
         ),
         children: [
+          //Егер баланың жалпы ұпайы жасыл ұяшықта болса, ол шекті мәннен жоғары.  Баланың дамуы кестеге сай.
           TextSpan(
-            text: 'Если общий балл ребенка находится в ',
+            text: getTranslated(context, "result_description_text_1"),
           ),
           TextSpan(
-              text: 'зеленом поле', style: TextStyle(color: Color(0XFF79BCB7))),
+              text: getTranslated(context, "result_description_text_2"),
+              style: TextStyle(color: Color(0XFF79BCB7))),
+          TextSpan(text: getTranslated(context, "result_description_text_3")),
+
+          // Егер баланың жалпы ұпайы қызғылт сары ұяшықта болса, ол шекке жақын.
+          // Оқу әрекетін қамтамасыз ету және өзгерістерді қадағалау қажет.
+          TextSpan(text: getTranslated(context, "result_description_text_4")),
           TextSpan(
-            text:
-                ', он выше порогового значения, и развитие ребенка идет по графику.\n',
-          ),
-          TextSpan(
-            text: '\nЕсли общий балл ребенка находится в ',
-          ),
-          TextSpan(
-            text: 'оранжевом поле',
+            text: getTranslated(context, "result_description_text_5"),
             style: TextStyle(
               color: Color(0XFFF2C477),
             ),
           ),
+          // Егер баланың жалпы ұпайы көк ұяшықта болса, ол шекті мәннен төмен.
+          // Маманға жүгінуге кеңес береміз.
           TextSpan(
-            text:
-                ', он близок к пороговому значению. Обеспечьте учебную деятельность и контролируйте.\n',
+            text: getTranslated(context, "result_description_text_6"),
           ),
           TextSpan(
-            text: '\nЕсли общий балл ребенка находится в ',
+            text: getTranslated(context, "result_description_text_7"),
           ),
           TextSpan(
-              text: 'голубом поле', style: TextStyle(color: Color(0XFF6CBBD9))),
+              text: getTranslated(context, "result_description_text_8"),
+              style: TextStyle(color: Color(0XFF6CBBD9))),
           TextSpan(
-            text:
-                ', он ниже порогового значения. Может потребоваться дополнительная оценка профессионала.\n',
+            text: getTranslated(context, "result_description_text_9"),
           ),
         ],
       ),

@@ -36,13 +36,13 @@ class HomeViewModel extends BaseViewModel {
   CommonModel _banner;
 
   CommonModel get banner => _banner;
-  
+
   Future<void> initData() async {
     _username = await _userData.getUsername();
-    
-  await InAppPurchaseDataRepository().getSubscriptionIds();
-  await InAppPurchaseDataRepository().checkCurrentSubscription();
-  await InAppPurchaseDataRepository().fetchAvailableSubscriptions();
+    await InAppPurchaseDataRepository().getSubscriptionIds();
+    // InAppPurchaseDataRepository().init();
+    await InAppPurchaseDataRepository().checkCurrentSubscription();
+    await InAppPurchaseDataRepository().fetchAvailableSubscriptions();
     notifyListeners();
   }
 

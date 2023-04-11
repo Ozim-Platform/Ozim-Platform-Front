@@ -43,7 +43,9 @@ class _HomeScreen extends State<HomeScreen> {
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, model, child) {
         if (model.isLoadingCategory || model.isLoadingBanner) {
-          return Center(child: CupertinoActivityIndicator());
+          return Center(
+            child: CupertinoActivityIndicator(),
+          );
         }
         return SafeArea(
           top: false,
@@ -89,8 +91,11 @@ class _HomeScreen extends State<HomeScreen> {
       actions: <Widget>[
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: SvgPicture.asset('assets/svg/Icon_notification_outline.svg',
-              height: 24, width: 24),
+          child: SvgPicture.asset(
+            'assets/svg/Icon_notification_outline.svg',
+            height: 24,
+            width: 24,
+          ),
         )
       ],
     );

@@ -87,7 +87,7 @@ class _ChildTypeWidgetState extends State<ChildTypeWidget> {
                 child: icon,
               ),
               Text(
-                getTranslated(context,widget.type),
+                getTranslated(context, widget.type),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,

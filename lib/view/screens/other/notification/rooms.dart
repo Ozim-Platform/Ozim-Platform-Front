@@ -1,3 +1,4 @@
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/data.dart';
 import 'package:charity_app/utils/constants.dart';
 import 'package:charity_app/view/components/no_data.dart';
@@ -56,7 +57,7 @@ class _RoomsState extends State<Rooms> {
           return Center(
               child: Container(
                   child: EmptyData(
-            text: 'У вас пока что нет начатых чатов',
+            text: getTranslated(context,"no_messages"),
           )));
 
         List data = snapshot.data.data()['rooms'];
@@ -72,7 +73,7 @@ class _RoomsState extends State<Rooms> {
           return Center(
               child: Container(
                   child: EmptyData(
-            text: 'У вас пока что нет начатых чатов',
+            text: getTranslated(context,"no_messages"),
           )));
 
         return Padding(

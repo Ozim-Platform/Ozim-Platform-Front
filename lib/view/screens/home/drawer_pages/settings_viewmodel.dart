@@ -102,6 +102,19 @@ class SettingsViewModel extends BaseViewModel {
   Future<void> changeLanguage(int position) async {
     _selectLanguage = position;
     Utils.changeLanguage(context, langCode[_selectLanguage]);
+    _apiProvider
+        .getUser()
+        .then((value) => {
+              _userData.setUsername(value.name ?? ''),
+              _userData.setEmail(value.email ?? ''),
+              _userData.setPhoneNumber(value.phone ?? ''),
+              _userData.setAvatar(value.avatar ?? ""),
+              _userData.setUserType(value.type ?? ""),
+              // user type which comes from the backend should be changed in accordance with the lang
+            })
+        .catchError((onError) {
+      ToastUtils.toastErrorGeneral("Error $onError", context);
+    }).whenComplete(() => {});
   }
 
   Future<void> handleRadioValueChange(int value) async {
@@ -119,7 +132,8 @@ class SettingsViewModel extends BaseViewModel {
   }
 
   Future<void> pickFile() async {
-    final PickedFile pickedFile = await _picker.getImage(source: ImageSource.gallery);
+    final PickedFile pickedFile =
+        await _picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       // File croppedFile = await ImageCropper.cropImage(
       //     sourcePath: pickedFile.path,
@@ -155,7 +169,9 @@ class SettingsViewModel extends BaseViewModel {
       String email = await _userData.getEmail();
 
       try {
-        await FirebaseStorage.instance.ref('users/$email/avatar.png').putFile(tempImage);
+        await FirebaseStorage.instance
+            .ref('users/$email/avatar.png')
+            .putFile(tempImage);
 
         try {
           await _apiProvider.changeUserAvatar(tempImage, pickedFile.path);
@@ -170,7 +186,8 @@ class SettingsViewModel extends BaseViewModel {
         await drawerModel.update();
         notifyListeners();
       } on FirebaseException catch (e) {
-        ToastUtils.toastErrorGeneral('Не удалось сохранить в Firebase. ${e}', context);
+        ToastUtils.toastErrorGeneral(
+            'Не удалось сохранить в Firebase. ${e}', context);
         print(e, level: 1);
       }
     } else {

@@ -8,7 +8,6 @@ import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/constants.dart';
 import 'package:charity_app/utils/post_url_helper.dart';
 import 'package:charity_app/view/screens/home/favourite/favourite_screen.dart';
-// import 'package:charity_app/view/screens/home/forum/forum_screen.dart';
 import 'package:charity_app/view/screens/home/general_search_screen.dart';
 import 'package:charity_app/view/screens/home/home_screen.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';

@@ -23,6 +23,8 @@ class For_ParentViewModel extends BaseViewModel {
 
   List<Data> get folders => _folders;
 
+  List<Category> _category;
+
   Future<void> initModel(List<Category> category) async {
     _isLoading = true;
     List<Future> futures = [
@@ -34,10 +36,16 @@ class For_ParentViewModel extends BaseViewModel {
 
   Future<void> getForMother(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     _apiProvider
-        .forMother(category)
+        .forMother(category, 1)
         .then((value) => {
+              // _formother.data.addAll( value.data),
               _formother = value,
+              // _formother.page = value.page,
+              // _formother.pages = value.pages,
+              //                 _isLoading = false,
+
             })
         .catchError((error) {
       print("Error: $error", level: 1);
@@ -51,5 +59,23 @@ class For_ParentViewModel extends BaseViewModel {
         .catchError((error) {
       print("Error: $error", level: 1);
     }).whenComplete(() => {notifyListeners()});
+  }
+
+  Future<void> paginate() {
+    // _isLoading = true;
+    notifyListeners();
+    if (_formother.page < _formother.pages) {
+      return _apiProvider
+          .forMother(_category, _formother.page + 1)
+          .then((value) => {
+                _formother.data.addAll(value.data),
+                _formother.page = value.page,
+                _formother.pages = value.pages,
+                _isLoading = false,
+              })
+          .catchError((error) {
+        print("Error: $error", level: 1);
+      }).whenComplete(() => {_isLoading = false, notifyListeners()});
+    }
   }
 }

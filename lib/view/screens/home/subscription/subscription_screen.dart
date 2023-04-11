@@ -156,10 +156,10 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                           color: const Color(0XFFF1BC62),
                           borderRadius: BorderRadius.circular(27.5),
                         ),
-                        child: InkWell(splashColor: Colors.transparent,
-                          onTap: ()async {
-                            await model.purchaseSubscription();
-                            Navigator.of(context).pop();
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          onTap: () async {
+                            model.purchaseSubscription(context);
                           },
                           child: Text(
                             getTranslated(context, "continue"),
@@ -176,7 +176,8 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          InkWell(splashColor: Colors.transparent,
+                          InkWell(
+                            splashColor: Colors.transparent,
                             onTap: () {
                               Navigator.of(context).pop();
                               // dispose viewmodel
@@ -197,7 +198,8 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                               ),
                             ),
                           ),
-                          InkWell(splashColor: Colors.transparent,
+                          InkWell(
+                            splashColor: Colors.transparent,
                             onTap: () async {
                               // trigger a callback function from a viewmodel
                               await model.restorePurchases();
@@ -208,6 +210,8 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                                 alignment: Alignment.centerRight,
                                 child: Text(
                                   getTranslated(context, "restore_purchase"),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontFamily: "Helvetica Neue",
                                     color: Colors.white,
@@ -249,7 +253,8 @@ class _SubscriptionState extends State<Subscription> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(splashColor: Colors.transparent,
+    return InkWell(
+      splashColor: Colors.transparent,
       onTap: () {
         widget.model.selectSubscription(
           widget.subscriptionItem,

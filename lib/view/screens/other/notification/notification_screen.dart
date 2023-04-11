@@ -69,19 +69,21 @@ class _NotificationScreen extends State<NotificationScreen> {
         },
       )),
     );
-    _usersStream.forEach((element) {
-      Map<String, dynamic> data = element.data();
-      if (data != null) {
-        if (data['rooms'] != null) {
-          List rooms = data['rooms'];
-          rooms.forEach((element) {
-            if (element['unread'] != null) {
-              _countPrivate += toInt(element['unread']);
-            }
-          });
+    _usersStream.forEach(
+      (element) {
+        Map<String, dynamic> data = element.data();
+        if (data != null) {
+          if (data['rooms'] != null) {
+            List rooms = data['rooms'];
+            rooms.forEach((element) {
+              if (element['unread'] != null) {
+                _countPrivate += toInt(element['unread']);
+              }
+            });
+          }
         }
-      }
-    });
+      },
+    );
     super.initState();
 
     _scrollController.addListener(_onScroll);
@@ -133,7 +135,6 @@ class _NotificationScreen extends State<NotificationScreen> {
 
   @override
   void setState(VoidCallback fn) {
-    // TODO: implement setState
     super.setState(fn);
   }
 
@@ -212,7 +213,7 @@ class _NotificationScreen extends State<NotificationScreen> {
           body: SafeArea(
             child: WillPopScope(
               onWillPop: () {
-                return _onPopUp();
+                // return _onPopUp();
               },
               child: NavigationChat(buildModel, context, model),
             ),
@@ -356,7 +357,6 @@ class _NotificationScreen extends State<NotificationScreen> {
     return SingleChildScrollView(
       controller: _scrollController,
       child: Column(
-        // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           if (_showSearchMessages) SearchMessagesWidget(search: search),
           mainUI(_currentIndex),
@@ -485,8 +485,10 @@ class CustomList extends StatelessWidget {
       return Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 15),
-          child: Text(getTranslated(context, 'no_comment'),
-              style: AppThemeStyle.normalText),
+          child: Text(
+            getTranslated(context, 'no_comment'),
+            style: AppThemeStyle.normalText,
+          ),
         ),
       );
     } else {

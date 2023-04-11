@@ -23,8 +23,11 @@ class SkillViewModel extends BaseViewModel {
 
   List<Data> get folders => _folders;
 
+  List<Category> _category;
+
   Future<void> initModel(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     List<Future> futures = [
       getSkill(category),
       getBookMarks(),
@@ -43,13 +46,30 @@ class SkillViewModel extends BaseViewModel {
 
   Future<void> getSkill(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     _apiProvider
-        .skill(category)
+        .skill(category, 1)
         .then((value) => {
               _skill = value,
             })
         .catchError((error) {
       print("Error: $error", level: 1);
     }).whenComplete(() => {_isLoading = false, notifyListeners()});
+  }
+
+  Future<void> paginate() {
+    // _isLoading = true;
+    if (_skill.page < _skill.pages) {
+      _apiProvider
+          .skill(_category, _skill.page + 1)
+          .then((value) => {
+                _skill.data.addAll(value.data),
+                _skill.page = value.page,
+                _skill.pages = value.pages,
+              })
+          .catchError((error) {
+        print("Error: $error", level: 1);
+      }).whenComplete(() => {_isLoading = false, notifyListeners()});
+    }
   }
 }

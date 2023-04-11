@@ -54,9 +54,10 @@ class _ArticleScreenState extends State<ArticleScreen>
   Widget getSecondMainUI(context, ArticleViewModel viewmodel, String category,
       List<Category> allCategories) {
     return CustomRecordList<ArticleViewModel>(
-        model: viewmodel,
-        category: category,
-        allCategories: allCategories,
-        parentController: _tabController);
+      model: viewmodel,
+      category: category,
+      allCategories: allCategories,
+      parentController: _tabController,
+    );
   }
 }

@@ -23,6 +23,8 @@ class RightViewModel extends BaseViewModel {
 
   List<Data> get folders => _folders;
 
+  List<Category> _category;
+
   Future<void> initModel(List<Category> category) async {
     _isLoading = true;
     List<Future> futures = [
@@ -43,11 +45,24 @@ class RightViewModel extends BaseViewModel {
 
   Future<void> getRights(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     _apiProvider
-        .rights(category)
+        .rights(category, 1)
         .then((value) => {_right = value})
         .catchError((error) {
       print("Error: $error", level: 1);
     }).whenComplete(() => {_isLoading = false, notifyListeners()});
+  }
+
+  Future<void> paginate() {
+    // _isLoading = true;
+    if (_right.page < _right.pages) {
+      _apiProvider
+          .rights(_category, _right.page + 1)
+          .then((value) => {_right = value})
+          .catchError((error) {
+        print("Error: $error", level: 1);
+      }).whenComplete(() => {_isLoading = false, notifyListeners()});
+    }
   }
 }

@@ -112,7 +112,17 @@ class User {
   String avatar;
   int points;
   String type;
-  User({this.id, this.phone, this.name, this.email, this.avatar, this.points,this.type});
+  bool subscription;
+  User({
+    this.id,
+    this.phone,
+    this.name,
+    this.email,
+    this.avatar,
+    this.points,
+    this.type,
+    this.subscription,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -122,6 +132,9 @@ class User {
     avatar = json['avatar'];
     points = json['points'];
     type = json['type']["name"];
+    subscription = json['subscription'] != null
+        ? json['subscription']["subscription"]
+        : false;
   }
 
   Map<String, dynamic> toJson() {

@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionaire_appbar.dart';
 
+import 'package:charity_app/model/child/child.dart';
+import 'package:charity_app/utils/formatters.dart';
+
 class QuestionnaireScreen extends StatefulWidget {
   final QuestionnaireData data;
   QuestionnaireViewModel viewModel;
@@ -38,9 +41,9 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
           return widget.viewModel;
         } else {
           return QuestionnaireViewModel(
-            widget.data,
-            widget.childId,
-            false,
+            passedQuestionnaireData: widget.data,
+            childId: widget.childId,
+            isResultModel: false,
           );
         }
       },
@@ -52,15 +55,20 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
           return Scaffold(
             appBar: customAppbarForQuestionaire(
               context: context,
-              appBarTitle: '',
-              appBarIncome: getTranslated(context, "questionnaire"),
-              callback: () => model.currentStep != null
-                  ? model.nextStep()
-                  : Navigator.of(context).pop(),
+              appBarTitle: getTranslated(context, "questionnaire"),
+              appBarIncome2: getTranslated(context, "asses_these_questions"),
+              appBarIncome: getTranslated(context, "for_age") +
+                  " " +
+                  getAgeString(
+                    context,
+                    ChildAge.fromInteger(widget.data.age),
+                  ),
+              callback: () => model.previousStep(context),
               age: widget.data.age,
             ),
             backgroundColor: Colors.white,
             body: Container(
+              padding: EdgeInsets.only(left: 16, right: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -69,6 +77,10 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                 ),
               ),
               child: ListView(
+                // padding: EdgeInsets.only(
+                //   left: 16,
+                //   right: 16,
+                // ),
                 shrinkWrap: true,
                 children: <Widget>[
                   getListUI(
@@ -117,7 +129,12 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                                 context: context,
                                 builder: (BuildContext context) =>
                                     CupertinoAlertDialog(
-                                  title: Text(getTranslated(context,"questionaire_incomplete")),
+                                  title: Text(
+                                    getTranslated(
+                                      context,
+                                      "questionaire_incomplete",
+                                    ),
+                                  ),
                                   actions: <CupertinoDialogAction>[
                                     CupertinoDialogAction(
                                       onPressed: () {
@@ -209,47 +226,32 @@ class QuestionWithCommentWidget extends StatefulWidget {
 }
 
 class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
-  List<TextEditingController> textControllersList = [];
-
   _onAnswerSelected(int questionIndex, bool value) {
-    setState(() {
-      widget.model.setAnswerWithCommentValue(questionIndex, value);
-    });
-  }
-
-  _onCommentChanged(int questionIndex, String answer) {
-    setState(() {
-      widget.model.setAnswerComment(questionIndex, answer);
-    });
+    setState(
+      () {
+        widget.model.setAnswerWithCommentValue(questionIndex, value);
+      },
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    int numberOfTextControllers = textControllersList.length;
-    for (int i = 0; i < numberOfTextControllers; i++) {
-      textControllersList[i].dispose();
-    }
   }
 
-  // TODO precache svgassets, since they are static
-  // TODO: Clear all controllers on dispose method
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListView.builder(
           physics: NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
-          ),
+          // padding: const EdgeInsets.only(
+          //   left: 16,
+          //   right: 16,
+          // ),
           shrinkWrap: true,
           itemCount: widget.questions.questions.length + 3,
           itemBuilder: (context, index) {
-            TextEditingController _textEditingController =
-                TextEditingController();
             int questionIndex = index - 2;
             index;
             if (index == 0) {
@@ -282,51 +284,57 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                       ),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Radio(
-                        value: true,
-                        activeColor: Color(0XFFF1BC62),
-                        groupValue: widget.model.currentQuestionaireAnswer
-                            .answers[questionIndex].value,
-                        onChanged: (value) {
-                          widget.isAnswerScreen == true
-                              ? print(value)
-                              : _onAnswerSelected(questionIndex, value);
-                          // _onAnswerSelected(index, value);
-                        },
-                      ),
-                      Text(getTranslated(context, "yes")),
-                      const SizedBox(width: 16),
-                      Radio(
-                        value: false,
-                        activeColor: Color(0XFFF1BC62),
-                        groupValue: widget.model.currentQuestionaireAnswer
-                            .answers[questionIndex].value,
-                        onChanged: (value) {
-                          widget.isAnswerScreen == true
-                              ? print(value)
-                              : _onAnswerSelected(questionIndex, value);
-                          // _onAnswerSelected(index, value);
-                        },
-                      ),
-                      Text(getTranslated(context, "no")),
-                    ],
-                  ),
-                  TextField(
-                    enabled: !widget.isAnswerScreen,
-                    controller: _textEditingController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      labelText: widget.isAnswerScreen == true
-                          ? widget.answers.answers[questionIndex].comment
-                          : 'Комментарии',
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Radio(
+                          value: true,
+                          activeColor: Color(0XFFF1BC62),
+                          groupValue: widget.model.currentQuestionaireAnswer
+                              .answers[questionIndex].value,
+                          onChanged: (value) {
+                            widget.isAnswerScreen == true
+                                ? print(value)
+                                : _onAnswerSelected(
+                                    questionIndex,
+                                    value,
+                                  );
+                          },
+                        ),
+                        Text(
+                          getTranslated(context, "yes").toUpperCase(),
+                        ),
+                        const SizedBox(width: 16),
+                        Radio(
+                          value: false,
+                          activeColor: Color(0XFFF1BC62),
+                          groupValue: widget.model.currentQuestionaireAnswer
+                              .answers[questionIndex].value,
+                          onChanged: (value) {
+                            widget.isAnswerScreen == true
+                                ? print(value)
+                                : _onAnswerSelected(
+                                    questionIndex,
+                                    value,
+                                  );
+                          },
+                        ),
+                        Text(
+                          getTranslated(context, "no").toUpperCase(),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 16.0,
+                    ),
+                    child: questionnaireTextField(
+                      questionIndex,
+                    ),
+                  ),
                 ],
               );
             } else if (index == 8) {
@@ -342,7 +350,12 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                             context: context,
                             builder: (BuildContext context) =>
                                 CupertinoAlertDialog(
-                              title: const Text("questionaire_incomplete"),
+                              title: Text(
+                                getTranslated(
+                                  context,
+                                  "questionaire_incomplete",
+                                ),
+                              ),
                               actions: <CupertinoDialogAction>[
                                 CupertinoDialogAction(
                                   onPressed: () {
@@ -397,6 +410,61 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
       ],
     );
   }
+
+  Widget questionnaireTextField(
+    int questionIndex,
+  ) {
+    if (widget.isAnswerScreen &&
+        widget.answers.answers[questionIndex].comment != null) {
+      widget.model.commentControllers[questionIndex].text =
+          widget.answers.answers[questionIndex].comment;
+      return TextField(
+        maxLines: null, // <-- SEE HERE
+        minLines: 1, // <-- SEE HERE
+        enabled: !widget.isAnswerScreen,
+        controller: widget.model.commentControllers[questionIndex],
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
+            borderSide: BorderSide(
+              color: Color(0XFFCECECE),
+              width: 1.0,
+            ),
+          ),
+          filled: true, //<-- SEE HERE
+          fillColor: Color(0XFFF4F4F4),
+        ),
+      );
+    } else if (widget.isAnswerScreen == false) {
+      return TextField(
+        maxLines: null, // <-- SEE HERE
+        minLines: 1, // <-- SEE HERE
+        enabled: !widget.isAnswerScreen,
+        controller: widget.model.commentControllers[questionIndex],
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(
+              15.0,
+            ),
+            borderSide: BorderSide(
+              color: Color(
+                0XFFCECECE,
+              ),
+              width: 1.0,
+            ),
+          ),
+          focusColor: Color(
+            0XFFCECECE,
+          ),
+          filled: true, //<-- SEE HERE
+          fillColor: Color(0XFFF4F4F4),
+          labelText: 'Комментарии',
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
 }
 
 class QuestionWidget extends StatefulWidget {
@@ -421,7 +489,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.vertical,
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
       shrinkWrap: true,
       itemCount: widget.question.questions.length + 1,
       itemBuilder: (BuildContext context, int index) {
@@ -469,7 +537,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         },
                       ),
                       Text(
-                        getTranslated(context, "yes"),
+                        getTranslated(context, "yes").toUpperCase(),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -491,7 +559,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         },
                       ),
                       Text(
-                        getTranslated(context, "sometimes"),
+                        getTranslated(context, "sometimes").toUpperCase(),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -513,7 +581,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         },
                       ),
                       Text(
-                        getTranslated(context, "no"),
+                        getTranslated(context, "no").toUpperCase(),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

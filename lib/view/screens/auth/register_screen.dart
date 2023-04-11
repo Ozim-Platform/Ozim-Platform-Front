@@ -133,8 +133,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     controller: model.usernameController,
                                     style: const TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
-                                      hintText: "Логин",
-                                      // getTranslated(context, 'username'),
+                                      hintText: 
+                                      getTranslated(context, 'username'),
                                       hintStyle: TextStyle(
                                           color: Colors.white,
                                           fontSize:

@@ -253,7 +253,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
   Widget _buildChildren(BuildContext context, Widget child) {
     final Color borderSideColor = Colors.transparent;
     BoxDecoration title_decoration = widget.titleDecoration;
-
+    SizeConfig().init(context);
     return Container(
       decoration: BoxDecoration(
         color: _backgroundColor.value ?? Colors.transparent,

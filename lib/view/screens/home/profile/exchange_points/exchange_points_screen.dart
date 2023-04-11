@@ -55,7 +55,9 @@ class _ExchangePointsScreenState extends State<ExchangePointsScreen> {
             children: [
               MyPointsWidget(points: model.points),
               const ExchangePonintsInformationWidget(),
-              PartnersList(partners: model.partners),
+              PartnersList(
+                model: model,
+              ),
             ],
           );
         },
@@ -155,9 +157,10 @@ class ExchangePonintsInformationWidget extends StatelessWidget {
 }
 
 class PartnersList extends StatefulWidget {
-  List<Partner> partners;
+  ExchangePointsViewModel model;
+
   // ValueNotifier<bool> isLoading;
-  PartnersList({Key key, this.partners}) : super(key: key);
+  PartnersList({Key key, this.model}) : super(key: key);
 
   @override
   _PartnersListState createState() => _PartnersListState();
@@ -166,10 +169,37 @@ class PartnersList extends StatefulWidget {
 class _PartnersListState extends State<PartnersList> {
   @override
   Widget build(BuildContext context) {
-    return ExpandablePanel(
-      headerTitle: getTranslated(context, "how_to_exchange_points"),
-      disableBackgroundColor: true,
-      child: _buildListView(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(
+            16.0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                getTranslated(
+                  context,
+                  "how_to_exchange_points",
+                ),
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Color(
+                    0XFF777F83,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.expand_more,
+              )
+            ],
+          ),
+        ),
+        _buildListView(),
+      ],
     );
   }
 
@@ -182,10 +212,11 @@ class _PartnersListState extends State<PartnersList> {
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
       padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-      itemCount: widget.partners.length,
+      itemCount: widget.model.partners.length,
       itemBuilder: (context, index) {
         return ResourcesCardBuilder(
-          data: widget.partners[index],
+          model: widget.model,
+          index: index,
         );
       },
     );
@@ -244,24 +275,27 @@ class _ExpandablePanelState extends State<ExpandablePanel> {
 }
 
 class ResourcesCardBuilder extends StatefulWidget {
-  const ResourcesCardBuilder({
+  ExchangePointsViewModel model;
+  int index;
+  ResourcesCardBuilder({
     Key key,
-    this.data,
+    this.model,
+    this.index,
   }) : super(key: key);
-
-  final Partner data;
 
   @override
   _CardBuilderState createState() => _CardBuilderState();
 }
 
 class _CardBuilderState extends State<ResourcesCardBuilder> {
-  Partner get data => widget.data;
-  ExchangePointsViewModel exchangePointsViewModel;
+  int get index => widget.index;
+  ExchangePointsViewModel get model => widget.model;
+  Partner data;
+
   @override
   initState() {
     super.initState();
-
+    data = model.partners[index];
     InAppPurchaseDataRepository().hasActiveSubscription.addListener(
       () {
         setState(
@@ -406,17 +440,22 @@ class _CardBuilderState extends State<ResourcesCardBuilder> {
               onTap: () async {
                 if (InAppPurchaseDataRepository().hasActiveSubscription.value ==
                     true) {
-                  bool exchangedPoints = await Navigator.of(context).push(
+                  var exchangedPoints = await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => PartnerScreen(partner: data),
+                      builder: (context) => PartnerScreen(
+                        partner: data,
+                        userPoints: model.points,
+                      ),
                     ),
                   );
 
-                  if (exchangedPoints) {
-                    setState(() {
-                      data.exchangedPoints = exchangedPoints;
-                    });
-                    exchangePointsViewModel.getPoints();
+                  if (exchangedPoints != null) {
+                    setState(
+                      () {
+                        data.exchangedPoints = exchangedPoints;
+                      },
+                    );
+                    model.getPoints();
                   }
                 } else {
                   Navigator.of(context).push(

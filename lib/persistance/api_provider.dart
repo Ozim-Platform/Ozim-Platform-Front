@@ -43,9 +43,11 @@ class ApiProvider {
   final baseUrl = 'https://ozimplatform.kz/api';
 
   final baseHeader = {
-    HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
-    'authorization':
-        '\$2y\$10\$nTX/1eBIlQQ0cu4rjt2ea.axCqSMY65dh./.OX0Vtet3w7dGaYfLW',
+    // HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+    HttpHeaders.contentTypeHeader: 'application/json',
+
+    // 'authorization':
+    //     '\$2y\$10\$nTX/1eBIlQQ0cu4rjt2ea.axCqSMY65dh./.OX0Vtet3w7dGaYfLW',
   };
 
   getHeaders() async {
@@ -446,6 +448,7 @@ class ApiProvider {
     // };
 
     // await Future.forEach(types, (t) async {
+
     CommonModel data = await getBookMarkRecord(/*t, callbacks[t]*/);
     if (data != null) {
       // print(data);
@@ -687,14 +690,18 @@ class ApiProvider {
 
       var res = _response(response) as List;
       List sortedData = [];
-      res.forEach((element) {
-        var el = element['record'];
-        el['preview'] = element['image'];
-        el['type'] = element['type'];
-        sortedData.add(el);
-      });
+      res.forEach(
+        (element) {
+          var el = element['record'];
+          el['preview'] = element['image'];
+          el['type'] = element['type'];
+          sortedData.add(el);
+        },
+      );
 
+      // here we are enconuntering an error, because there are more than one page in the database
       Map<String, dynamic> result = {"data": sortedData, "page": 1, "pages": 1};
+
       result = _symplifyData(result, null);
       responseJson = CommonModel.fromJson(result);
     } on FetchDataException {
@@ -784,8 +791,7 @@ class ApiProvider {
       final response = await client.post(Uri.parse('$baseUrl/forum'),
           headers: await getHeaders(), body: jsonEncode(data));
       var res = _response(response);
-      // print(res);
-      // print(data);
+
       responseJson = BaseResponses.fromJson(res);
     } on FetchDataException {
       throw FetchDataException("No Internet connection");
@@ -795,13 +801,8 @@ class ApiProvider {
 
   ///category
   Future<List<Category>> getCategory() async {
-    // var token = await _userData.getToken();
-    // print(token);
-    // this.getUser(token);
-
     var responseJson;
     var lang = await _userData.getLang();
-    // print('cats ' + lang);
     try {
       final response = await client.get(
         Uri.parse('$baseUrl/category?language=$lang'),
@@ -816,40 +817,52 @@ class ApiProvider {
   }
 
   /// diagnoses
-  Future<Diagnosis> getDiagnoses(List<Category> category) async {
+  Future<Diagnosis> getDiagnoses(
+    List<Category> category,
+    int page,
+  ) async {
     var responseJson;
     responseJson = await _sendApiRequestType(
-        category, 'diagnoses', (element) => Diagnosis.fromJson(element));
+      category,
+      'diagnoses',
+      (element) => Diagnosis.fromJson(element),
+      page,
+    );
     return responseJson;
   }
 
   /// skill
-  Future<Skill> skill(List<Category> category) async {
+  Future<Skill> skill(List<Category> category, int page) async {
     var responseJson;
     responseJson = await _sendApiRequestType(
-        category, 'skill', (element) => Skill.fromJson(element));
+      category,
+      'skill',
+      (element) => Skill.fromJson(element),
+      page,
+    );
     return responseJson;
   }
 
   ///resource
-  Future<Links> getLinks(List<Category> category) async {
+  Future<Links> getLinks(List<Category> category, int page) async {
     var responseJson;
     responseJson = await _sendApiRequestType(
-        category, 'links', (element) => Links.fromJson(element));
+        category, 'links', (element) => Links.fromJson(element), page);
     return responseJson;
   }
 
   /// article
-  Future<Article> getArticle({List<Category> category, int id}) async {
+  Future<Article> getArticle(
+      {List<Category> category, int id, int page}) async {
     var responseJson;
     if (category != null) {
       responseJson = await _sendApiRequestType(
-          category, 'article', (element) => Article.fromJson(element));
+          category, 'article', (element) => Article.fromJson(element), page);
     } else {
       if (id != null) {
         var lang = await ApiProvider.getLang();
         String method = 'article';
-        String apiUrl = '$baseUrl/$method?language=$lang&page=1&id=$id';
+        String apiUrl = '$baseUrl/$method?language=$lang&page=${page}&id=$id';
         try {
           final response = await client.get(
             Uri.parse(apiUrl),
@@ -873,34 +886,43 @@ class ApiProvider {
   }
 
   /// service_provider
-  Future<ServiceProvider> serviceProvider(List<Category> category) async {
+  Future<ServiceProvider> serviceProvider(
+      List<Category> category, int page) async {
     var responseJson;
     responseJson = await _sendApiRequestType(category, 'service_provider',
-        (element) => ServiceProvider.fromJson(element));
+        (element) => ServiceProvider.fromJson(element), page);
     return responseJson;
   }
 
   /// rights
-  Future<Right> rights(List<Category> category) async {
+  Future<Right> rights(List<Category> category, int page) async {
     var responseJson;
     responseJson = await _sendApiRequestType(
-        category, 'rights', (element) => Right.fromJson(element));
+        category, 'rights', (element) => Right.fromJson(element), page);
     return responseJson;
   }
 
   /// inclusion
-  Future<Inclusion> inclusion(List<Category> category) async {
+  Future<Inclusion> inclusion(List<Category> category, int page) async {
     var responseJson;
     responseJson = await _sendApiRequestType(
-        category, 'inclusion', (element) => Inclusion.fromJson(element));
+      category,
+      'inclusion',
+      (element) => Inclusion.fromJson(element),
+      page,
+    );
     return responseJson;
   }
 
   ///for_mother
-  Future<For_Parent> forMother(List<Category> category) async {
+  Future<For_Parent> forMother(List<Category> category, int page) async {
     var responseJson;
     responseJson = await _sendApiRequestType(
-        category, 'for_parent', (element) => For_Parent.fromJson(element));
+      category,
+      'for_parent',
+      (element) => For_Parent.fromJson(element),
+      page,
+    );
     return responseJson;
   }
 
@@ -927,7 +949,9 @@ class ApiProvider {
   Future<List<Partner>> fetchAllPartners() async {
     List<Partner> partnerData = [];
     var lang = await ApiProvider.getLang();
+
     int page = 1;
+
     String apiUrl = '$baseUrl/partner?page=$page';
     try {
       log("fetching all partners");
@@ -1054,20 +1078,6 @@ class ApiProvider {
     return responseJson;
   }
 
-  ///questionnaire
-  // Future<QuestionnaireData> getQuestionnaire(List<Category> category) async {
-  //   var responseJson;
-  //   responseJson = await _sendApiRequestType(category, 'questionnaire',
-  //       (element) => QuestionnaireData.fromJson(element,));
-  //   return responseJson;
-  // }
-
-  // Future<BaseResponses> sendQuestionnaire(Map<String, dynamic> data) async {
-  //   BaseResponses responseJson =
-  //       await _sendApiRequestBase('questionnaire', data);
-  //   return responseJson;
-  // }
-
   ///my comment
   Future<List<DataComment>> myComment() async {
     var responseJson;
@@ -1132,14 +1142,10 @@ class ApiProvider {
     try {
       String apiUrl = '$baseUrl/$method';
       data['language'] = lang;
-      // print(apiUrl);
-      // print(data);
+
       final response = await client.post(Uri.parse(apiUrl),
           headers: await getHeaders(), body: jsonEncode(data));
-      // print(response.request.url);
-      // print(response.body);
       var res = _response(response);
-      // print(res);
       if (res is List) {
         if (res.isEmpty) {
           res = {'success': 'Успешно'};
@@ -1148,11 +1154,9 @@ class ApiProvider {
       if (res == null) {
         res = {'error': 'Ошибка'};
       }
-      // print(res);
 
       responseJson = BaseResponses.fromJson(res);
     } on FetchDataException {
-      // print('error', level: 1);
       throw FetchDataException("No Internet connection");
     }
     return responseJson;
@@ -1160,11 +1164,12 @@ class ApiProvider {
 
   ///type helper
   Future _sendApiRequestType(
-      List<Category> category, String method, callback) async {
+      List<Category> category, String method, callback, int page) async {
     var responseJson;
     var lang = await _userData.getLang();
     try {
-      String apiUrl = '$baseUrl/$method?language=$lang&page=1';
+      // make page number parameter of this function
+      String apiUrl = '$baseUrl/$method?language=$lang&page=${page}';
       Map<String, dynamic> result = {"page": null, "pages": null, "data": []};
 
       if (category.isEmpty) {
@@ -1312,8 +1317,8 @@ class ApiProvider {
     List<Child> returnList = [];
     try {
       final response = await client.get(Uri.parse('$baseUrl/user/children'),
-          headers: await getHeaders());
-      var res = _response(response);
+          headers: await getHeaders(),);
+      var res = _response(response); 
 
       if (res is Map && res.isNotEmpty) {
         final result = res.values.first;
@@ -1358,15 +1363,42 @@ class ApiProvider {
     }
   }
 
+  Future<Response> updateChild(
+    DateTime updatedBirthDate,
+    int childId,
+  ) async {
+    try {
+      Map<dynamic, dynamic> requestBody = {
+        "birth_date": (updatedBirthDate.toString()).substring(0, 10),
+      };
+
+      Response response = await client.post(
+        Uri.parse(
+          '$baseUrl/user/children/$childId',
+        ),
+        headers: await getHeaders(),
+        body: jsonEncode(
+          requestBody,
+        ),
+      );
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   // receive points
   Future<void> receivePoints() async {
     try {
       var response = await client.post(
-        Uri.parse('$baseUrl/user/get_points'),
+        Uri.parse(
+          '$baseUrl/user/get_points',
+        ),
         headers: await getHeaders(),
       );
-
-      log("receivePointsStatusCode is: " + response.statusCode.toString());
+      log(
+        "receivePointsStatusCode is: " + response.statusCode.toString(),
+      );
     } catch (e) {
       throw e;
     }
@@ -1433,22 +1465,56 @@ class ApiProvider {
     }
   }
 
-  Future<Response> sendQuestionaireResultsToEmail(
+  Future<Response> sendQuestionaireResultsToEmail({
     int answerId,
     String email,
-  ) async {
-    Map<String, dynamic> data = {
+  }) async {
+    Map<dynamic, dynamic> data = {
       'answer_id': answerId,
       'email': email,
     };
+    var _body = jsonEncode(data);
     try {
       final response = await client.post(
         Uri.parse('$baseUrl/questionnaire/send'),
         headers: await getHeaders(),
-        body: json.encode(data),
+        body: _body,
       );
 
       return response;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> downloadFile(String link) async {
+    await File("").writeAsBytes(await readBytes(
+      Uri.parse(
+        link,
+      ),
+    ));
+  }
+
+  Future<void> updateSubscriptionStatus(
+      {bool status, String expirationDate}) async {
+    Map<String, dynamic> body = {
+      "subscription": status,
+      "expires": (expirationDate.toString()).substring(
+        0,
+        10,
+      ),
+    };
+    try {
+      Response response = await client.post(
+        Uri.parse('$baseUrl/user/subscription/store'),
+        body: jsonEncode(body),
+        headers: await getHeaders(),
+      );
+      if (response.statusCode == 200) {
+        log(
+          "updateSubscriptionStatus is: " + response.statusCode.toString(),
+        );
+      }
     } catch (e) {
       throw e;
     }

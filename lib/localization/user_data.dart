@@ -116,6 +116,8 @@ class UserData {
     return DataUser.fromJson(user);
   }
 
+  
+
   Future<void> clearData() async {
     final SharedPreferences prefs = await _prefs;
     prefs.remove('token');
