@@ -1,16 +1,27 @@
-# charity_app
+<p align="center"><a href="http://ozimplatform.com" target="_blank"><img src="https://static.tildacdn.com/tild6430-6563-4830-b538-363264643761/logo.svg" width="400"></a></p>
 
-A new Flutter application.
+## About Ozim Platform
 
-## Getting Started
+Ozim Platform is a mobile app for parents of children of early age. It contains information on early development and intervention through text and video format. We are bringing together researchers in the field of education, inclusion, and specialists in early intervention to help parents develop their children's skills at home.
 
-This project is a starting point for a Flutter application.
+## Learning Ozim Platform
 
-A few resources to get you started if this is your first Flutter project:
+Ozim Platform mobile app has the most useful information on children's development including the children with special needs. To download the app please visit the [Ozim Platform page](http://ozimplatform.com/en/?utm=en), App Store or Google Play.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+We also have information about our other projects and events [here](http://ozimplatform.com/en/?utm=en)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Contributing
+
+Thank you for considering contributing to the Ozim Platform! If you are interested in becoming a sponsor, please visit the Ozim Platform page.The contact details for contributions can be found at the [Ozim Platform](http://ozimplatform.com/en/?utm=en).
+
+## Code of Conduct
+
+In order to ensure that the Ozim Platform community is welcoming to all, please abide the Code of Conduct: be tolerant of opposing views and ensure that your language and actions are free of personal attacks.
+
+## Security Vulnerabilities
+
+If you discover a security vulnerability within Ozim Platform, please send an e-mail to Assem Tazhiyeva via [ozim.project@gmail.com](mailto:ozim.project@gmail.com). All security vulnerabilities will be promptly addressed.
+
+## License
+
+The Ozim Platform framework is open-sourced software licensed under the [BSD 3-Clause](https://github.com/flutter/flutter/blob/master/LICENSE).
