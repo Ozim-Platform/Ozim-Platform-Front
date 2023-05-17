@@ -18,6 +18,10 @@ Thank you for considering contributing to the Ozim Platform! If you are interest
 
 In order to ensure that the Ozim Platform community is welcoming to all, please abide the Code of Conduct: be tolerant of opposing views and ensure that your language and actions are free of personal attacks.
 
+## Privacy Policy
+
+The Privacy policy of the mobile app Ozim Platform is available at [Privacy Policy](https://github.com/Ozim-Platform/Ozim-Platform/blob/7167ea40f2ed16e60a9ca76271ccbbb941485488/documents/Ozim%20Platform%20PrivacyPolicy.pdf).
+
 ## Security Vulnerabilities
 
 If you discover a security vulnerability within Ozim Platform, please send an e-mail to Assem Tazhiyeva via [ozim.project@gmail.com](mailto:ozim.project@gmail.com). All security vulnerabilities will be promptly addressed.
