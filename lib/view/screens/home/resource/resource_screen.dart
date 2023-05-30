@@ -17,9 +17,9 @@ class ResourceScreen extends StatefulWidget {
 
 class _ResourceScreenState extends State<ResourceScreen>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController tabController;
   void initState() {
-    _tabController = TabController(length: widget.category.length, vsync: this);
+    tabController = TabController(length: widget.category.length, vsync: this);
     super.initState();
   }
 
@@ -31,7 +31,7 @@ class _ResourceScreenState extends State<ResourceScreen>
         list: widget.category,
         model: model,
         buildMethod: getMainUI,
-        controller: _tabController,
+        controller: tabController,
       ),
       onViewModelReady: (model) {
         model.getLinks(widget.category);
@@ -43,11 +43,10 @@ class _ResourceScreenState extends State<ResourceScreen>
   Widget getMainUI(context, ResourceViewModel viewmodel, String category,
       List<Category> allCategories) {
     return CustomRecordList<ResourceViewModel>(
-        model: viewmodel,
-        category: category,
-        allCategories: allCategories,
-        parentController: _tabController,);
+      model: viewmodel,
+      category: category,
+      allCategories: allCategories,
+      parentController: tabController,
+    );
   }
-
-  
 }

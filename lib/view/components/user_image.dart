@@ -4,12 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserImage extends StatelessWidget {
-  const UserImage({Key key, @required this.userUrl, this.size = 45})
-      : super(key: key);
+  const UserImage({
+    Key key,
+    @required this.userUrl,
+    this.size = 45,
+  }) : super(key: key);
 
   final String userUrl;
   final double size;
-
   @override
   Widget build(BuildContext context) {
     if (userUrl == null || userUrl == '') {

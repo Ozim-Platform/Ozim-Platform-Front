@@ -3,6 +3,7 @@ import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/view/screens/common/bottom_bar_detail_viemodel.dart';
 import 'package:charity_app/view/theme/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FavoriteLink extends StatelessWidget {
   const FavoriteLink({
@@ -55,7 +56,7 @@ class FavoriteLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
+      height: 40.h,
       child: GestureDetector(
         excludeFromSemantics: true,
         onPanUpdate: (details) {
@@ -66,18 +67,21 @@ class FavoriteLink extends StatelessWidget {
         },
         onTap: () => onFavClick(context),
         child: Stack(
-          alignment: Alignment.center,
+          alignment: Alignment.centerRight,
           children: [
             Image.asset(
               'assets/image/favorite_shadow.png',
+              width: MediaQuery.of(context).size.width > 500 ? 200.h : 50.h,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 22, top: 5),
+              padding: EdgeInsets.only(top: 5.w),
               child: Icon(
                 data.inBookmarks == true
                     ? Icons.bookmark
                     : Icons.bookmark_outline,
                 color: AppColor.primary,
+                // size: MediaQuery.of(context).size.width > 500 ? 20.w : 20.w,
+                size: 20.w,
               ),
             ),
           ],

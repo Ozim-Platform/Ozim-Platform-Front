@@ -57,7 +57,7 @@ class _RoomsState extends State<Rooms> {
           return Center(
               child: Container(
                   child: EmptyData(
-            text: getTranslated(context,"no_messages"),
+            text: getTranslated(context, "no_messages"),
           )));
 
         List data = snapshot.data.data()['rooms'];
@@ -73,13 +73,14 @@ class _RoomsState extends State<Rooms> {
           return Center(
               child: Container(
                   child: EmptyData(
-            text: getTranslated(context,"no_messages"),
+            text: getTranslated(context, "no_messages"),
           )));
 
         return Padding(
           padding: const EdgeInsets.all(25.0),
           child: ListView(
             shrinkWrap: true,
+            physics: BouncingScrollPhysics(),
             children: data.map((document) {
               Map<String, dynamic> d = document as Map<String, dynamic>;
               return GestureDetector(

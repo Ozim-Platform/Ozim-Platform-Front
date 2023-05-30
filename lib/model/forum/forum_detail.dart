@@ -113,6 +113,8 @@ class User {
   int points;
   String type;
   bool subscription;
+  var subscriptionMapperValue;
+  String madePurchaseFrom;
   User({
     this.id,
     this.phone,
@@ -122,6 +124,7 @@ class User {
     this.points,
     this.type,
     this.subscription,
+    this.madePurchaseFrom,
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -135,6 +138,24 @@ class User {
     subscription = json['subscription'] != null
         ? json['subscription']["subscription"]
         : false;
+    subscriptionMapperValue = json['subscription'] != null
+        ? subscriptionMapper(json['subscription'])
+        : null;
+    madePurchaseFrom = json['subscription'] != null
+        ? json["subscription"]["store"] != null
+            ? json["subscription"]["store"]
+            : "unkown"
+        : "unkown";
+  }
+
+  bool subscriptionMapper(Map<dynamic, dynamic> subscriptionEntry) {
+    if (DateTime.parse(subscriptionEntry["expires"]).isBefore(
+      DateTime.now(),
+    )) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   Map<String, dynamic> toJson() {

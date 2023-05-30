@@ -1,4 +1,5 @@
 import 'package:charity_app/view/widgets/custom/custom_appbar.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class CustomTabController extends StatelessWidget {
@@ -21,6 +22,16 @@ class CustomTabController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (controller != null) {
+      controller.addListener(
+        () {
+          if (controller.indexIsChanging) {
+            FocusScope.of(context).requestFocus(FocusNode());
+          }
+        },
+      );
+    }
+
     return DefaultTabController(
       length: list.length,
       child: Scaffold(
@@ -34,7 +45,6 @@ class CustomTabController extends StatelessWidget {
         ),
         body: TabBarView(
           controller: controller,
-          physics: NeverScrollableScrollPhysics(),
           children: List<Widget>.generate(list.length, (int index) {
             return buildMethod(context, model, list[index].sysName, list);
           }),

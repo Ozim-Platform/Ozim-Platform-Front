@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:charity_app/data/in_app_purchase/store_config.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/persistance/hive_boxes.dart';
 import 'package:charity_app/providers/locator.dart';
@@ -12,22 +15,33 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:theme_provider/theme_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'localization/demo_localizations.dart';
 
+final GlobalKey<NavigatorState> navigatorKey =
+    GlobalKey(debugLabel: "Main Navigator");
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Hive.initFlutter();
+
   await Hive.openBox<int>(HiveBoxes.countBox);
-  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-  //   statusBarColor: Colors.transparent,
-  // ));
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
 
   SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  if (Platform.isAndroid) {
+    await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+  }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -150,35 +164,47 @@ class _MyAppState extends State<MyApp> {
             controller.forgetSavedTheme();
           }
         },
+
         child: ThemeConsumer(
           child: Builder(
-            builder: (themeContext) => MaterialApp(
-              theme: ThemeProvider.themeOf(themeContext).data,
-              debugShowCheckedModeBanner: false,
-              title: 'Charity App',
-              home: SplashScreen(),
-              locale: _locale,
-              supportedLocales: [
-                Locale('kk', 'KK'),
-                Locale('ru', 'RU'),
-              ],
-              localizationsDelegates: [
-                DemoLocalization.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              localeResolutionCallback: (locale, supportedLocales) {
-                for (var supportedLocale in supportedLocales) {
-                  if (supportedLocale.languageCode == locale.languageCode &&
-                      supportedLocale.countryCode == locale.countryCode) {
-                    return supportedLocale;
-                  }
-                  // //print(supportedLocale);
-                }
-                return supportedLocales.first;
-              },
-            ),
+            builder: (themeContext) => ScreenUtilInit(
+                designSize: Size(
+                  390,
+                  844,
+                ),
+                builder: (context, child) {
+
+                  return MaterialApp(
+                    navigatorKey: navigatorKey,
+                    theme: ThemeProvider.themeOf(themeContext).data,
+                    debugShowCheckedModeBanner: false,
+                    title: 'Charity App',
+                    home: SplashScreen(),
+                    locale: _locale,
+                    supportedLocales: [
+                      Locale('kk', 'KK'),
+                      Locale('ru', 'RU'),
+                    ],
+                    localizationsDelegates: [
+                      DemoLocalization.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    localeResolutionCallback: (locale, supportedLocales) {
+                      for (var supportedLocale in supportedLocales) {
+                        if (supportedLocale.languageCode ==
+                                locale.languageCode &&
+                            supportedLocale.countryCode == locale.countryCode) {
+                          return supportedLocale;
+                        }
+                        // //print(supportedLocale);
+                      }
+
+                      return supportedLocales.first;
+                    },
+                  );
+                }),
           ),
         ),
       ),

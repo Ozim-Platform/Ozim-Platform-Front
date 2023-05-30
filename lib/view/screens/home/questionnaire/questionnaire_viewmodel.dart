@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:charity_app/data/db/local_questionaires_db.dart';
 import 'package:charity_app/localization/language_constants.dart';
+import 'package:charity_app/localization/user_data.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/toast_utils.dart';
@@ -25,7 +26,9 @@ class QuestionnaireViewModel extends BaseViewModel {
   TextEditingController emailController = TextEditingController();
 
   int childId;
-  bool isLoading;
+
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
+
   List<TextEditingController> commentControllers = [
     TextEditingController(),
     TextEditingController(),
@@ -51,10 +54,11 @@ class QuestionnaireViewModel extends BaseViewModel {
 
   String userEmail;
 
-  QuestionnaireViewModel(
-      {QuestionnaireData passedQuestionnaireData,
-      int childId,
-      bool isResultModel}) {
+  QuestionnaireViewModel({
+    QuestionnaireData passedQuestionnaireData,
+    int childId,
+    bool isResultModel,
+  }) {
     this.childId = childId;
     init(passedQuestionnaireData, isResultModel);
   }
@@ -83,6 +87,11 @@ class QuestionnaireViewModel extends BaseViewModel {
 
     notifyListeners();
     setBusy(false);
+  }
+
+  Future<void> getUserEmail() async {
+    var _userEmail = await UserData().getEmail();
+    emailController.text = _userEmail ?? "";
   }
 
   void actionIfResultModel(QuestionnaireData passedQuestionnaireData) {
@@ -158,6 +167,8 @@ class QuestionnaireViewModel extends BaseViewModel {
 
   Future<bool> submitQuestionnaire(context) async {
     // get values from the controllers and set them to the answer
+    isLoading.value = true;
+    notifyListeners();
 
     setAnswerComment();
     // create an object which will be converted to json and sent to server
@@ -177,14 +188,21 @@ class QuestionnaireViewModel extends BaseViewModel {
       );
 
       questionaireAnswers = _questionaireAnswersToSend.answers;
-
+      _questionaireAnswersToSend.answerId = jsonDecode(response.body)["id"];
+      isLoading.value = false;
+      notifyListeners();
       return true;
     } else {
+      isLoading.value = false;
+      notifyListeners();
       return false;
     }
   }
 
   Future<bool> sendResultsToEmail(BuildContext context) async {
+    isLoading.value = true;
+    notifyListeners();
+    emailController.text.replaceAll(' ', '');
     if (_questionaireAnswersToSend == null) {
       _questionaireAnswersToSend = questionnaireData.questionaireAnswers;
     }
@@ -200,6 +218,9 @@ class QuestionnaireViewModel extends BaseViewModel {
         context,
       );
       Navigator.of(context).popUntil((route) => route.isFirst);
+
+      isLoading.value = false;
+      notifyListeners();
       return true;
     } else {
       ToastUtils.toastErrorGeneral(
@@ -207,6 +228,8 @@ class QuestionnaireViewModel extends BaseViewModel {
         context,
       );
 
+      isLoading.value = false;
+      notifyListeners();
       return false;
     }
   }
@@ -263,14 +286,12 @@ class QuestionnaireViewModel extends BaseViewModel {
 
     for (int i = 0; i < 6; i += 1) {
       for (int j = 0; j < 6; j += 1) {
-        log("i:$i");
-        log("j:$j");
         if (questionaireAnswers.answers[i].answers[j].value != null) {
           numberOfAnswersForCurrentPage += 1;
         }
       }
 
-      if (numberOfAnswersForCurrentPage == 5) {
+      if (numberOfAnswersForCurrentPage == 6) {
         haveAnswersTillIndex += 1;
         numberOfAnswersForCurrentPage = 0;
       } else {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/localization/user_data.dart';
@@ -71,7 +73,8 @@ class CommentViewModel extends BaseViewModel {
     setSendCallback(null);
     setWritting(hint: 'your_comment');
     notifyListeners();
-    ToastUtils.toastInfoGeneral(getTranslated(context, 'message_is_sended'), context);
+    ToastUtils.toastInfoGeneral(
+        getTranslated(context, 'message_is_sended'), context);
   }
 
   setSendCallback(callback) {
@@ -195,7 +198,8 @@ class CommentViewModel extends BaseViewModel {
         phone: ownProfile.phone,
         name: ownProfile.name,
         avatar: ownProfile.avatar);
-    final DataComment comment = data.comments.firstWhere((element) => element.id == commentId);
+
+    final DataComment comment = findReplyById(data.comments, commentId);
     comment.replies.insert(0, reply);
     scrollToComment = reply.id;
     notifyListeners();
@@ -273,5 +277,20 @@ class CommentViewModel extends BaseViewModel {
     //         //print("Error: $error");
     //       }).whenComplete(() => {_isLoading = false, notifyListeners()}),
     //     });
+  }
+
+  DataComment findReplyById(List<DataComment> comments, int targetId) {
+    for (var comment in comments) {
+      if (comment.id == targetId) {
+        return comment;
+      }
+
+      var result = findReplyById(comment.replies, targetId);
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return null;
   }
 }

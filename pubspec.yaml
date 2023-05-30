@@ -27,8 +27,6 @@ dependencies:
   tab_indicator_styler: ^2.0.0
   cached_network_image: ^3.1.0
 
-
-
   notification_permissions: ^0.6.1
   image_picker: ^0.8.0+3
   mask_text_input_formatter: ^2.0.0
@@ -38,11 +36,11 @@ dependencies:
   dio: ^5.1.1
   flutter_svg_provider: ^1.0.3
 
-  flutter_html: ^2.0.0
-  # flutter_html: ^3.0.0-alpha.6
+  flutter_html: 3.0.0-alpha.5
+  # flutter_html: ^3.0.0-alpha.5
+
   path_provider: ^2.0.2
   flutter_local_notifications: ^13.0.0
-  webview_flutter: ^2.0.4
 
   flutter_cache_manager: ^3.1.2
   pdf_viewer_plugin: ^2.0.1
@@ -77,6 +75,9 @@ dependencies:
   auto_size_text: ^3.0.0
   theme_provider: ^0.5.0
   flutter_datetime_picker: ^1.5.1
+  flutter_screenutil: ^5.7.0
+  flutter_inappwebview: ^5.7.2+3
+  youtube_player_iframe: ^4.0.4
 
   #Animation Plugin
   lottie: ^2.2.0
@@ -97,11 +98,12 @@ dependencies:
   sign_in_with_apple: ^4.3.0
 
   # iap
-  # in_app_purchase: ^3.1.5
+  # purchases_flutter: ^4.12.0
   flutter_inapp_purchase: ^5.4.1
-  
+
 dependency_overrides: 
   flutter_svg: ^1.0.0
+
 
 dev_dependencies:
   flutter_launcher_icons: ^0.12.0

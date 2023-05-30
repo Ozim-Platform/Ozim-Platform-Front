@@ -10,6 +10,7 @@ import 'package:charity_app/view/widgets/app_bar_auth.dart';
 import 'package:charity_app/view/widgets/custom/getWidgetLogoHorizontal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 
@@ -85,6 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   _size.height > 600 ? 25 : 8)),
                           Text(
                             getTranslated(context, 'add_account'),
+                            // textScaleFactor: SizeConfig.textScaleFactor(),
                             style: TextStyle(
                                 // fontFamily: 'Arial',
                                 fontSize: SizeConfig.calculateTextSize2(
@@ -133,8 +135,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     controller: model.usernameController,
                                     style: const TextStyle(color: Colors.white),
                                     decoration: InputDecoration(
-                                      hintText: 
-                                      getTranslated(context, 'username'),
+                                      hintText:
+                                          getTranslated(context, 'username'),
                                       hintStyle: TextStyle(
                                           color: Colors.white,
                                           fontSize:
@@ -209,11 +211,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       GestureDetector(
                                         onTap: togglePassword,
-                                        child: Container(
-                                          child: SvgPicture.asset(
-                                            "assets/image/eye.svg",
-                                          ),
-                                        ),
+                                        child: _isObscured == true
+                                            ? SvgPicture.asset(
+                                                'assets/image/eye.svg',
+                                                width: SizeConfig
+                                                    .calculateBlockHorizontal(
+                                                        24.w),
+                                                height: SizeConfig
+                                                    .calculateBlockVertical(
+                                                        24.w),
+                                                fit: BoxFit.scaleDown,
+                                              )
+                                            : Image.asset(
+                                                'assets/image/open_eye.png',
+                                                width: SizeConfig
+                                                    .calculateBlockHorizontal(
+                                                        35.w),
+                                                height: SizeConfig
+                                                    .calculateBlockVertical(
+                                                        35.w),
+                                                fit: BoxFit.scaleDown,
+                                              ),
                                       )
                                     ],
                                   ),
@@ -274,16 +292,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       GestureDetector(
                                         onTap: togglePassword,
-                                        child: SizedBox(
-                                          width: 18,
-                                          height: 18,
-                                          child: SvgPicture.asset(
-                                            "assets/image/eye.svg",
-                                            width: 15,
-                                            height: 15,
-                                            fit: BoxFit.scaleDown,
-                                          ),
-                                        ),
+                                        child: _isObscured == true
+                                            ? SvgPicture.asset(
+                                                'assets/image/eye.svg',
+                                                width: SizeConfig
+                                                    .calculateBlockHorizontal(
+                                                        24.w),
+                                                height: SizeConfig
+                                                    .calculateBlockVertical(
+                                                        24.w),
+                                                fit: BoxFit.scaleDown,
+                                              )
+                                            : Image.asset(
+                                                'assets/image/open_eye.png',
+                                                width: SizeConfig
+                                                    .calculateBlockHorizontal(
+                                                        25.w),
+                                                height: SizeConfig
+                                                    .calculateBlockVertical(
+                                                        25.w),
+                                                fit: BoxFit.scaleDown,
+                                              ),
                                       )
                                     ],
                                   ),
@@ -387,6 +416,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           const EdgeInsets.only(left: 10.0),
                                       child: Text(
                                         getTranslated(context, 'user_type'),
+                                        // textScaleFactor:
+                                        // SizeConfig.textScaleFactor(),
                                         style: TextStyle(
                                           // fontFamily: 'Arial',
                                           fontSize:
@@ -485,6 +516,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   child: Text(
                                     getTranslated(
                                         context, 'agree_personal_data'),
+                                    // textScaleFactor:
+                                    //     SizeConfig.textScaleFactor(),
                                     style: TextStyle(
                                       fontSize:
                                           SizeConfig.calculateTextSize(16),
@@ -506,7 +539,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: AppThemeStyle.primaryColor,
                               text: getTranslated(context, 'create'),
                               onTap: () {
-                                model.registration(context);
+                                if (!model.isLoading) {
+                                  model.registration(context);
+                                }
                               },
                             ),
                           ),

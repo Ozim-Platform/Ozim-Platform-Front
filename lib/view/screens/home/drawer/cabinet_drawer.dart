@@ -24,6 +24,7 @@ import 'package:charity_app/view/theme/app_color.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:charity_app/view/widgets/exit_modal_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 
@@ -62,7 +63,10 @@ class CabinetDrawer extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 25, bottom: 4),
-                          child: NotificationButton(removePaddings: true),
+                          child: NotificationButton(
+                            removePaddings: true,
+                            isBottomBar: false,
+                          ),
                         ),
                         // SizedBox(
                         //     height: SizeConfig.calculateBlockVertical(50)),
@@ -225,6 +229,8 @@ class CabinetDrawer extends StatelessWidget {
                                     left: 10),
                                 child: Row(
                                   children: [
+                                    Icon(Icons.bookmark_outline,
+                                        color: Colors.white),
                                     // Icon(FlevaIcons.bookmark_outline,
                                     //     color: Colors.white),
                                     SizedBox(

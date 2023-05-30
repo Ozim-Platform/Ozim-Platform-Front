@@ -7,6 +7,7 @@ import 'package:charity_app/view/theme/app_color.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoticeCard extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -47,13 +48,13 @@ class _NoticeCardState extends State<NoticeCard> {
       elevation: 0.0,
       color: AppColor.scaffoldBackground,
       child: Container(
-        height: widget.needNotice ? 118 : 90,
+        height: widget.needNotice ? 118.w : 90.w,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             UserImage(
               userUrl: _avatar,
-              size: 60,
+              size: 60.w,
             ),
             SizedBox(width: SizeConfig.calculateBlockVertical(20)),
             Expanded(
@@ -69,29 +70,31 @@ class _NoticeCardState extends State<NoticeCard> {
                       ),
                       if (widget.needNotice)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          padding: EdgeInsets.symmetric(vertical: 5.w),
                           child: Text(
                             getTranslated(context, 'notice_reply_annotation'),
                             style: AppThemeStyle.normalTextItalic,
+                            // textScaleFactor: SizeConfig.textScaleFactor(),
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 2, right: 30),
+                        padding: EdgeInsets.only(top: 2.w, right: 30.w),
                         child: SizedBox(
-                          height: 40,
+                          height: 40.w,
                           child: Text(
                             widget.data['messages'].length > 0
                                 ? widget.data['messages'].last['message']
                                 : widget.data['email'],
                             style: AppThemeStyle.normalText,
                             maxLines: 2,
+                            // textScaleFactor: SizeConfig.textScaleFactor(),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
                       Expanded(child: SizedBox()),
                       Container(
-                        height: 1,
+                        height: 1.w,
                         width: double.infinity,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
@@ -102,11 +105,12 @@ class _NoticeCardState extends State<NoticeCard> {
                       Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 2),
+                          padding: EdgeInsets.only(top: 2.w),
                           child: Text(
                             dateFormatter2(getDate(widget.data['timecreated'],
                                 milliseconds: true)),
                             style: AppThemeStyle.normalTextLighter,
+                            // textScaleFactor: SizeConfig.textScaleFactor(),
                           ),
                         ),
                       ),

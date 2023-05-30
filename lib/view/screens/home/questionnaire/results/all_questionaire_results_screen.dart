@@ -1,4 +1,5 @@
 import 'package:charity_app/localization/language_constants.dart';
+import 'package:charity_app/localization/user_data.dart';
 import 'package:charity_app/model/child/child.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/utils/formatters.dart';
@@ -6,6 +7,7 @@ import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_answer_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AllQuestionareResultsScreen extends StatefulWidget {
   Child child;
@@ -48,7 +50,7 @@ class _AllQuesionareResultsScreenState
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0XFF79BCB7),
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -77,13 +79,15 @@ class QuestionareAnswerPreview extends StatelessWidget {
     return InkWell(
       splashColor: Colors.transparent,
       onTap: () {
+        // String email = await UserData().getEmail();
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => QuestionaireAnswerScreen(
               model: QuestionnaireViewModel(
-                passedQuestionnaireData:questionnaireData,
-                childId:childId,
-                isResultModel:true,
+                passedQuestionnaireData: questionnaireData,
+                childId: childId,
+                isResultModel: true,
+                // userEmail: email,
               ),
               data: questionnaireData,
               questionaireAnswers:
@@ -95,10 +99,10 @@ class QuestionareAnswerPreview extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0XFFFFFFFFF),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.w),
         ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-        margin: const EdgeInsets.all(24),
+        padding: EdgeInsets.fromLTRB(24.w, 16.w, 24.w, 16.w),
+        margin: EdgeInsets.all(24.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -107,9 +111,9 @@ class QuestionareAnswerPreview extends StatelessWidget {
                 context,
                 ChildAge.fromInteger(questionnaireData.age),
               ),
-              style: const TextStyle(
+              style: TextStyle(
                 color: Color(0XFF778083),
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w400,
               ),
             ),

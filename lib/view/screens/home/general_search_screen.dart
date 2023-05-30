@@ -213,7 +213,6 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
           if (query != '') {
             query = query;
             await model.search(query);
-            // print(model.isLoading);
           }
         }
 

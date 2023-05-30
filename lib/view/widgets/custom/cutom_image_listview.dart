@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ImageListview extends StatefulWidget {
   final List<String> imgList;
   BuildContext context;
   Function(int index, BuildContext context) goToBanner;
-  ImageListview({Key key, this.imgList, this.context,this.goToBanner}) : super(key: key);
+  ImageListview({Key key, this.imgList, this.context, this.goToBanner})
+      : super(key: key);
 
   @override
   State<ImageListview> createState() => _ImageListviewState();
@@ -23,8 +25,7 @@ class _ImageListviewState extends State<ImageListview> {
     return Column(
       children: [
         Container(
-          height: 200,
-          // margin: EdgeInsets.only(left: 16, right: 16),
+          height: MediaQuery.of(context).size.width > 500 ? 200.h : 200.h,
           child: PageView.builder(
             itemCount: widget.imgList.length,
             onPageChanged: (index) {
@@ -35,17 +36,16 @@ class _ImageListviewState extends State<ImageListview> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  if(widget.context!=null){
-
-                  widget.goToBanner(index, context);
-                  // pass data to this page
+                  if (widget.context != null) {
+                    widget.goToBanner(index, context);
+                    // pass data to this page
                   }
                 },
                 child: Container(
-                  // margin: EdgeInsets.only(left: 16, right: 16, top: 32),
                   padding: EdgeInsets.only(
-                    left: 24,
-                    right: 24,
+                    left: MediaQuery.of(context).size.width > 500 ? 55.h : 37.h,
+                    right:
+                        MediaQuery.of(context).size.width > 500 ? 55.h : 37.h,
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(
@@ -61,7 +61,7 @@ class _ImageListviewState extends State<ImageListview> {
             },
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
@@ -69,8 +69,8 @@ class _ImageListviewState extends State<ImageListview> {
             (index) => AnimatedContainer(
               duration: Duration(milliseconds: 200),
               margin: EdgeInsets.symmetric(horizontal: 4),
-              width: 6,
-              height: 6,
+              width: 6.h,
+              height: 6.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _currentIndex == index

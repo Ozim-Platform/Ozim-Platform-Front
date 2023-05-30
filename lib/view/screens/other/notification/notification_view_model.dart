@@ -25,4 +25,6 @@ class NotificationViewModel extends BaseViewModel {
     _isLoading = false;
     notifyListeners();
   }
+
+  
 }

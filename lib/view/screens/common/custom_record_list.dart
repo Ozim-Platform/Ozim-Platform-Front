@@ -20,6 +20,7 @@ import 'package:charity_app/view/theme/app_color.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 
@@ -58,22 +59,19 @@ class _CustomRecordListState<T extends BaseViewModel>
   List get allCategories => widget.allCategories;
   ScrollController _scrollController = ScrollController();
 
-
   @override
   initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-
   }
 
   void _onScroll() {
     dynamic _model = viewmodel as dynamic;
 
     if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent ) {
+        _scrollController.position.maxScrollExtent) {
       _model.paginate();
-    } else {
-      log(_scrollController.position.pixels.toString());
+      log('paginating');
     }
   }
 
@@ -108,8 +106,13 @@ class _CustomRecordListState<T extends BaseViewModel>
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: getListUI(context, viewmodel, category, allCategories),
+          padding: EdgeInsets.fromLTRB(10.w, 10.w, 10.w, 10.w),
+          child: getListUI(
+            context,
+            viewmodel,
+            category,
+            allCategories,
+          ),
         ),
       ),
     );
@@ -124,17 +127,26 @@ class _CustomRecordListState<T extends BaseViewModel>
     if (model.instance?.data != null && model.instance.data.length > 0) {
       List list = [];
       if (widget.type == 'category') {
-        list = getListOfInstancesByCategory(model.instance.data, category);
+        list = getListOfInstancesByCategory(
+          model.instance.data,
+          category,
+        );
       } else if (widget.type == 'folder') {
-        list = getListOfInstancesByFolder(model.instance.data, category);
+        list = getListOfInstancesByFolder(
+          model.instance.data,
+          category,
+        );
         if (list.isEmpty)
           return Center(
-              child: Text(getTranslated(context, 'data_not_found'),
-                  style: AppThemeStyle.normalTextLighter));
+            child: Text(
+              getTranslated(context, 'data_not_found'),
+              style: AppThemeStyle.normalTextLighter,
+            ),
+          );
       } else if (widget.type == 'search') {
         list = model.article.data + model.service.data + model.diagnosis.data;
       }
-      list = list.reversed.toList();
+
       return ListView.builder(
         itemCount: list.length,
         controller: _scrollController,
@@ -218,12 +230,13 @@ class _CardBuilderState extends State<CardBuilder> {
     InAppPurchaseDataRepository().hasActiveSubscription.addListener(() {
       setState(() {});
     });
+    super.initState();
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  dispose() {
     InAppPurchaseDataRepository().hasActiveSubscription.removeListener(() {});
+    super.dispose();
   }
 
   swipedLeft() {
@@ -246,7 +259,6 @@ class _CardBuilderState extends State<CardBuilder> {
         list: [data],
       );
     }
-
     return Column(
       children: [
         Stack(
@@ -255,23 +267,11 @@ class _CardBuilderState extends State<CardBuilder> {
             InkWell(
               splashColor: Colors.transparent,
               onTap: () async {
-                // if (data.type == "link") {
-                //   if (!data.link.startsWith("https://")) {
-                //     data.link = "https://" + data.link;
-                //   }
-                //   // launch in web view
-                //   Navigator.of(context).push(
-                //     MaterialPageRoute(
-                //       builder: (context) => LibraryWebViewScreen(
-                //         data: data,
-                //       ),
-                //     ),
-                //   );
-                // } else
                 if (data.isPaid == false ||
                     InAppPurchaseDataRepository().hasActiveSubscription.value ==
                         true) {
-                  Navigator.of(context).push(
+                  Navigator.of(context)
+                      .push(
                     MaterialPageRoute(
                       builder: (context) => BottomBarDetail(
                         instance: model,
@@ -282,7 +282,10 @@ class _CardBuilderState extends State<CardBuilder> {
                         parentController: widget.parentController,
                       ),
                     ),
-                  );
+                  )
+                      .then((value) {
+                    setState(() {});
+                  });
                 }
               },
               child: Stack(
@@ -290,24 +293,37 @@ class _CardBuilderState extends State<CardBuilder> {
                   Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(15.0.w),
                     ),
                     child: Container(
-                      height: 75,
+                      height: 75.w,
                       child: Row(
                         children: [
                           Stack(
                             alignment: Alignment.centerLeft,
                             children: [
-                              SvgPicture.asset(
-                                'assets/svg/icons/article_badge.svg',
-                              ),
                               Container(
-                                height: 75.0,
-                                width: 75.0,
+                                width: 75.w,
+                                height: 75.w,
+                                margin: EdgeInsets.only(
+                                  left: 15.w,
+                                ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
-                                    15.0,
+                                    15.w,
+                                  ),
+                                  color: Color(0xFFF4F4F4),
+                                ),
+                                transform: Matrix4.rotationZ(
+                                  10.67 * 3.1415926536 / 180,
+                                ),
+                              ),
+                              Container(
+                                height: 75.w,
+                                width: 75.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    15.w,
                                   ),
                                   image: DecorationImage(
                                     image: data.preview != null
@@ -319,7 +335,8 @@ class _CardBuilderState extends State<CardBuilder> {
                                                 'assets/image/article_image.png')
                                             : CachedNetworkImageProvider(
                                                 Constants.MAIN_HTTP +
-                                                    data.image.path)),
+                                                    data.image.path,
+                                              )),
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -361,21 +378,19 @@ class _CardBuilderState extends State<CardBuilder> {
                                     onForceUpdateList: widget.onForceUpdateList,
                                   ),
                                 ),
-                          // SwipedContainerFavorite(
-                          //   _swiped,
-                          //   widget.onForceUpdateList,
-                          //   swipedRight,
-                          //   data: data,
-                          // ),
                         ],
                       ),
                     ),
                   ),
                   (data.isPaid == true &&
-                          InAppPurchaseDataRepository()
-                                  .hasActiveSubscription
-                                  .value ==
-                              false)
+                          (InAppPurchaseDataRepository()
+                                      .hasActiveSubscription
+                                      .value ==
+                                  false ||
+                              InAppPurchaseDataRepository()
+                                      .hasActiveSubscription
+                                      .value ==
+                                  null))
                       ? InkWell(
                           splashColor: Colors.transparent,
                           onTap: () {
@@ -385,29 +400,21 @@ class _CardBuilderState extends State<CardBuilder> {
                               ),
                             );
                           },
-                          child: LockedCardOverlay(),
+                          child: Padding(
+                            padding: EdgeInsets.all(
+                                4), // default margin value for the Flutter Card widget
+                            child: LockedCardOverlay(),
+                          ),
                         )
                       : SizedBox(),
                 ],
               ),
             ),
-            // FavoriteLink(
-            //   data: data,
-            //   swipeLeft: widget.enableSwipe ? swipedLeft : () {},
-            //   swipeRight: swipedRight,
-            //   onForceUpdateList: widget.onForceUpdateList,
-            // ),
-            // SwipedContainerFavorite(
-            //   _swiped,
-            //   widget.onForceUpdateList,
-            //   swipedRight,
-            //   data: data,
-            // ),
           ],
         ),
         data.type != "link"
             ? Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
+                padding: EdgeInsets.only(left: 16.w, right: 16.w),
                 child: Row(
                   children: [
                     Expanded(
@@ -415,13 +422,13 @@ class _CardBuilderState extends State<CardBuilder> {
                       child: Row(children: <Widget>[
                         SvgPicture.asset(
                           'assets/svg/icons/eye.svg',
-                          width: 14,
-                          height: 14,
+                          width: 14.w,
+                          height: 14.w,
                           color: AppColor.lightGrey,
-                          fit: BoxFit.scaleDown,
+                          // fit: BoxFit.scaleDown,
                         ),
                         SizedBox(
-                          width: 12,
+                          width: 12.w,
                         ),
                         Text(
                           '${data.views}',
@@ -434,13 +441,13 @@ class _CardBuilderState extends State<CardBuilder> {
                       child: Row(children: <Widget>[
                         SvgPicture.asset(
                           'assets/svg/icons/heart.svg',
-                          width: 14,
-                          height: 14,
+                          width: 14.w,
+                          height: 14.w,
                           color: AppColor.lightGrey,
-                          fit: BoxFit.scaleDown,
+                          // fit: BoxFit.scaleDown,
                         ),
                         SizedBox(
-                          width: 5,
+                          width: 5.w,
                         ),
                         Text(
                           '${data.likes}',
@@ -454,14 +461,15 @@ class _CardBuilderState extends State<CardBuilder> {
                         children: [
                           SvgPicture.asset(
                             'assets/svg/icons/comment.svg',
-                            width: 14,
-                            height: 14,
+                            width: 14.w,
+                            height: 14.w,
+                            // autoadjust height
                             color: AppColor.lightGrey,
-                            fit: BoxFit.scaleDown,
+                            // fit: BoxFit.scaleDown,
                           ),
                           data.comments.isNotEmpty
                               ? Padding(
-                                  padding: const EdgeInsets.only(left: 3),
+                                  padding: EdgeInsets.only(left: 3.w),
                                   child: Text(
                                     data.comments.length.toString(),
                                     style:
@@ -473,19 +481,19 @@ class _CardBuilderState extends State<CardBuilder> {
                       ),
                     ),
                     Expanded(
-                      flex: 7,
+                      flex: 8,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           SvgPicture.asset(
                             'assets/svg/icons/clock.svg',
-                            width: 14,
-                            height: 14,
+                            width: 14.w,
+                            height: 14.w,
                             color: AppColor.lightGrey,
-                            fit: BoxFit.scaleDown,
+                            // fit: BoxFit.scaleDown,
                           ),
                           SizedBox(
-                            width: 5,
+                            width: 5.w,
                           ),
                           Text(
                             "${dateFormatter2(DateTime.fromMillisecondsSinceEpoch(data.createdAt * 1000))}",
@@ -519,20 +527,21 @@ class DownloadLink extends StatelessWidget {
   final Function onForceUpdateList;
 
   onFavClick(BuildContext context) async {
-    if (data.link != null && data.link.isNotEmpty) {
+    if (data.bookInformation != null && data.link.isNotEmpty) {
       Downloader().downloadFile(
         data.bookInformation.path,
         data.bookInformation.originalName,
+        context,
       );
     } else {
-      // 
+      //
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
+      height: 40.h,
       child: GestureDetector(
         excludeFromSemantics: true,
         onTap: () => onFavClick(context),
@@ -543,8 +552,16 @@ class DownloadLink extends StatelessWidget {
               'assets/image/favorite_shadow.png',
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 22, top: 5),
-              child: SvgPicture.asset("assets/svg/icons/download_icon.svg"),
+              padding: EdgeInsets.only(
+                left: 22.h,
+                top: 5.h,
+              ),
+              child: data.bookInformation != null
+                  ? SvgPicture.asset(
+                      "assets/svg/icons/download_icon.svg",
+                    )
+                  : SvgPicture.asset(
+                      "assets/svg/icons/download_icon_disabled.svg"),
             ),
           ],
         ),

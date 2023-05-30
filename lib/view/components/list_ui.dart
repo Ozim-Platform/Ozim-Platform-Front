@@ -1,4 +1,4 @@
-
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/material.dart';
 
 class ListUI extends StatefulWidget {
@@ -37,6 +37,7 @@ class _TextFieldState extends State<ListUI> {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.end,
               maxLines: 2,
+              // textScaleFactor: SizeConfig.textScaleFactor(),
             )
           ],
         ),

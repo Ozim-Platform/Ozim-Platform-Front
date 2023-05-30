@@ -14,6 +14,7 @@ class ProfileViewModel extends BaseViewModel {
 
   List<Child> _children = [];
   List<Child> get children => _children;
+  ValueNotifier<bool> navigateToAddChild = ValueNotifier(false);
 
   Child childToDisplay;
   QuestionnaireData questionnaireDataToDisplay;
@@ -21,73 +22,100 @@ class ProfileViewModel extends BaseViewModel {
   // iterate through all children, when meet new questionaire check if we already notified the user about it
   // if not then notify and save the date of notification
 
-  Future<void> initModel() async {
+  Future<void> initModel(var childIdFromPush) async {
     _isLoading = true;
-    checkNewQuestionaires();
+    checkNewQuestionaires(childIdFromPush);
+  }
+
+  Future<List<Child>> getChildren() async {
+    _children = await _apiProvider.getChildren();
+    _children.length != 0
+        ? navigateToAddChild.value = false
+        : navigateToAddChild.value = true;
+    notifyListeners();
+    return _children;
   }
 
   // we should check whether a user has child with available questionaire
-  Future<void> checkNewQuestionaires() async {
+  Future<void> checkNewQuestionaires(var childIdFromPush) async {
     List<Child> children = [];
 
-    children = await _apiProvider.getChildren();
+    children = await getChildren();
+    if (children.length != 0) {
+      navigateToAddChild.value = false;
+    } else {
+      navigateToAddChild.value = true;
+    }
+    notifyListeners();
+    if (childIdFromPush != null) {
+      children.forEach(
+        (element) {
+          if (element.childId == childIdFromPush) {
+            childToDisplay = element;
+            questionnaireDataToDisplay = element.newQuestionnaires[0];
+            questionnaireDataToDisplay = element.newQuestionnaires[0];
 
-    for (Child child in children) {
-      {
-        if (child.newQuestionnaires.length > 0) {
-          // check if we already notified the user about this new questioanire
+            shouldShowChildQuestionaire.value = true;
+          }
+        },
+      );
+    }
+    if (childIdFromPush == null) {
+      for (Child child in children) {
+        {
+          if (child.newQuestionnaires.length > 0) {
+            // check if we already notified the user about this new questioanire
 
-          // key would be a child_id and questionnaire_id
+            // key would be a child_id and questionnaire_id
 
-          String key = "local_notification_child_" +
-              child.childId.toString() +
-              "questionaire_" +
-              child.newQuestionnaires[0].id.toString();
+            String key = "local_notification_child_" +
+                child.childId.toString() +
+                "questionaire_" +
+                child.newQuestionnaires[0].id.toString();
 
-          var notificationDate =
-              await SharedPreferencesHelper(key: key).readNotificationDate();
-          if (notificationDate != null) {
-            // we already notified the user about this new questionaire
+            var notificationDate =
+                await SharedPreferencesHelper(key: key).readNotificationDate();
 
-            // calculate the difference between current date and the date of notification
+            if (notificationDate != null) {
+              // we already notified the user about this new questionaire
 
-            // if the difference is more than 7 days then notify again
-            Duration differenceBetweenPreviousShow = DateTime.now().difference(
-              DateTime.parse(notificationDate),
-            );
+              // calculate the difference between current date and the date of notification
 
-            if (differenceBetweenPreviousShow.compareTo(
-                  Duration(days: 7),
-                ) >=
-                0) {
-              // notify
+              // if the difference is more than 7 days then notify again
+              Duration differenceBetweenPreviousShow =
+                  DateTime.now().difference(
+                DateTime.parse(notificationDate),
+              );
 
-              // save
+              if (differenceBetweenPreviousShow.compareTo(
+                    Duration(days: 7),
+                  ) >=
+                  0) {
+                // notify
+
+                // save
+                childToDisplay = child;
+                questionnaireDataToDisplay = child.newQuestionnaires[0];
+                shouldShowChildQuestionaire.value = true;
+                await SharedPreferencesHelper(key: key).saveNotificationDate(
+                  DateTime.now().toString(),
+                );
+                break;
+              } else {
+                shouldShowChildQuestionaire.value = false;
+                break;
+              }
+            } else {
               childToDisplay = child;
               questionnaireDataToDisplay = child.newQuestionnaires[0];
               shouldShowChildQuestionaire.value = true;
-              await SharedPreferencesHelper(key: key).saveNotificationDate(
-                DateTime.now().toString(),
-              );
-              break;
-            } else {
-              shouldShowChildQuestionaire.value = false;
+              await SharedPreferencesHelper(key: key)
+                  .saveNotificationDate(DateTime.now().toString());
               break;
             }
-          } else {
-            // notify
-
-            // save
-            childToDisplay = child;
-            questionnaireDataToDisplay = child.newQuestionnaires[0];
-            shouldShowChildQuestionaire.value = true;
-            await SharedPreferencesHelper(key: key)
-                .saveNotificationDate(DateTime.now().toString());
-            break;
           }
         }
       }
-      ;
     }
 
     notifyListeners();

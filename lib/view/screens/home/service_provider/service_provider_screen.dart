@@ -69,11 +69,12 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen>
       if (model.links?.data != null && model.links.data.length > 0) {
         List list = getListOfInstancesByCategory(model.links.data, category);
         return Padding(
-            padding: const EdgeInsets.all(10),
-            child: BuildListServices(
-              list: list,
-              updateCallback: model.reloadData,
-            ));
+          padding: const EdgeInsets.all(10),
+          child: BuildListServices(
+            list: list,
+            updateCallback: model.reloadData,
+          ),
+        );
       } else {
         return Container(
           child: EmptyData(),

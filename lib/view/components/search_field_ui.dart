@@ -1,5 +1,6 @@
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/services.dart';
 
 class SearchFieldUI extends StatefulWidget {
@@ -82,6 +83,7 @@ class _TextFieldState extends State<SearchFieldUI> {
             child: Text(
               widget.text == null ? "" : widget.text,
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+              // textScaleFactor: SizeConfig.textScaleFactor(),
             ),
           ),
         ),
@@ -90,7 +92,9 @@ class _TextFieldState extends State<SearchFieldUI> {
           maxLength: widget.textMaxLength,
           readOnly: widget.isReadOnly,
           autofocus: false,
-          style: widget.isPhoneNumber ? AppThemeStyle.listStyle : AppThemeStyle.normalTextBigger,
+          style: widget.isPhoneNumber
+              ? AppThemeStyle.listStyle
+              : AppThemeStyle.normalTextBigger,
           textInputAction: widget.inputAction,
           controller: widget.controller,
           enabled: widget.enabled,
@@ -118,7 +122,8 @@ class _TextFieldState extends State<SearchFieldUI> {
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(color: Colors.black26),
                   ),
-                  contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   counterText: widget.counterText,
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),

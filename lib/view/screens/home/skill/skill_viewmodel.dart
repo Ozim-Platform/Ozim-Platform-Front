@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:charity_app/model/category.dart';
 import 'package:charity_app/model/common_model.dart';
 import 'package:charity_app/model/data.dart';
@@ -57,7 +59,7 @@ class SkillViewModel extends BaseViewModel {
     }).whenComplete(() => {_isLoading = false, notifyListeners()});
   }
 
-  Future<void> paginate() {
+  Future<void> paginate() async {
     // _isLoading = true;
     if (_skill.page < _skill.pages) {
       _apiProvider
@@ -69,7 +71,8 @@ class SkillViewModel extends BaseViewModel {
               })
           .catchError((error) {
         print("Error: $error", level: 1);
-      }).whenComplete(() => {_isLoading = false, notifyListeners()});
+      }).whenComplete(() =>
+              {_isLoading = false, notifyListeners(), log("skill paginate")});
     }
   }
 }

@@ -5,6 +5,7 @@ import 'package:charity_app/view/screens/home/home_without_drawer_screen.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 
@@ -59,8 +60,8 @@ class _HomeScreen extends State<HomeScreen> {
                 label: getTranslated(context, "menu"),
                 child: SvgPicture.asset(
                   'assets/svg/icons/menu.svg',
-                  width: 24,
-                  height: 24,
+                  width: 24.w,
+                  height: 24.w,
                   fit: BoxFit.scaleDown,
                 ),
               ),
@@ -90,11 +91,11 @@ class _HomeScreen extends State<HomeScreen> {
       automaticallyImplyLeading: false,
       actions: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding: EdgeInsets.only(right: 10.w),
           child: SvgPicture.asset(
             'assets/svg/Icon_notification_outline.svg',
-            height: 24,
-            width: 24,
+            height: 24.h,
+            width: 24.h,
           ),
         )
       ],

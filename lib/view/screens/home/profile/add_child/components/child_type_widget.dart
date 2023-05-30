@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ChildTypeWidget extends StatefulWidget {
@@ -33,14 +34,16 @@ class _ChildTypeWidgetState extends State<ChildTypeWidget> {
         color = const Color(0XFF6CBBD9);
         icon = SvgPicture.asset(
           'assets/svg/icons/add_boy.svg',
-          height: 27.39,
+          height: 31.31.w,
+          width: 32.w,
         );
         break;
       case 'girl':
         color = const Color(0XFFF08390);
         icon = SvgPicture.asset(
           'assets/svg/icons/add_girl.svg',
-          height: 27.39,
+          height: 27.39.w,
+          width: 42.33.w,
         );
         break;
     }
@@ -70,11 +73,20 @@ class _ChildTypeWidgetState extends State<ChildTypeWidget> {
         enableFeedback: false,
         onTap: () => widget.onSelected(),
         child: Container(
-          padding: EdgeInsets.only(top: 16, bottom: 16),
-          margin: EdgeInsets.only(bottom: 32),
+          height: 50.w,
+          width: 143.w,
+          padding: EdgeInsets.only(
+            top: 15.w,
+            bottom: 15.w,
+            right: 16.w,
+            left: 9.w,
+          ),
+          margin: EdgeInsets.only(
+            bottom: 47.w,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(
-              Radius.circular(25),
+              Radius.circular(25.w),
             ),
             color: (widget.isActiveNotifier.value == widget.isGirl)
                 ? color
@@ -82,16 +94,14 @@ class _ChildTypeWidgetState extends State<ChildTypeWidget> {
           ),
           child: Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16),
-                child: icon,
-              ),
+              icon,
+              Spacer(),
               Text(
                 getTranslated(context, widget.type),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                 ),
               ),
             ],

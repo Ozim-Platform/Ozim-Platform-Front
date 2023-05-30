@@ -1,4 +1,5 @@
 import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
+import 'package:charity_app/data/in_app_purchase/revenue_cat.dart';
 import 'package:charity_app/localization/user_data.dart';
 import 'package:charity_app/model/category.dart';
 import 'package:charity_app/model/common_model.dart';
@@ -39,10 +40,10 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> initData() async {
     _username = await _userData.getUsername();
+
     await InAppPurchaseDataRepository().getSubscriptionIds();
-    // InAppPurchaseDataRepository().init();
-    await InAppPurchaseDataRepository().checkCurrentSubscription();
     await InAppPurchaseDataRepository().fetchAvailableSubscriptions();
+    await InAppPurchaseDataRepository().checkSubscriptionFromBackend();
     notifyListeners();
   }
 

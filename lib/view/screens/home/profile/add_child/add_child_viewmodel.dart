@@ -5,6 +5,7 @@ import 'package:charity_app/model/child/child.dart';
 import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/toast_utils.dart';
 import 'package:charity_app/view/screens/home/profile/child_results/child_results_screen.dart';
+import 'package:charity_app/view/screens/home/profile/profile_screen_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -31,7 +32,11 @@ class AddChildViewModel extends BaseViewModel {
 
   Child child;
 
-  AddChildViewModel({Child child}) {
+  bool isLoading = false;
+
+  ProfileViewModel _profileScreenViewModel;
+
+  AddChildViewModel(Child child, [ProfileViewModel profileScreenViewModel]) {
     if (child != null) {
       this.child = child;
       _name = child.name;
@@ -39,6 +44,9 @@ class AddChildViewModel extends BaseViewModel {
       _birthDate.value = DateTime.parse(child.birthDate);
       _isGirl.value = child.isGirl;
     }
+    profileScreenViewModel != null
+        ? _profileScreenViewModel = profileScreenViewModel
+        : null;
   }
 
   void setBirthDate(DateTime value) {
@@ -75,26 +83,30 @@ class AddChildViewModel extends BaseViewModel {
   }
 
   createChild(context) async {
+    isLoading = true;
+
     log(name);
     log(birthDate.toString());
     if (name != "" && birthDate != null) {
       var result = await _apiProvider.createChild(
         _name,
-        (_birthDate.toString()).substring(0, 10),
+        (_birthDate.value.toString()).substring(0, 10),
         _isGirl.value ? 1 : 2,
       );
-      log("we sent request for creating a child");
       if (result == true) {
         ToastUtils.toastSuccessGeneral(
             getTranslated(context, "success"), context);
-        // Navigator.of(context).pop();
-        // push screen with all children
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (BuildContext context) => ChildResultsScreen()),
           (Route<dynamic> route) => route.isFirst,
         );
+        if (_profileScreenViewModel != null) {
+          _profileScreenViewModel.getChildren();
+        }
+        isLoading = false;
 
         return true;
       } else {
@@ -103,9 +115,11 @@ class AddChildViewModel extends BaseViewModel {
           context,
         );
         Navigator.of(context).pop();
+        isLoading = false;
         return false;
       }
     } else {
+      isLoading = false;
       return false;
     }
   }
@@ -113,10 +127,14 @@ class AddChildViewModel extends BaseViewModel {
   Future<void> updateChild(
     BuildContext context,
   ) async {
+    isLoading = true;
+
     var response =
         await _apiProvider.updateChild(birthDate.value, child.childId);
     if (response.statusCode == 200) {
-      ToastUtils.toastSuccessGeneral("success", context);
+      ToastUtils.toastSuccessGeneral(
+          getTranslated(context, "success"), context);
+      isLoading = false;
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -128,19 +146,24 @@ class AddChildViewModel extends BaseViewModel {
         response.body.toString(),
         context,
       );
+      isLoading = false;
     }
   }
 
   Future<void> sendRequest(BuildContext context) {
-    if (child == null) {
-      return createChild(
-        context,
-      );
-    } else {
-      // make sure that the user has changed the date
-      return updateChild(
-        context,
-      );
+    if (isLoading == false) {
+      if (child == null) {
+        return createChild(
+          context,
+        );
+      } else {
+        // make sure that the user has changed the date
+        return updateChild(
+          context,
+        );
+      }
+
+      // call getChildren function from the profileViewModel
     }
   }
 }

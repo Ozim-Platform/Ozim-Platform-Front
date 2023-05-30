@@ -25,11 +25,7 @@ class _SkillScreenState extends State<SkillScreen>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {

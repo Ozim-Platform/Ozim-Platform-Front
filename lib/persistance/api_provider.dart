@@ -209,10 +209,10 @@ class ApiProvider {
         await request.send(),
       );
 
-      // //print(response.request.url);
-      // //print(response.request.headers.toString());
-      // //print(response.statusCode);
-      // //print(response.body);
+      print(response.request.url);
+      print(response.request.headers.toString());
+      print(response.statusCode);
+      print(response.body);
 
       var res = _response(response);
       responseJson = BaseResponses.fromJson(res);
@@ -1182,26 +1182,57 @@ class ApiProvider {
         res = _symplifyData(res, null);
         result = res;
       } else {
-        await Future.forEach(category, (cat) async {
-          final response = await client.get(
-            Uri.parse(apiUrl + getCatUrl(cat)),
-            headers: await getHeaders(),
-          );
-          var res = _response(response);
-          res = _symplifyData(res, cat.sysName);
+        // String urls = apiUrl + getCatUrls(category);
+        // final response = await client.get(
+        //   Uri.parse(urls),
+        //   headers: await getHeaders(),
+        // );
 
-          if (result['page'] == null) {
-            result['page'] = res['page'];
-          }
-          if (result['pages'] == null) {
-            result['pages'] = res['pages'];
-          }
-          result['data'].addAll(res['data']);
-        });
+        // var res = _response(response);
+        // res = _symplifyData(res, null);
+
+        // if (result['page'] == null) {
+        //   result['page'] = res['page'];
+        // }
+        // if (result['pages'] == null) {
+        //   result['pages'] = res['pages'];
+        // }
+
+        // result['data'].addAll(res['data']);
+
+        await Future.forEach(
+          category,
+          (cat) async {
+            final response = await client.get(
+              Uri.parse(apiUrl + getCatUrl(cat)),
+              headers: await getHeaders(),
+            );
+
+            var res = _response(response);
+            res = _symplifyData(res, cat.sysName);
+
+            if (result['page'] == null) {
+              result['page'] = res['page'];
+              // } else {
+              //   if (result['page'] < res['page']) {
+              //     result['page'] = res['page'];
+              //   }
+            }
+
+            if (result['pages'] == null) {
+              result['pages'] = res['pages'];
+            } else {
+              if (result['pages'] < res['pages']) {
+                result['pages'] = res['pages'];
+              }
+            }
+
+            result['data'].addAll(res['data']);
+          },
+        );
       }
-      // print(result);
+
       var t = callback(result);
-      // print(t);
       responseJson = t;
     } on FetchDataException {
       print('Error', level: 1);
@@ -1218,7 +1249,6 @@ class ApiProvider {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
-        //print(responseJson);
         return responseJson;
       case 400:
         if (context != null) {
@@ -1227,7 +1257,6 @@ class ApiProvider {
         }
         break;
       case 401:
-        //print("401 error");
         if (context != null) {
           Navigator.of(context).pushReplacementNamed('/NotFoundPage');
           throw UnauthorisedException(response.body.toString());
@@ -1262,6 +1291,7 @@ class ApiProvider {
           element['type'] = element['category']['type']['sys_name'];
         }
 
+        // this part needs to be re-written
         element['category'] = customcategory != null
             ? customcategory
             : (element['category'] != null
@@ -1316,15 +1346,21 @@ class ApiProvider {
   Future<List<Child>> getChildren() async {
     List<Child> returnList = [];
     try {
-      final response = await client.get(Uri.parse('$baseUrl/user/children'),
-          headers: await getHeaders(),);
-      var res = _response(response); 
+      final response = await client.get(
+        Uri.parse('$baseUrl/user/children'),
+        headers: await getHeaders(),
+      );
+      var res = _response(response);
 
       if (res is Map && res.isNotEmpty) {
         final result = res.values.first;
         if (result is List) {
           result.forEach((element) {
-            returnList.add(Child.fromJson(element));
+            returnList.add(
+              Child.fromJson(
+                element,
+              ),
+            );
           });
         }
       }
@@ -1388,13 +1424,18 @@ class ApiProvider {
   }
 
   // receive points
-  Future<void> receivePoints() async {
+  Future<void> receivePoints(
+    int amountOfPoints,
+  ) async {
     try {
       var response = await client.post(
         Uri.parse(
           '$baseUrl/user/get_points',
         ),
         headers: await getHeaders(),
+        body: json.encode({
+          "points": amountOfPoints,
+        }),
       );
       log(
         "receivePointsStatusCode is: " + response.statusCode.toString(),
@@ -1496,13 +1537,18 @@ class ApiProvider {
   }
 
   Future<void> updateSubscriptionStatus(
-      {bool status, String expirationDate}) async {
+      {bool status,
+      String expirationDate,
+      String store,
+      String purchaseToken}) async {
     Map<String, dynamic> body = {
       "subscription": status,
       "expires": (expirationDate.toString()).substring(
         0,
         10,
       ),
+      "store": store,
+      "purchaseToken": purchaseToken,
     };
     try {
       Response response = await client.post(
@@ -1510,10 +1556,28 @@ class ApiProvider {
         body: jsonEncode(body),
         headers: await getHeaders(),
       );
+
       if (response.statusCode == 200) {
+        log(body.toString());
         log(
           "updateSubscriptionStatus is: " + response.statusCode.toString(),
         );
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<bool> deleteAccount() async {
+    try {
+      final response = await client.delete(
+        Uri.parse('$baseUrl/user/destroy'),
+        headers: await getHeaders(),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
       }
     } catch (e) {
       throw e;

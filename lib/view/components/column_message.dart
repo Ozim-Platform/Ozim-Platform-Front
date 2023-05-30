@@ -1,3 +1,4 @@
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:charity_app/view/widgets/avatar_iamge.dart';
 import 'package:flutter/material.dart';
@@ -65,16 +66,23 @@ class _ColumnMessage extends State<ColumnMessage> {
                     ],
                   ),
                 ),
+                
                 SizedBox(width: 10),
                 Visibility(
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color.fromRGBO(254, 205, 131, 1),
-                      borderRadius: const BorderRadius.all(const Radius.circular(20)),
+                      borderRadius:
+                          const BorderRadius.all(const Radius.circular(20)),
                     ),
+                    
                     child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Text("22", style: AppThemeStyle.buttonWhite14)),
+                      padding: const EdgeInsets.all(6.0),
+                      child: Text("22",
+                      
+                          // textScaleFactor: SizeConfig.textScaleFactor(),
+                          style: AppThemeStyle.buttonWhite14),
+                    ),
                   ),
                   maintainState: true,
                   maintainAnimation: true,
@@ -91,6 +99,8 @@ class _ColumnMessage extends State<ColumnMessage> {
               alignment: Alignment.topRight,
               child: Text(
                 "13.04.2021",
+                                          // textScaleFactor: SizeConfig.textScaleFactor(),
+
                 style: AppThemeStyle.titleListGrey,
               ),
             ),

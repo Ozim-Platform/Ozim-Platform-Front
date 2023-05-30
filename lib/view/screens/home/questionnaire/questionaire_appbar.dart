@@ -5,12 +5,13 @@ import 'package:charity_app/localization/language_constants.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget customAppbarForQuestionaire({
   @required BuildContext context,
   @required String appBarTitle,
   @required String appBarIncome,
-  @required String appBarIncome2,
+  String appBarIncome2,
   controller,
   VoidCallback callback,
   int age,
@@ -49,21 +50,21 @@ Widget customAppbarForQuestionaire({
     bottom: PreferredSize(
       preferredSize: Size(
         _size.width,
-        73.0,
+        70.0.w,
       ),
       child: Container(
         width: _size.width,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 32,
+        padding: EdgeInsets.symmetric(
+          horizontal: 32.w,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: const Radius.circular(
-              40,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(
+              40.w,
             ),
-            topRight: const Radius.circular(
-              40,
+            topRight: Radius.circular(
+              40.w,
             ),
           ),
         ),
@@ -71,9 +72,9 @@ Widget customAppbarForQuestionaire({
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                top: 8.0,
-                bottom: 8,
+              padding: EdgeInsets.only(
+                top: appBarIncome2 == null ? 43.0.w : 25.2.w,
+                bottom: 4.3.w,
               ),
               child: Text(
                 appBarIncome,
@@ -81,19 +82,20 @@ Widget customAppbarForQuestionaire({
                 style: TextStyle(
                   color: Color(0XFF778083),
                   fontWeight: FontWeight.w500,
-                  fontSize: 23,
+                  fontSize: 23.sp,
                 ),
               ),
             ),
-            Text(
-              appBarIncome2,
-              // textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0XFF777F83),
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-              ),
-            ),
+            appBarIncome2 != null
+                ? Text(
+                    appBarIncome2,
+                    style: TextStyle(
+                      color: Color(0XFF777F83),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp,
+                    ),
+                  )
+                : SizedBox(),
           ],
         ),
       ),

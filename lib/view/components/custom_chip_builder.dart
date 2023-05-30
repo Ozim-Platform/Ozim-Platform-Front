@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -78,7 +79,11 @@ class CustomChipBuilder extends ChipBuilder {
               color: badgeColor,
               borderRadius: BorderRadius.circular(borderRadius),
             ),
-            child: Text(chip, style: TextStyle(color: textColor, fontSize: 12)),
+            child: Text(
+              chip,
+              style: TextStyle(color: textColor, fontSize: 12),
+              // textScaleFactor: SizeConfig.textScaleFactor(),
+            ),
           ),
         ),
       );

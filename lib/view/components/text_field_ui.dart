@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:charity_app/utils/device_size_config.dart';
 
 class TextFieldUI extends StatefulWidget {
   const TextFieldUI({
@@ -61,6 +62,7 @@ class _TextFieldState extends State<TextFieldUI> {
             child: Text(
               widget.text,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+              // textScaleFactor: SizeConfig.textScaleFactor(),
             ),
           ),
         ),
@@ -88,7 +90,8 @@ class _TextFieldState extends State<TextFieldUI> {
             ),
             filled: false,
             hintText: widget.hintText,
-            hintStyle: TextStyle(color: const Color(0xff272836).withOpacity(0.5)),
+            hintStyle:
+                TextStyle(color: const Color(0xff272836).withOpacity(0.5)),
             labelText: widget.labelText,
             helperText: widget.helperText,
             prefixIcon: widget.prefixIcon,

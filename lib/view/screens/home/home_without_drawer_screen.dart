@@ -1,3 +1,4 @@
+import 'package:charity_app/custom_icons_icons.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/article/article.dart';
 import 'package:charity_app/model/category.dart';
@@ -25,6 +26,7 @@ import 'package:charity_app/view/screens/home/service_provider/service_provider_
 import 'package:charity_app/view/screens/home/skill/skill_screen.dart';
 import 'package:charity_app/view/widgets/custom/cutom_image_listview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:stacked/stacked.dart';
 
 class HomeWithoutDrawerScreen extends StatelessWidget {
@@ -100,82 +102,88 @@ class HomeWithoutDrawerScreen extends StatelessWidget {
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         appBar: getAppBar(context),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            if (imgList.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0),
-                child: ImageListview(
-                  imgList: imgList,
-                  context: context,
-                  goToBanner: _goToBanner,
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              if (imgList.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 32.h,
+                    bottom: MediaQuery.of(context).size.width > 500 ? 4.h : 8.h,
+                  ),
+                  child: ImageListview(
+                    imgList: imgList,
+                    context: context,
+                    goToBanner: _goToBanner,
+                  ),
+                ),
+              Expanded(
+                child: Center(
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left:
+                          MediaQuery.of(context).size.width > 500 ? 55.h : 37.h,
+                      right:
+                          MediaQuery.of(context).size.width > 500 ? 55.h : 37.h,
+                    ),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 15.h,
+                    crossAxisSpacing: 15.h,
+                    children: [
+                      buildCard(
+                        context,
+                        model,
+                        'diagnosis',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'skill',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'link',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'article',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'inclusion',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'for_parent',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'service_provider',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'forum',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'right',
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            SizedBox(height: SizeConfig.calculateBlockVertical(15) + 10),
-            Expanded(
-              child: Center(
-                child: GridView.count(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(left: 24, right: 24),
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  children: [
-                    buildCard(
-                      context,
-                      model,
-                      'diagnosis',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'skill',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'link',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'article',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'inclusion',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'for_parent',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'service_provider',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'forum',
-                    ),
-                    buildCard(
-                      context,
-                      model,
-                      'right',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // SizedBox(
-            //   height: 10,
-            // )
-          ],
+            ],
+          ),
         ),
       ),
       onViewModelReady: (model) {
@@ -197,12 +205,13 @@ class HomeWithoutDrawerScreen extends StatelessWidget {
         getRouteBuilder(category, _categories);
 
     return CardIcon(
-        category: category,
-        operation: (getTranslated(context, category)),
-        iconPath: iconPath,
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: _builder));
-        });
+      category: category,
+      operation: (getTranslated(context, category)),
+      iconPath: iconPath,
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: _builder));
+      },
+    );
   }
 
   Widget Function(BuildContext context) getRouteBuilder(
@@ -254,9 +263,20 @@ class HomeWithoutDrawerScreen extends StatelessWidget {
       automaticallyImplyLeading: false,
       title: Text(''),
       actions: <Widget>[
-        Align(
-          alignment: Alignment.center,
-          child: NotificationButton(),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0.h),
+          child: Align(
+            alignment: Alignment.center,
+            child: NotificationButton(
+              size: 24,
+              icon: Icon(
+                CustomIcons.bell,
+                color: Constants.mainTextColor,
+                size: 24,
+              ),
+              isBottomBar: false,
+            ),
+          ),
         ),
       ],
     );

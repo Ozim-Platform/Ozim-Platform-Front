@@ -33,13 +33,13 @@ class _FavouriteScreenState extends State<FavouriteScreen>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    if (_tabController != null) {
-      _tabController.dispose();
-    }
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   if (_tabController != null) {
+  //     _tabController.dispose();
+  //   }
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

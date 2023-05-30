@@ -132,8 +132,8 @@ class SettingsViewModel extends BaseViewModel {
   }
 
   Future<void> pickFile() async {
-    final PickedFile pickedFile =
-        await _picker.getImage(source: ImageSource.gallery);
+    final XFile pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       // File croppedFile = await ImageCropper.cropImage(
       //     sourcePath: pickedFile.path,

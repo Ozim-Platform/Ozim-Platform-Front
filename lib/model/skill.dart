@@ -11,6 +11,7 @@ class Skill extends CommonModel {
         data.add(new Data.fromJson(v));
       });
     }
+
     page = json['page'];
     pages = json['pages'];
   }

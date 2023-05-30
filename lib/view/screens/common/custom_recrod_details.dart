@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:charity_app/custom_icons_icons.dart';
 import 'package:charity_app/data/downloader/downloader.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/data.dart';
@@ -15,13 +14,16 @@ import 'package:charity_app/view/theme/app_color.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CustomRecordDetails extends StatefulWidget {
   final Data data;
   final BottomBarDetailViewModel model;
+  KeyedSubtree player;
 
-  const CustomRecordDetails({Key key, this.data, this.model}) : super(key: key);
+  CustomRecordDetails({Key key, this.data, this.model, this.player})
+      : super(key: key);
 
   @override
   _CustomRecordDetailsState createState() => _CustomRecordDetailsState();
@@ -55,7 +57,7 @@ class _CustomRecordDetailsState extends State<CustomRecordDetails> {
     _timer = Timer(
       Duration(minutes: 5),
       () {
-        _apiProvider.receivePoints();
+        _apiProvider.receivePoints(50);
       },
     );
   }
@@ -64,10 +66,16 @@ class _CustomRecordDetailsState extends State<CustomRecordDetails> {
       String type, Data data, BottomBarDetailViewModel bottomNavigation) {
     if (type == "skill" || type == "inclusion") {
       return ExcludedRecordDetailInformation(
-          data: data, bottomNavigation: bottomNavigation);
+        data: data,
+        bottomNavigation: bottomNavigation,
+        player: widget.player,
+      );
     } else {
       return RecordDetailInformation(
-          data: data, bottomNavigation: bottomNavigation);
+        data: data,
+        bottomNavigation: bottomNavigation,
+        player: widget.player,
+      );
     }
   }
 
@@ -78,10 +86,13 @@ class _CustomRecordDetailsState extends State<CustomRecordDetails> {
 }
 
 class RecordDetailInformation extends StatelessWidget {
-  const RecordDetailInformation({
+  KeyedSubtree player;
+
+  RecordDetailInformation({
     Key key,
     @required this.data,
     @required this.bottomNavigation,
+    this.player,
   }) : super(key: key);
 
   final Data data;
@@ -91,7 +102,7 @@ class RecordDetailInformation extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
-        vertical: 20,
+        vertical: 20.w,
       ),
       physics: BouncingScrollPhysics(),
       child: Container(
@@ -99,20 +110,29 @@ class RecordDetailInformation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              data.name != null
-                  ? data.name
-                  : (data.title != null ? data.title : ''),
-              style: AppThemeStyle.headerPrimaryColor.copyWith(),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8.0,
+              ),
+              child: Text(
+                data.name != null
+                    ? data.name
+                    : (data.title != null ? data.title : ''),
+                style:
+                    AppThemeStyle.headerPrimaryColor.copyWith(fontSize: 23.sp),
+              ),
             ),
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
-                20,
+                MediaQuery.of(context).size.width > 500 ? 10.w : 20.w,
               ),
             ),
             data.type != 'link'
                 ? Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    padding: EdgeInsets.only(
+                      left: 20.w,
+                      right: 20.w,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -124,12 +144,12 @@ class RecordDetailInformation extends StatelessWidget {
                           child: Row(children: <Widget>[
                             SvgPicture.asset(
                               'assets/svg/icons/clock.svg',
-                              width: 14,
-                              height: 14,
+                              width: 14.w,
+                              height: 14.w,
                               color: AppColor.lightGrey,
-                              fit: BoxFit.scaleDown,
+                              // fit: BoxFit.scaleDown,
                             ),
-                            SizedBox(width: 4),
+                            SizedBox(width: 4.w),
                             Text(
                               "${dateFormatterEng(DateTime.fromMillisecondsSinceEpoch(data.createdAt * 1000))}",
                               style: AppThemeStyle.normalTextSmallerLigther,
@@ -144,12 +164,12 @@ class RecordDetailInformation extends StatelessWidget {
                           child: Row(children: <Widget>[
                             SvgPicture.asset(
                               'assets/svg/icons/eye.svg',
-                              width: 14,
-                              height: 14,
+                              width: 14.w,
+                              height: 14.w,
                               color: AppColor.lightGrey,
-                              fit: BoxFit.scaleDown,
+                              // fit: BoxFit.scaleDown,
                             ),
-                            SizedBox(width: 10),
+                            SizedBox(width: 10.w),
                             Text(
                               "${data.views}",
                               style: AppThemeStyle.normalTextSmallerLigther,
@@ -164,13 +184,13 @@ class RecordDetailInformation extends StatelessWidget {
                           child: Row(children: <Widget>[
                             SvgPicture.asset(
                               'assets/svg/icons/heart.svg',
-                              width: 14,
-                              height: 14,
+                              width: 14.w,
+                              height: 14.w,
                               color: AppColor.lightGrey,
-                              fit: BoxFit.scaleDown,
+                              // fit: BoxFit.scaleDown,
                             ),
                             SizedBox(
-                              width: 4,
+                              width: 4.w,
                             ),
                             Text(
                               '${data.likes}',
@@ -184,80 +204,94 @@ class RecordDetailInformation extends StatelessWidget {
                 : SizedBox(),
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
-                15,
+                15.w,
               ),
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(
-                28,
+            Center(
+              child: Padding(
+                padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                    28.w,
+                  ),
+                  child: data.image != null
+                      ? CachedNetworkImage(
+                          imageUrl: Constants.MAIN_HTTP + data.image.path,
+                        )
+                      : Image.asset('assets/image/home_image2.png'),
+                ),
               ),
-              child: data.image != null
-                  ? CachedNetworkImage(
-                      imageUrl: Constants.MAIN_HTTP + data.image.path,
-                    )
-                  : Image.asset('assets/image/home_image2.png'),
             ),
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
-                15,
+                15.w,
               ),
             ),
             (data.author != null)
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipOval(
-                        child: data.authorPhoto == null
-                            ? Image.asset(
-                                'assets/image/avatar.png',
-                                width: 55,
-                                height: 55,
-                              )
-                            : Image.network(
-                                Constants.MAIN_HTTP + data.authorPhoto.path,
-                                width: 55,
-                                height: 55,
-                              ),
-                      ),
-                      SizedBox(
-                        width: SizeConfig.calculateBlockHorizontal(
-                          10,
+                ? Padding(
+                    padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ClipOval(
+                          child: data.authorPhoto == null
+                              ? Image.asset(
+                                  'assets/image/avatar.png',
+                                  width: 55.w,
+                                  height: 55.w,
+                                )
+                              : Image.network(
+                                  Constants.MAIN_HTTP + data.authorPhoto.path,
+                                  width: 55.w,
+                                  height: 55.w,
+                                ),
                         ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              data.author ?? '',
-                              textAlign: TextAlign.start,
-                              style: AppThemeStyle.subHeader,
-                            ),
-                            SizedBox(
-                              height: SizeConfig.calculateBlockVertical(
-                                10,
-                              ),
-                            ),
-                            Text(
-                              data.authorPosition ?? '',
-                              style: AppThemeStyle.titleListPrimary.copyWith(
-                                fontWeight: FontWeight.normal,
-                              ),
-                              textAlign: TextAlign.start,
-                            ),
-                          ],
+                        SizedBox(
+                          width: SizeConfig.calculateBlockHorizontal(
+                            10.w,
+                          ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                data.author ?? '',
+                                textAlign: TextAlign.start,
+                                style: AppThemeStyle.subHeader.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(
+                                height: SizeConfig.calculateBlockVertical(
+                                  10.w,
+                                ),
+                              ),
+                              Text(
+                                data.authorPosition ?? '',
+                                style: AppThemeStyle.titleListPrimary.copyWith(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14.sp,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 : Container(),
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
-                15,
+                15.w,
               ),
             ),
-            CustomHtml(data: data.description),
+            CustomHtml(
+              data: data.description,
+              player: player,
+            ),
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
                 12,
@@ -273,8 +307,9 @@ class RecordDetailInformation extends StatelessWidget {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16.w,
+                    horizontal: 8.w,
                   ),
                   child: Text(
                     'Посмотреть все комментарии (' +
@@ -291,12 +326,13 @@ class RecordDetailInformation extends StatelessWidget {
                   Downloader().downloadFile(
                     data.bookInformation.path,
                     data.bookInformation.originalName,
+                    context,
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 8,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16.w,
+                    horizontal: 8.w,
                   ),
                   child: Row(
                     children: [
@@ -305,12 +341,9 @@ class RecordDetailInformation extends StatelessWidget {
                         style: AppThemeStyle.normalText,
                       ),
                       SizedBox(
-                        width: 4,
+                        width: 4.w,
                       ),
-                      Icon(
-                        Icons.download_rounded,
-                        color: Color(0XFF79BCB7),
-                      ),
+                      SvgPicture.asset('assets/svg/icons/download_icon.svg'),
                     ],
                   ),
                 ),
@@ -323,12 +356,13 @@ class RecordDetailInformation extends StatelessWidget {
 }
 
 class ExcludedRecordDetailInformation extends StatelessWidget {
-  // for links and skills
-  const ExcludedRecordDetailInformation({
-    Key key,
-    @required this.data,
-    @required this.bottomNavigation,
-  }) : super(key: key);
+  KeyedSubtree player;
+  ExcludedRecordDetailInformation(
+      {Key key,
+      @required this.data,
+      @required this.bottomNavigation,
+      this.player})
+      : super(key: key);
 
   final Data data;
   final BottomBarDetailViewModel bottomNavigation;
@@ -337,7 +371,7 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
-        vertical: 20,
+        vertical: 20.w,
       ),
       physics: BouncingScrollPhysics(),
       child: Container(
@@ -345,11 +379,14 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              data.name != null
-                  ? data.name
-                  : (data.title != null ? data.title : ''),
-              style: AppThemeStyle.headerPrimaryColor.copyWith(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0.w),
+              child: Text(
+                data.name != null
+                    ? data.name
+                    : (data.title != null ? data.title : ''),
+                style: AppThemeStyle.headerPrimaryColor.copyWith(),
+              ),
             ),
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
@@ -357,7 +394,7 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
+              padding: EdgeInsets.only(left: 20.w, right: 20.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -367,12 +404,14 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
                       "pub_date",
                     ),
                     child: Row(children: <Widget>[
-                      Icon(
-                        CustomIcons.clock,
-                        size: 15,
+                      SvgPicture.asset(
+                        'assets/svg/icons/clock.svg',
+                        width: 14.w,
+                        height: 14.w,
                         color: AppColor.lightGrey,
+                        // fit: BoxFit.scaleDown,
                       ),
-                      SizedBox(width: 4),
+                      SizedBox(width: 4.w),
                       Text(
                         "${dateFormatterEng(DateTime.fromMillisecondsSinceEpoch(data.createdAt * 1000))}",
                         style: AppThemeStyle.normalTextSmallerLigther,
@@ -385,12 +424,14 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
                       "whatches",
                     ),
                     child: Row(children: <Widget>[
-                      Icon(
-                        CustomIcons.eye,
-                        size: 12,
+                      SvgPicture.asset(
+                        'assets/svg/icons/eye.svg',
+                        width: 14.w,
+                        height: 14.w,
                         color: AppColor.lightGrey,
+                        // fit: BoxFit.scaleDown,
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 10.w),
                       Text(
                         "${data.views}",
                         style: AppThemeStyle.normalTextSmallerLigther,
@@ -403,13 +444,15 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
                       "likes",
                     ),
                     child: Row(children: <Widget>[
-                      Icon(
-                        CustomIcons.heart_outline,
-                        size: 14,
+                      SvgPicture.asset(
+                        'assets/svg/icons/heart.svg',
+                        width: 14.w,
+                        height: 14.w,
                         color: AppColor.lightGrey,
+                        // fit: BoxFit.scaleDown,
                       ),
                       SizedBox(
-                        width: 4,
+                        width: 4.w,
                       ),
                       Text(
                         '${data.likes}',
@@ -422,13 +465,17 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
             ),
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
-                15,
+                15.w,
               ),
             ),
-            CustomHtml2(data: data.description),
+            CustomHtml2(
+              data: data.description,
+              player: player,
+            ),
+
             SizedBox(
               height: SizeConfig.calculateBlockVertical(
-                12,
+                12.w,
               ),
             ),
             // if (data.comments != null && data.comments.isNotEmpty)
@@ -441,8 +488,9 @@ class ExcludedRecordDetailInformation extends StatelessWidget {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
+                padding: EdgeInsets.symmetric(
+                  vertical: 10.w,
+                  horizontal: 10.w,
                 ),
                 child: Text(
                   'Посмотреть все комментарии (' +

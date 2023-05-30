@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/localization/user_data.dart';
+import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/device_size_config.dart';
+import 'package:charity_app/utils/toast_utils.dart';
 import 'package:charity_app/view/components/user_image.dart';
+import 'package:charity_app/view/screens/home/drawer/drawer_viewmodel.dart';
 import 'package:charity_app/view/screens/home/profile/add_child/add_child_screen.dart';
 import 'package:charity_app/view/screens/home/profile/child_results/child_results_screen.dart';
 import 'package:charity_app/view/screens/home/profile/exchange_points/exchange_points_screen.dart';
@@ -9,13 +15,19 @@ import 'package:charity_app/view/screens/home/profile/profile_screen_viewmodel.d
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
 import 'package:charity_app/view/screens/other/notification/notification_screen.dart';
+import 'package:charity_app/view/widgets/blurred_avatar.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_svg/svg.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:stacked/stacked.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key key}) : super(key: key);
+  int childId;
+  ProfileScreen({Key key, this.childId}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -27,43 +39,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-
-    profileScreenAppBar(context, false).then(
-      (value) => setState(
-        () {
-          appBar = value;
-        },
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<ProfileViewModel>.reactive(
         viewModelBuilder: () => ProfileViewModel(),
-        onViewModelReady: (model) => model.initModel(),
+        onViewModelReady: (model) => model.initModel(widget.childId),
         builder: (context, model, snapshot) {
+          profileScreenAppBar(
+            context,
+            false,
+            model,
+          ).then(
+            (value) => setState(
+              () {
+                appBar = value;
+              },
+            ),
+          );
+
           return Scaffold(
             appBar: appBar,
             body: model.shouldShowChildQuestionaire.value == true
                 ? NewQuestionaireAvailableWidget(
                     model: model,
-                    // child: model.children[0],
                   )
                 : ListView(
                     padding: EdgeInsets.only(
-                      top: 60,
+                      top: 76.h,
                     ),
                     children: [
                       InkWell(
                         splashColor: Colors.transparent,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChildResultsScreen(),
-                            ),
-                          );
+                        onTap: () async {
+                          if (model.navigateToAddChild.value) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddChildScreen(
+                                  profileScreenViewModel: model,
+                                ),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChildResultsScreen(),
+                              ),
+                            );
+                          }
+
+                          ;
                         },
                         child: ProfileScreenListWidget(
                           type: "child_results",
@@ -142,22 +170,26 @@ class _ProfileScreenListWidgetState extends State<ProfileScreenListWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 33.0, right: 33.0, bottom: 8),
+      padding: EdgeInsets.only(left: 33.0.w, right: 33.0.w, bottom: 8.w),
       child: Row(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8.0.w),
             child: icon,
           ),
           Expanded(
             child: Container(
-              padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+              padding: EdgeInsets.only(
+                left: 16.w,
+                right: 16.w,
+                top: 16.w,
+                bottom: 16.w,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
-                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25.w),
+                  bottomRight: Radius.circular(25.w),
+                  topLeft: Radius.circular(25.w),
                 ),
                 color: color,
               ),
@@ -166,7 +198,7 @@ class _ProfileScreenListWidgetState extends State<ProfileScreenListWidget> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: "Helvetica Neue",
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
                 ),
@@ -179,17 +211,86 @@ class _ProfileScreenListWidgetState extends State<ProfileScreenListWidget> {
   }
 }
 
-Future<AppBar> profileScreenAppBar(
-  BuildContext context,
-  bool showLeadingIcon,
-) async {
+Future<AppBar> profileScreenAppBar(BuildContext context, bool showLeadingIcon,
+    [ProfileViewModel model]) async {
   UserData _userData = new UserData();
+  final _picker = ImagePicker();
 
   String _username = await _userData.getUsername();
 
-  String _avatar = await _userData.getAvatar();
+  ValueNotifier<String> _avatar = ValueNotifier(await _userData.getAvatar());
 
   String _userType = await _userData.getUserType();
+
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<void> _imagePicked(
+      CroppedFile pickedFile, BuildContext context) async {
+    if (pickedFile?.path != null) {
+      var tempImage = File(pickedFile.path);
+      var fileSize = tempImage.lengthSync().toString();
+      var byt = tempImage.readAsBytesSync();
+      var fileSource = base64Encode(byt);
+      var fileName = pickedFile.path.split("/").last;
+      var fileExt = fileName.split(".").last;
+
+      String email = await _userData.getEmail();
+
+      try {
+        await FirebaseStorage.instance
+            .ref('users/$email/avatar.png')
+            .putFile(tempImage);
+        try {
+          await _apiProvider.changeUserAvatar(tempImage, pickedFile.path);
+        } catch (e) {
+          ToastUtils.toastErrorGeneral('Не удалось в БД Ozim. $e', context);
+        }
+
+        String newavatarurl = (await _apiProvider.getUser()).avatar ?? "";
+        _userData.setAvatar(newavatarurl);
+        String _imageUrl = await _userData.getAvatar();
+        _avatar.value = _imageUrl;
+      } on FirebaseException catch (e) {
+        ToastUtils.toastErrorGeneral(
+          'Не удалось сохранить в Firebase. $e',
+          context,
+        );
+      }
+    } else {
+      ToastUtils.toastErrorGeneral(
+        'Не найден файл',
+        context,
+      );
+    }
+  }
+
+  Future<void> pickFile(BuildContext context) async {
+    final XFile pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      CroppedFile croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        maxHeight: 512,
+        maxWidth: 512,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: Colors.deepOrange,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: true),
+          IOSUiSettings(
+            minimumAspectRatio: 1.0,
+          ),
+        ],
+      );
+
+      await _imagePicked(croppedFile, context);
+    }
+  }
 
   return AppBar(
     elevation: 0.0,
@@ -199,33 +300,46 @@ Future<AppBar> profileScreenAppBar(
         bottom: Radius.circular(40),
       ),
     ),
+    // toolbarHeight: 80,
+    // automaticallyImplyLeading: false,
     leading: showLeadingIcon == true
         ? Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+            padding: EdgeInsets.all(8.0.w),
             child: IconButton(
-              iconSize: 20.0,
-              splashRadius: 20,
+              iconSize: 20.0.sp,
+              splashRadius: 20.sp,
               icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
           )
         : SizedBox(),
     bottom: PreferredSize(
-      preferredSize: Size.fromHeight(90),
+      preferredSize: Size.fromHeight(80.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(left: 30, bottom: 20),
+            padding: EdgeInsets.only(left: 30.w, bottom: 20.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                UserImage(
-                  userUrl: _avatar,
-                  size: 60,
+                InkWell(
+                  splashColor: Colors.transparent,
+                  onTap: () async {
+                    await pickFile(context);
+                  },
+                  child: ValueListenableBuilder(
+                    valueListenable: _avatar,
+                    builder: (BuildContext context, String url, Widget child) {
+                      return BlurredAvatar(
+                        imageUrl: url,
+                        size: 70.0,
+                      );
+                    },
+                  ),
                 ),
-                SizedBox(width: 10),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +352,7 @@ Future<AppBar> profileScreenAppBar(
                           fontWeight: FontWeight.w700,
                           fontFamily: "Helvetica Neue",
                           color: Colors.white,
-                          fontSize: 23,
+                          fontSize: 23.sp,
                         ),
                       ),
                       Text(
@@ -248,26 +362,30 @@ Future<AppBar> profileScreenAppBar(
                           fontWeight: FontWeight.w500,
                           fontFamily: "Helvetica Neue",
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: 16.sp,
                         ),
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 32.0),
+                  padding: EdgeInsets.only(right: 32.0.w),
                   child: InkWell(
                     splashColor: Colors.transparent,
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => AddChildScreen(),
                         ),
+                      ).then(
+                        (value) => model.initModel(false),
                       );
+                      ;
                     },
                     child: SvgPicture.asset(
                       "assets/svg/icons/add_child.svg",
+                      height: 35.w,
                     ),
                   ),
                 ),
@@ -295,8 +413,9 @@ class _NewQuestionaireAvailableWidgetState
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        margin: EdgeInsets.only(left: 22, right: 22),
-        padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 32),
+        margin: EdgeInsets.only(left: 22.w, right: 22.w),
+        padding:
+            EdgeInsets.only(left: 16.w, right: 16.w, top: 32.h, bottom: 32.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           color: Colors.white,
@@ -307,26 +426,48 @@ class _NewQuestionaireAvailableWidgetState
           children: [
             SvgPicture.asset("assets/svg/icons/Group 86.svg"),
             SizedBox(
-              height: 16,
+              height: 16.h,
             ),
-            Text(
-              "Доступен новый опросник",
-              style: TextStyle(
-                fontFamily: "Helvetica Neue",
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0XFF7B8387),
-              ),
-            ),
-            Text(
-              "для " + widget.model.childToDisplay.name,
-              style: TextStyle(
-                fontFamily: "Helvetica Neue",
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0XFF7B8387),
-              ),
-            ),
+            Localizations.localeOf(context).languageCode == "ru"
+                ? Text(
+                    getTranslated(context, "new_questionaire_available1"),
+                    style: TextStyle(
+                      fontFamily: "Helvetica Neue",
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0XFF7B8387),
+                    ),
+                  )
+                : Text(
+                    widget.model.childToDisplay.name +
+                        getTranslated(context, "new_questionaire_available1"),
+                    style: TextStyle(
+                      fontFamily: "Helvetica Neue",
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0XFF7B8387),
+                    ),
+                  ),
+            Localizations.localeOf(context).languageCode == "ru"
+                ? Text(
+                    getTranslated(context, "new_questionaire_available2") +
+                        widget.model.childToDisplay.name,
+                    style: TextStyle(
+                      fontFamily: "Helvetica Neue",
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0XFF7B8387),
+                    ),
+                  )
+                : Text(
+                    getTranslated(context, "new_questionaire_available2"),
+                    style: TextStyle(
+                      fontFamily: "Helvetica Neue",
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0XFF7B8387),
+                    ),
+                  ),
             Container(
               width: SizeConfig.screenWidth,
               margin: EdgeInsets.only(
@@ -347,6 +488,7 @@ class _NewQuestionaireAvailableWidgetState
               ),
               child: InkWell(
                 onTap: () {
+                  // String email = await UserData().getEmail();
                   QuestionnaireViewModel questionaireModel =
                       QuestionnaireViewModel(
                     passedQuestionnaireData:
@@ -364,7 +506,7 @@ class _NewQuestionaireAvailableWidgetState
                   );
                 },
                 child: Text(
-                  "Перейти",
+                  getTranslated(context, "proceed"),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: "Helvetica Neue",
@@ -384,7 +526,7 @@ class _NewQuestionaireAvailableWidgetState
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Пропустить",
+                  getTranslated(context, "skip"),
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 16,

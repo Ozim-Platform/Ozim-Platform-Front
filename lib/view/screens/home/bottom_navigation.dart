@@ -7,6 +7,7 @@ import 'package:charity_app/model/data.dart';
 import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/constants.dart';
 import 'package:charity_app/utils/post_url_helper.dart';
+import 'package:charity_app/view/components/notification_button.dart';
 import 'package:charity_app/view/screens/home/favourite/favourite_screen.dart';
 import 'package:charity_app/view/screens/home/general_search_screen.dart';
 import 'package:charity_app/view/screens/home/home_screen.dart';
@@ -15,11 +16,16 @@ import 'package:charity_app/view/screens/other/notification/notification_screen.
 import 'package:charity_app/view/theme/app_color.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:uni_links/uni_links.dart';
 
 class BottomNavigation extends StatefulWidget {
+  bool isFromNotification;
+  int childId;
+  BottomNavigation({this.isFromNotification = false, this.childId});
+
   @override
   BottomNavigationState createState() => BottomNavigationState();
 
@@ -34,6 +40,9 @@ class BottomNavigation extends StatefulWidget {
 
 class BottomNavigationState extends State<BottomNavigation> {
   static bool rebuild = false;
+  bool _isFromNotification = false;
+  int _childId = 0;
+
   GlobalKey globalKey = new GlobalKey(debugLabel: 'btm_app_bar');
   GlobalKey<ConvexAppBarState> _bottomAppBarKey =
       GlobalKey<ConvexAppBarState>();
@@ -43,6 +52,7 @@ class BottomNavigationState extends State<BottomNavigation> {
   List<Category> _category = [];
   List<Data> _folders = [];
   StreamSubscription _uriSub;
+  RemoteMessage messageWhenTerminated;
 
   void _onItemTap(int index) async {
     if (index == 2) {
@@ -72,13 +82,36 @@ class BottomNavigationState extends State<BottomNavigation> {
     }
   }
 
+  Future<void> getMessageWhenClosed() async {
+    messageWhenTerminated =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (messageWhenTerminated != null) {
+      if (messageWhenTerminated.data["child_id"] != null) {
+        _isFromNotification = true;
+        _childId = int.parse(messageWhenTerminated.data["child_id"]);
+        selectedItem = 4;
+        _bottomAppBarKey.currentState.animateTo(
+          selectedItem,
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
-    _uriSub = uriLinkStream.listen((Uri link) {
-      PostUrlHelper.handleUrl(link, context);
-    }, onError: (err) {
-      // ignore
-    });
+    _isFromNotification = widget.isFromNotification;
+    _childId = widget.childId;
+
+    getMessageWhenClosed();
+    _uriSub = uriLinkStream.listen(
+      (Uri link) {
+        PostUrlHelper.handleUrl(link, context);
+      },
+      onError: (err) {
+        // ignore
+      },
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final initialUri = await getInitialUri();
       if (initialUri != null) {
@@ -87,6 +120,9 @@ class BottomNavigationState extends State<BottomNavigation> {
     });
     getCategory();
     getBookmarksFolders();
+    if (_isFromNotification) {
+      selectedItem = 4;
+    }
     super.initState();
   }
 
@@ -104,7 +140,9 @@ class BottomNavigationState extends State<BottomNavigation> {
       GeneralSearchScreen(),
       NotificationScreen(),
       FavouriteScreen(folders: _folders),
-      ProfileScreen(),
+      ProfileScreen(
+        childId: _isFromNotification ? _childId : null,
+      ),
     ];
     return Builder(
       builder: (BuildContext context) {
@@ -139,14 +177,17 @@ class BottomNavigationState extends State<BottomNavigation> {
                 isIconBlend: true,
               ),
               TabItem(
-                icon: SvgPicture.asset(
-                  "assets/svg/icons/messenger.svg",
-                  width: 24,
-                  height: 24,
-                  fit: BoxFit.scaleDown,
-                  color: color,
+                icon: NotificationButton(
+                  size: 24,
+                  icon: SvgPicture.asset(
+                    "assets/svg/icons/messenger.svg",
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.scaleDown,
+                    color: color,
+                  ),
+                  isBottomBar: true,
                 ),
-                isIconBlend: true,
               ),
               TabItem(
                 icon: Icon(CustomIcons.favorite_outline,
@@ -166,7 +207,7 @@ class BottomNavigationState extends State<BottomNavigation> {
                 isIconBlend: true,
               ),
             ],
-            initialActiveIndex: 0,
+            initialActiveIndex: selectedItem,
             onTap: (int i) => {
               _onItemTap(i),
             },

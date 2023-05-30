@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 
 Widget getWidgetLogo = Container(
     child: SvgPicture.asset(
-  'assets/svg/family (2).svg',
+  'assets/svg/family.svg',
   width: SizeConfig.calculateBlockHorizontal(318),
   height: SizeConfig.calculateBlockVertical(318),
 ));
