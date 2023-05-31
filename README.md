@@ -21,7 +21,6 @@ We also have information about our other projects and events [here](http://ozimp
 * [Android Minimal SDK 21](https://developer.android.com/studio/releases/platforms)
 * [Android Targeted SDK 31](https://developer.android.com/studio/releases/platforms)
 * [Java 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [FHIR Android SDK 0.5.0](https://github.com/google/android-fhir)
 
 #### Backend
 * [PHP](https://www.php.net/downloads.php)
