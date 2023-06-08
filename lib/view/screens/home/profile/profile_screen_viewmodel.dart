@@ -54,7 +54,6 @@ class ProfileViewModel extends BaseViewModel {
             childToDisplay = element;
             questionnaireDataToDisplay = element.newQuestionnaires[0];
             questionnaireDataToDisplay = element.newQuestionnaires[0];
-
             shouldShowChildQuestionaire.value = true;
           }
         },

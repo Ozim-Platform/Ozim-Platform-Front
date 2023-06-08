@@ -59,7 +59,7 @@ AppBar customAppbar(
     bottom: PreferredSize(
       preferredSize: MediaQuery.of(context).size.width > 500
           ? Size.fromHeight(
-              100.0.w,
+              60.0.w,
             )
           : Size.fromHeight(
               60.0.w,

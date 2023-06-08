@@ -32,7 +32,7 @@ class _CardIcon extends State<CardIcon> {
       73,
     );
 
-    final double iconSize = MediaQuery.of(context).size.width > 500 ? 50 : 60;
+    final double iconSize = MediaQuery.of(context).size.width > 500 ? 80 : 60;
 
     return InkWell(
       splashColor: Colors.transparent,

@@ -42,20 +42,30 @@ class SubscriptionViewModel extends BaseViewModel {
         },
       );
     }
-
+    _inAppPurchaseDataRepository.purchaseErrorSubscription.onData(
+      (data) {
+        log("error message received");
+        isLoading.value = false;
+        notifyListeners();
+      },
+    );
     setBusy(false);
     notifyListeners();
   }
 
-  Future<PurchasedItem> restorePurchases() async {
-    // isLoading.value = true;
-    // notifyListeners();
+  restorePurchases(BuildContext context) async {
+    isLoading.value = true;
+    notifyListeners();
+    if (await _inAppPurchaseDataRepository.restorePurchase() == true) {
+      ToastUtils.toastErrorGeneral(
+          getTranslated(context, "account_has_subscription"), context);
+    } else {
+      ToastUtils.toastErrorGeneral(
+          getTranslated(context, "could_not_find_subscription"), context);
+    }
 
-    // PurchasedItem purchasedItem =
-    //     await _inAppPurchaseDataRepository.checkCurrentSubscription();
-    // isLoading.value = false;
-    // notifyListeners();
-    // return purchasedItem;
+    isLoading.value = false;
+    notifyListeners();
   }
 
   Future<PurchasedItem> purchaseSubscription(BuildContext context) async {

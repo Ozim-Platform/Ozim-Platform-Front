@@ -476,7 +476,14 @@ class _CardBuilderState extends State<CardBuilder> {
                                         AppThemeStyle.normalTextSmallerLigther,
                                   ),
                                 )
-                              : SizedBox(),
+                              : Padding(
+                                  padding: EdgeInsets.only(left: 3.w),
+                                  child: Text(
+                                    "0",
+                                    style:
+                                        AppThemeStyle.normalTextSmallerLigther,
+                                  ),
+                                ),
                         ],
                       ),
                     ),

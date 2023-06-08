@@ -300,8 +300,10 @@ Future<AppBar> profileScreenAppBar(BuildContext context, bool showLeadingIcon,
         bottom: Radius.circular(40),
       ),
     ),
-    // toolbarHeight: 80,
-    // automaticallyImplyLeading: false,
+    // toolbarHeight: 40.w,
+
+    toolbarHeight: 80.h,
+    automaticallyImplyLeading: false,
     leading: showLeadingIcon == true
         ? Padding(
             padding: EdgeInsets.all(8.0.w),

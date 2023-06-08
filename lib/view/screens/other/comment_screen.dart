@@ -14,6 +14,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:stacked/stacked.dart';
 
@@ -72,7 +73,7 @@ class CommentScreen extends StatelessWidget {
             leading: Column(
               children: [
                 IconButton(
-                  iconSize: 25.0,
+                  iconSize: 20.sp,
                   splashRadius: 20,
                   icon: Icon(
                     Icons.arrow_back_ios,
@@ -105,7 +106,7 @@ class CommentScreen extends StatelessWidget {
               elevation: 0.2,
               style: TabStyle.fixedCircle,
               color: Colors.black45,
-              height: 35.0,
+              height: 35.0.w,
               activeColor: AppColor.sometimes,
               backgroundColor: Colors.white,
               items: [
@@ -519,7 +520,8 @@ class _MainBuilderCommentState extends State<MainBuilderComment> {
                         focusable: true,
                         label: getTranslated(context, "reply_vo"),
                         button: true,
-                        child: InkWell(splashColor: Colors.transparent,
+                        child: InkWell(
+                          splashColor: Colors.transparent,
                           onTap: answerForComment,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
@@ -648,7 +650,8 @@ class _CommentTextField extends StatelessWidget {
         if (sending)
           CupertinoActivityIndicator()
         else
-          InkWell(splashColor: Colors.transparent,
+          InkWell(
+            splashColor: Colors.transparent,
             onTap: () {
               callback(_textController.text);
               _textController.text = '';

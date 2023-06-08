@@ -133,6 +133,9 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
         await model.init();
       },
       builder: (context, model, child) {
+        model.isLoading.addListener(() {
+          setState(() {});
+        });
         if (model.isBusy) {
           return CircularProgressIndicator();
         } else
@@ -234,8 +237,8 @@ class _SubscriptionPriceWidgetState extends State<SubscriptionPriceWidget> {
                     ),
                     InkWell(
                       splashColor: Colors.transparent,
-                      onTap: () async {
-                        await model.restorePurchases();
+                      onTap: () {
+                        model.restorePurchases(context);
                       },
                       child: Padding(
                         padding: EdgeInsets.only(
@@ -364,7 +367,7 @@ class _SubscriptionState extends State<Subscription> {
                     ) +
                     (widget.subscriptionItem.currency == "KZT"
                         ? " / т "
-                        : widget.subscriptionItem.currency) +
+                        : "/ " + widget.subscriptionItem.currency + " ") +
                     widget.subscriptionItem.price,
                 style: TextStyle(
                   color: Colors.white,

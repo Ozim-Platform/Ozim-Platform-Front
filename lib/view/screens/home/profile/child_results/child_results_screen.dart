@@ -233,14 +233,15 @@ class ChildPreview extends StatelessWidget {
                     splashColor: Colors.transparent,
                     onTap: () {
                       // make a check whether the child has any results
-
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AllQuestionareResultsScreen(
-                            child: child,
+                      if (child.results != null && child.results.isNotEmpty) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => AllQuestionareResultsScreen(
+                              child: child,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                     child: Text(
                       getTranslated(context, "watch_test_results"),

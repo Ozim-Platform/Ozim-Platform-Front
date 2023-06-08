@@ -67,10 +67,10 @@ class _BtnUIState extends State<BtnUI> with SingleTickerProviderStateMixin {
       child: Transform.scale(
         scale: _scale,
         child: Container(
-          height: widget.height.h,
+          height: widget.height,
           width: widget.width,
           padding: widget.padding,
-          constraints: BoxConstraints(maxWidth: 450.h),
+          constraints: BoxConstraints(maxWidth: 450),
           decoration: BoxDecoration(
               color: widget.color,
               borderRadius: BorderRadius.circular(27.0),

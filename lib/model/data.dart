@@ -28,7 +28,7 @@ class Data {
   String email;
   String link;
   BookInformation bookInformation;
-  
+
   Data({
     this.id,
     this.name,
@@ -101,9 +101,8 @@ class Data {
     phone = json['phone'] != null ? json['phone'] : null;
     email = json['email'] != null ? json['email'] : null;
     link = json['link'] != null ? json['link'] : null;
-    bookInformation = json['book'] != null
-        ? BookInformation.fromJson(json['book'])
-        : null;
+    bookInformation =
+        json['book'] != null ? BookInformation.fromJson(json['book']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -267,8 +266,7 @@ class UserComment {
   }
 }
 
-
-class BookInformation{
+class BookInformation {
   String path;
   String extension;
   String originalName;

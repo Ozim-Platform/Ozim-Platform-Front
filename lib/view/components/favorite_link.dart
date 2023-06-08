@@ -71,7 +71,7 @@ class FavoriteLink extends StatelessWidget {
           children: [
             Image.asset(
               'assets/image/favorite_shadow.png',
-              width: MediaQuery.of(context).size.width > 500 ? 200.h : 50.h,
+              // width: MediaQuery.of(context).size.width > 500 ? 200.h : 50.h,
             ),
             Padding(
               padding: EdgeInsets.only(top: 5.w),

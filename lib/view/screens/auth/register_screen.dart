@@ -96,18 +96,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Colors.white),
                           ),
                           SizedBox(
-                              height: SizeConfig.calculateBlockVertical(5)),
+                              height: SizeConfig.calculateBlockVertical(10)),
+
                           _size.height > 600
                               ? TextField(
                                   controller: model.usernameController,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: SizeConfig.calculateTextSize2(14),
+                                    // fontFamily: 'Arial',
+                                  ),
                                   decoration: InputDecoration(
                                     hintText:
                                         getTranslated(context, 'username'),
                                     hintStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                            SizeConfig.calculateTextSize(14)),
+                                      color: Colors.white,
+                                      fontSize:
+                                          SizeConfig.calculateTextSize2(14),
+                                      // fontFamily: 'Arial',
+                                    ),
                                     prefixIcon: SvgPicture.asset(
                                       'assets/svg/icons/person_outline_white.svg',
                                       width:
@@ -117,13 +124,489 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           SizeConfig.calculateBlockVertical(24),
                                       fit: BoxFit.scaleDown,
                                     ),
-                                    enabledBorder: const UnderlineInputBorder(
+                                    enabledBorder: new UnderlineInputBorder(
                                       borderSide: const BorderSide(
                                         color: Colors.white,
                                         width: 1.0,
                                       ),
                                     ),
-                                    focusedBorder: const UnderlineInputBorder(
+                                    focusedBorder: new UnderlineInputBorder(
+                                      borderSide:
+                                          const BorderSide(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  height: 25,
+                                  child: TextField(
+                                    controller: model.emailController,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                      hintText: getTranslated(context, 'email'),
+                                      hintStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            SizeConfig.calculateTextSize2(14),
+                                      ),
+                                      prefixIconConstraints: BoxConstraints(
+                                        minHeight: 15,
+                                        minWidth: 32,
+                                        maxWidth: 32,
+                                        maxHeight: 18,
+                                      ),
+                                      prefixIcon: SvgPicture.asset(
+                                        'assets/svg/icons/mail.svg',
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                      enabledBorder: new UnderlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Colors.white,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      focusedBorder: new UnderlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                          // SizedBox(
+                          //     height: SizeConfig.calculateBlockVertical(10)),
+                          // _size.height > 600
+                          //     ? TextField(
+                          //         controller: model.emailController,
+                          //         style: TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: SizeConfig.calculateTextSize2(14),
+                          //           // fontFamily: 'Arial',
+                          //         ),
+                          //         decoration: InputDecoration(
+                          //           hintText: getTranslated(context, 'email'),
+                          //           hintStyle: TextStyle(
+                          //             color: Colors.white,
+                          //             fontSize:
+                          //                 SizeConfig.calculateTextSize2(14),
+                          //             // fontFamily: 'Arial',
+                          //           ),
+                          //           prefixIcon: SvgPicture.asset(
+                          //             'assets/svg/icons/mail.svg',
+                          //             width:
+                          //                 SizeConfig.calculateBlockHorizontal(
+                          //                     24),
+                          //             height:
+                          //                 SizeConfig.calculateBlockVertical(24),
+                          //             fit: BoxFit.scaleDown,
+                          //           ),
+                          //           enabledBorder: new UnderlineInputBorder(
+                          //             borderSide: const BorderSide(
+                          //               color: Colors.white,
+                          //               width: 1.0,
+                          //             ),
+                          //           ),
+                          //           focusedBorder: new UnderlineInputBorder(
+                          //             borderSide:
+                          //                 const BorderSide(color: Colors.white),
+                          //           ),
+                          //         ),
+                          //       )
+                          //     : Container(
+                          //         height: 25,
+                          //         child: TextField(
+                          //           controller: model.emailController,
+                          //           style: const TextStyle(color: Colors.white),
+                          //           decoration: InputDecoration(
+                          //             hintText: getTranslated(context, 'email'),
+                          //             hintStyle: TextStyle(
+                          //               color: Colors.white,
+                          //               fontSize:
+                          //                   SizeConfig.calculateTextSize2(14),
+                          //             ),
+                          //             prefixIconConstraints: BoxConstraints(
+                          //               minHeight: 15,
+                          //               minWidth: 32,
+                          //               maxWidth: 32,
+                          //               maxHeight: 18,
+                          //             ),
+                          //             prefixIcon: SvgPicture.asset(
+                          //               'assets/svg/icons/mail.svg',
+                          //               fit: BoxFit.scaleDown,
+                          //             ),
+                          //             enabledBorder: new UnderlineInputBorder(
+                          //               borderSide: const BorderSide(
+                          //                 color: Colors.white,
+                          //                 width: 1.0,
+                          //               ),
+                          //             ),
+                          //             focusedBorder: new UnderlineInputBorder(
+                          //               borderSide: const BorderSide(
+                          //                   color: Colors.white),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          // _size.height > 600
+                          //     ? TextField(
+                          //         controller: model.usernameController,
+                          //         style: const TextStyle(color: Colors.white),
+                          //         decoration: InputDecoration(
+                          //           hintText:
+                          //               getTranslated(context, 'username'),
+                          //           hintStyle: TextStyle(
+                          //               color: Colors.white,
+                          //               fontSize:
+                          //                   SizeConfig.calculateTextSize(14)),
+                          //           prefixIcon: SvgPicture.asset(
+                          //             'assets/svg/icons/person_outline_white.svg',
+                          //             width:
+                          //                 SizeConfig.calculateBlockHorizontal(
+                          //                     24),
+                          //             height:
+                          //                 SizeConfig.calculateBlockVertical(24),
+                          //             fit: BoxFit.scaleDown,
+                          //           ),
+                          //           enabledBorder: const UnderlineInputBorder(
+                          //             borderSide: const BorderSide(
+                          //               color: Colors.white,
+                          //               width: 1.0,
+                          //             ),
+                          //           ),
+                          //           focusedBorder: const UnderlineInputBorder(
+                          //             borderSide:
+                          //                 const BorderSide(color: Colors.white),
+                          //           ),
+                          //         ),
+                          //       )
+                          // :
+                          // Container(
+                          //   height: 30,
+                          //   child: TextField(
+                          //     controller: model.usernameController,
+                          //     style: TextStyle(
+                          //         color: Colors.white,
+                          //         fontSize: SizeConfig.calculateTextSize(14)),
+                          //     decoration: InputDecoration(
+                          //       hintText: getTranslated(context, 'username'),
+                          //       hintStyle: TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: SizeConfig.calculateTextSize(14)),
+                          //       prefixIconConstraints: BoxConstraints(
+                          //         minHeight: 15,
+                          //         minWidth: 32,
+                          //         maxWidth: 32,
+                          //         maxHeight: 18,
+                          //       ),
+                          //       prefixIcon: SizedBox(
+                          //         width: 10.sp,
+                          //         height: 10.sp,
+                          //         child: SvgPicture.asset(
+                          //           'assets/svg/icons/person_outline_white.svg',
+                          //           width: 10.sp,
+                          //           height: 10.sp,
+                          //           // fit: BoxFit.scaleDown,
+                          //         ),
+                          //       ),
+                          //       enabledBorder: const UnderlineInputBorder(
+                          //         borderSide: const BorderSide(
+                          //           color: Colors.white,
+                          //           width: 1.0,
+                          //         ),
+                          //       ),
+                          //       focusedBorder: const UnderlineInputBorder(
+                          //         borderSide:
+                          //             const BorderSide(color: Colors.white),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: SizeConfig.calculateBlockVertical(
+                          //     10,
+                          //   ),
+                          // ),
+                          // _size.height > 600
+                          //     ? Container(
+                          //         child: Row(
+                          //           children: [
+                          //             Flexible(
+                          //               child: TextField(
+                          //                 controller: model.passwordController,
+                          //                 style: const TextStyle(
+                          //                     color: Colors.white),
+                          //                 obscureText: _isObscured,
+                          //                 decoration: InputDecoration(
+                          //                   hintText: getTranslated(
+                          //                       context, 'password'),
+                          //                   hintStyle: const TextStyle(
+                          //                       color: Colors.white,
+                          //                       fontSize: 14),
+                          //                   prefixIcon: SvgPicture.asset(
+                          //                     'assets/svg/icons/lock.svg',
+                          //                     width: 24,
+                          //                     height: 24,
+                          //                     fit: BoxFit.scaleDown,
+                          //                   ),
+                          //                   enabledBorder:
+                          //                       const UnderlineInputBorder(
+                          //                     borderSide: const BorderSide(
+                          //                       color: Colors.white,
+                          //                       width: 1.0,
+                          //                     ),
+                          //                   ),
+                          //                   focusedBorder:
+                          //                       const UnderlineInputBorder(
+                          //                     borderSide: const BorderSide(
+                          //                         color: Colors.white),
+                          //                   ),
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             GestureDetector(
+                          //               onTap: togglePassword,
+                          //               child: _isObscured == true
+                          //                   ? SvgPicture.asset(
+                          //                       'assets/image/eye.svg',
+                          //                       width: SizeConfig
+                          //                           .calculateBlockHorizontal(
+                          //                               24.w),
+                          //                       height: SizeConfig
+                          //                           .calculateBlockVertical(
+                          //                               24.w),
+                          //                       fit: BoxFit.scaleDown,
+                          //                     )
+                          //                   : Image.asset(
+                          //                       'assets/image/open_eye.png',
+                          //                       width: SizeConfig
+                          //                           .calculateBlockHorizontal(
+                          //                               35.w),
+                          //                       height: SizeConfig
+                          //                           .calculateBlockVertical(
+                          //                               35.w),
+                          //                       fit: BoxFit.scaleDown,
+                          //                     ),
+                          //             )
+                          //           ],
+                          //         ),
+                          //         decoration: BoxDecoration(
+                          //           border: const Border(
+                          //             bottom: const BorderSide(
+                          //                 color: Colors.white, width: 1.0),
+                          //           ),
+                          //         ),
+                          //       )
+                          // :
+                          // Container(
+                          //   child: Row(
+                          //     children: [
+                          //       Flexible(
+                          //         child: Container(
+                          //           height: 30,
+                          //           child: TextField(
+                          //             controller: model.passwordController,
+                          //             style:
+                          //                 // const TextStyle(color: Colors.white),
+                          //                 TextStyle(
+                          //               color: Colors.white,
+                          //               fontSize: SizeConfig.calculateTextSize(
+                          //                 14,
+                          //               ),
+                          //             ),
+                          //             obscureText: _isObscured,
+                          //             decoration: InputDecoration(
+                          //               hintText:
+                          //                   getTranslated(context, 'password'),
+                          //               hintStyle: TextStyle(
+                          //                 color: Colors.white,
+                          //                 fontSize:
+                          //                     SizeConfig.calculateTextSize(
+                          //                   14,
+                          //                 ),
+                          //               ),
+                          //               prefixIconConstraints: BoxConstraints(
+                          //                 minHeight: 15,
+                          //                 minWidth: 32,
+                          //                 maxWidth: 32,
+                          //                 maxHeight: 18,
+                          //               ),
+                          //               prefixIcon: SvgPicture.asset(
+                          //                 'assets/svg/icons/lock.svg',
+                          //                 width: 15,
+                          //                 height: 15,
+                          //                 fit: BoxFit.scaleDown,
+                          //               ),
+                          //               enabledBorder:
+                          //                   const UnderlineInputBorder(
+                          //                 borderSide: const BorderSide(
+                          //                   color: Colors.white,
+                          //                   width: 1.0,
+                          //                 ),
+                          //               ),
+                          //               focusedBorder:
+                          //                   const UnderlineInputBorder(
+                          //                 borderSide: const BorderSide(
+                          //                     color: Colors.white),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       GestureDetector(
+                          //         onTap: togglePassword,
+                          //         child: _isObscured == true
+                          //             ? SvgPicture.asset(
+                          //                 'assets/image/eye.svg',
+                          //                 width: SizeConfig
+                          //                     .calculateBlockHorizontal(24.w),
+                          //                 height:
+                          //                     SizeConfig.calculateBlockVertical(
+                          //                         24.w),
+                          //                 fit: BoxFit.scaleDown,
+                          //               )
+                          //             : Image.asset(
+                          //                 'assets/image/open_eye.png',
+                          //                 width: SizeConfig
+                          //                     .calculateBlockHorizontal(35.w),
+                          //                 height:
+                          //                     SizeConfig.calculateBlockVertical(
+                          //                         35.w),
+                          //                 fit: BoxFit.scaleDown,
+                          //               ),
+                          //       )
+                          //     ],
+                          //   ),
+                          //   decoration: BoxDecoration(
+                          //     border: const Border(
+                          //       bottom: const BorderSide(
+                          //           color: Colors.white, width: 1.0),
+                          //     ),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //     height: SizeConfig.calculateBlockVertical(10)),
+                          // if (widget.email == null || widget.email.isEmpty)
+                          // _size.height > 600
+                          //     ? TextField(
+                          //         controller: model.emailController,
+                          //         style: const TextStyle(color: Colors.white),
+                          //         decoration: InputDecoration(
+                          //           hintText: getTranslated(context, 'email'),
+                          //           hintStyle: const TextStyle(
+                          //               color: Colors.white, fontSize: 14),
+                          //           prefixIcon: SvgPicture.asset(
+                          //             'assets/svg/icons/mail.svg',
+                          //             width: 24,
+                          //             height: 24,
+                          //             fit: BoxFit.scaleDown,
+                          //           ),
+                          //           enabledBorder: const UnderlineInputBorder(
+                          //             borderSide: const BorderSide(
+                          //               color: Colors.white,
+                          //               width: 1.0,
+                          //             ),
+                          //           ),
+                          //           focusedBorder: const UnderlineInputBorder(
+                          //             borderSide: const BorderSide(
+                          //                 color: Colors.white),
+                          //           ),
+                          //         ),
+                          //       )
+                          // :
+                          // Container(
+                          //   height: 30,
+                          //   child: TextField(
+                          //     controller: model.emailController,
+                          //     style: const TextStyle(color: Colors.white),
+                          //     decoration: InputDecoration(
+                          //       hintText: getTranslated(context, 'email'),
+                          //       hintStyle: TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: SizeConfig.calculateTextSize(14)),
+                          //       prefixIconConstraints: BoxConstraints(
+                          //         minHeight: 15,
+                          //         minWidth: 32,
+                          //         maxWidth: 32,
+                          //         maxHeight: 18,
+                          //       ),
+                          //       prefixIcon: SvgPicture.asset(
+                          //         'assets/svg/icons/mail.svg',
+                          //         width: 24,
+                          //         height: 24,
+                          //         fit: BoxFit.scaleDown,
+                          //       ),
+                          //       enabledBorder: const UnderlineInputBorder(
+                          //         borderSide: const BorderSide(
+                          //           color: Colors.white,
+                          //           width: 1.0,
+                          //         ),
+                          //       ),
+                          //       focusedBorder: const UnderlineInputBorder(
+                          //         borderSide:
+                          //             const BorderSide(color: Colors.white),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // _isObscured
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(10)),
+                          _size.height > 600
+                              ? TextField(
+                                  obscureText: _isObscured,
+                                  controller: model.passwordController,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: SizeConfig.calculateTextSize2(14),
+                                    // fontFamily: 'Arial',
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText:
+                                        getTranslated(context, 'password'),
+                                    hintStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize:
+                                          SizeConfig.calculateTextSize2(14),
+                                      // fontFamily: 'Arial',
+                                    ),
+                                    prefixIcon: SvgPicture.asset(
+                                      'assets/svg/icons/lock.svg',
+                                      width:
+                                          SizeConfig.calculateBlockHorizontal(
+                                              24),
+                                      height:
+                                          SizeConfig.calculateBlockVertical(24),
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () => setState(
+                                          () => _isObscured = !_isObscured),
+                                      icon: _isObscured == true
+                                          ? SvgPicture.asset(
+                                              'assets/image/eye.svg',
+                                              width: SizeConfig
+                                                  .calculateBlockHorizontal(
+                                                      24.w),
+                                              height: SizeConfig
+                                                  .calculateBlockVertical(24.w),
+                                              fit: BoxFit.scaleDown,
+                                            )
+                                          : Image.asset(
+                                              'assets/image/open_eye.png',
+                                              width: SizeConfig
+                                                  .calculateBlockHorizontal(
+                                                      35.w),
+                                              height: SizeConfig
+                                                  .calculateBlockVertical(35.w),
+                                              fit: BoxFit.scaleDown,
+                                            ),
+                                    ),
+                                    enabledBorder: new UnderlineInputBorder(
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    focusedBorder: new UnderlineInputBorder(
                                       borderSide:
                                           const BorderSide(color: Colors.white),
                                     ),
@@ -132,240 +615,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               : Container(
                                   height: 30,
                                   child: TextField(
-                                    controller: model.usernameController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText:
-                                          getTranslated(context, 'username'),
-                                      hintStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize:
-                                              SizeConfig.calculateTextSize(14)),
-                                      prefixIconConstraints: BoxConstraints(
-                                        minHeight: 15,
-                                        minWidth: 32,
-                                        maxWidth: 32,
-                                        maxHeight: 18,
-                                      ),
-                                      prefixIcon: SizedBox(
-                                        width: 10,
-                                        height: 10,
-                                        child: SvgPicture.asset(
-                                          'assets/svg/icons/person_outline_white.svg',
-                                          width: 10,
-                                          height: 10,
-                                          fit: BoxFit.scaleDown,
-                                        ),
-                                      ),
-                                      enabledBorder: const UnderlineInputBorder(
-                                        borderSide: const BorderSide(
-                                          color: Colors.white,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                      focusedBorder: const UnderlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(5)),
-                          _size.height > 600
-                              ? Container(
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                        child: TextField(
-                                          controller: model.passwordController,
-                                          style: const TextStyle(
-                                              color: Colors.white),
-                                          obscureText: _isObscured,
-                                          decoration: InputDecoration(
-                                            hintText: getTranslated(
-                                                context, 'password'),
-                                            hintStyle: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14),
-                                            prefixIcon: SvgPicture.asset(
-                                              'assets/svg/icons/lock.svg',
-                                              width: 24,
-                                              height: 24,
-                                              fit: BoxFit.scaleDown,
-                                            ),
-                                            enabledBorder:
-                                                const UnderlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                color: Colors.white,
-                                                width: 1.0,
-                                              ),
-                                            ),
-                                            focusedBorder:
-                                                const UnderlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: togglePassword,
-                                        child: _isObscured == true
-                                            ? SvgPicture.asset(
-                                                'assets/image/eye.svg',
-                                                width: SizeConfig
-                                                    .calculateBlockHorizontal(
-                                                        24.w),
-                                                height: SizeConfig
-                                                    .calculateBlockVertical(
-                                                        24.w),
-                                                fit: BoxFit.scaleDown,
-                                              )
-                                            : Image.asset(
-                                                'assets/image/open_eye.png',
-                                                width: SizeConfig
-                                                    .calculateBlockHorizontal(
-                                                        35.w),
-                                                height: SizeConfig
-                                                    .calculateBlockVertical(
-                                                        35.w),
-                                                fit: BoxFit.scaleDown,
-                                              ),
-                                      )
-                                    ],
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: const Border(
-                                      bottom: const BorderSide(
-                                          color: Colors.white, width: 1.0),
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                        child: Container(
-                                          height: 30,
-                                          child: TextField(
-                                            controller:
-                                                model.passwordController,
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                            obscureText: _isObscured,
-                                            decoration: InputDecoration(
-                                              hintText: getTranslated(
-                                                  context, 'password'),
-                                              hintStyle: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: SizeConfig
-                                                      .calculateTextSize(14)),
-                                              prefixIconConstraints:
-                                                  BoxConstraints(
-                                                minHeight: 15,
-                                                minWidth: 32,
-                                                maxWidth: 32,
-                                                maxHeight: 18,
-                                              ),
-                                              prefixIcon: SvgPicture.asset(
-                                                'assets/svg/icons/lock.svg',
-                                                width: 15,
-                                                height: 15,
-                                                fit: BoxFit.scaleDown,
-                                              ),
-                                              enabledBorder:
-                                                  const UnderlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                  color: Colors.white,
-                                                  width: 1.0,
-                                                ),
-                                              ),
-                                              focusedBorder:
-                                                  const UnderlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: togglePassword,
-                                        child: _isObscured == true
-                                            ? SvgPicture.asset(
-                                                'assets/image/eye.svg',
-                                                width: SizeConfig
-                                                    .calculateBlockHorizontal(
-                                                        24.w),
-                                                height: SizeConfig
-                                                    .calculateBlockVertical(
-                                                        24.w),
-                                                fit: BoxFit.scaleDown,
-                                              )
-                                            : Image.asset(
-                                                'assets/image/open_eye.png',
-                                                width: SizeConfig
-                                                    .calculateBlockHorizontal(
-                                                        25.w),
-                                                height: SizeConfig
-                                                    .calculateBlockVertical(
-                                                        25.w),
-                                                fit: BoxFit.scaleDown,
-                                              ),
-                                      )
-                                    ],
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: const Border(
-                                      bottom: const BorderSide(
-                                          color: Colors.white, width: 1.0),
-                                    ),
-                                  ),
-                                ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(5)),
-                          if (widget.email == null || widget.email.isEmpty)
-                            _size.height > 600
-                                ? TextField(
-                                    controller: model.emailController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: getTranslated(context, 'email'),
-                                      hintStyle: const TextStyle(
-                                          color: Colors.white, fontSize: 14),
-                                      prefixIcon: SvgPicture.asset(
-                                        'assets/svg/icons/mail.svg',
-                                        width: 24,
-                                        height: 24,
-                                        fit: BoxFit.scaleDown,
-                                      ),
-                                      enabledBorder: const UnderlineInputBorder(
-                                        borderSide: const BorderSide(
-                                          color: Colors.white,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                      focusedBorder: const UnderlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                  )
-                                : Container(
-                                    height: 30,
-                                    child: TextField(
-                                      controller: model.emailController,
+                                      obscureText: _isObscured,
+                                      controller: model.passwordController,
                                       style:
                                           const TextStyle(color: Colors.white),
                                       decoration: InputDecoration(
                                         hintText:
-                                            getTranslated(context, 'email'),
+                                            getTranslated(context, 'password'),
                                         hintStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontSize:
-                                                SizeConfig.calculateTextSize(
-                                                    14)),
+                                          color: Colors.white,
+                                          fontSize:
+                                              SizeConfig.calculateTextSize2(14),
+                                        ),
                                         prefixIconConstraints: BoxConstraints(
                                           minHeight: 15,
                                           minWidth: 32,
@@ -373,26 +634,118 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           maxHeight: 18,
                                         ),
                                         prefixIcon: SvgPicture.asset(
-                                          'assets/svg/icons/mail.svg',
-                                          width: 24,
-                                          height: 24,
+                                          'assets/svg/icons/lock.svg',
+                                          width: SizeConfig
+                                              .calculateBlockHorizontal(24),
+                                          height:
+                                              SizeConfig.calculateBlockVertical(
+                                                  24),
                                           fit: BoxFit.scaleDown,
                                         ),
-                                        enabledBorder:
-                                            const UnderlineInputBorder(
+                                        suffixIcon: IconButton(
+                                          onPressed: () => setState(
+                                              () => _isObscured = !_isObscured),
+                                          icon: SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: SvgPicture.asset(
+                                              'assets/image/eye.svg',
+                                              width: SizeConfig
+                                                  .calculateBlockHorizontal(24),
+                                              height: SizeConfig
+                                                  .calculateBlockVertical(24),
+                                              fit: BoxFit.scaleDown,
+                                            ),
+                                          ),
+                                        ),
+                                        enabledBorder: new UnderlineInputBorder(
                                           borderSide: const BorderSide(
                                             color: Colors.white,
                                             width: 1.0,
                                           ),
                                         ),
-                                        focusedBorder:
-                                            const UnderlineInputBorder(
+                                        focusedBorder: new UnderlineInputBorder(
                                           borderSide: const BorderSide(
                                               color: Colors.white),
                                         ),
+                                      )),
+                                ),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(10)),
+                          _size.height > 600
+                              ? TextField(
+                                  controller: model.emailController,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: SizeConfig.calculateTextSize2(14),
+                                    // fontFamily: 'Arial',
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: getTranslated(context, 'email'),
+                                    hintStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize:
+                                          SizeConfig.calculateTextSize2(14),
+                                      // fontFamily: 'Arial',
+                                    ),
+                                    prefixIcon: SvgPicture.asset(
+                                      'assets/svg/icons/mail.svg',
+                                      width:
+                                          SizeConfig.calculateBlockHorizontal(
+                                              24),
+                                      height:
+                                          SizeConfig.calculateBlockVertical(24),
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                    enabledBorder: new UnderlineInputBorder(
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    focusedBorder: new UnderlineInputBorder(
+                                      borderSide:
+                                          const BorderSide(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  height: 25,
+                                  child: TextField(
+                                    controller: model.emailController,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                      hintText: getTranslated(context, 'email'),
+                                      hintStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            SizeConfig.calculateTextSize2(14),
+                                      ),
+                                      prefixIconConstraints: BoxConstraints(
+                                        minHeight: 15,
+                                        minWidth: 32,
+                                        maxWidth: 32,
+                                        maxHeight: 18,
+                                      ),
+                                      prefixIcon: SvgPicture.asset(
+                                        'assets/svg/icons/mail.svg',
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                      enabledBorder: new UnderlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: Colors.white,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      focusedBorder: new UnderlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.white),
                                       ),
                                     ),
                                   ),
+                                ),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(15)),
                           SizedBox(
                               height: SizeConfig.calculateBlockVertical(20)),
                           CustomExpansionTile(

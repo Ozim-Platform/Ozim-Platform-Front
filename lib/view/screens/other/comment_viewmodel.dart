@@ -210,6 +210,7 @@ class CommentViewModel extends BaseViewModel {
     if (_commentid != null) {
       data['comment_id'] = _commentid;
     }
+    
     data['text'] = comment;
 
     if (type == 'article') {
@@ -250,6 +251,7 @@ class CommentViewModel extends BaseViewModel {
       data['type'] = type;
       _isLoading = true;
       _apiProvider.otherCommentStore(data).then((value) async {
+        // TODO: Here is the bug related to comments not displayed in rights
         if (value.error == null) {
           if (value.data != null) {
             if (_commentid != null) {

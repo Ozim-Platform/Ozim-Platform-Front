@@ -18,6 +18,7 @@ import 'package:charity_app/view/theme/themes.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:uni_links/uni_links.dart';
 
@@ -155,7 +156,7 @@ class BottomNavigationState extends State<BottomNavigation> {
             top: -20,
             curve: Curves.easeInOut,
             curveSize: 75,
-            height: 50,
+            height: 50.h,
             color: AppThemeStyle.colorGrey,
             activeColor: AppColor.primary,
             elevation: 0,
@@ -164,25 +165,29 @@ class BottomNavigationState extends State<BottomNavigation> {
             items: [
               TabItem(
                 icon: Icon(CustomIcons.home,
-                    size: selectedItem == 0 ? 31 : 23,
+                    size: selectedItem == 0
+                        ? (MediaQuery.of(context).size.width > 500 ? 40 : 31)
+                        : (MediaQuery.of(context).size.width > 500 ? 30 : 23),
                     color: color,
                     semanticLabel: getTranslated(context, "on_main")),
                 isIconBlend: true,
               ),
               TabItem(
                 icon: Icon(CustomIcons.search,
-                    size: selectedItem == 1 ? 27 : 22,
+                    size: selectedItem == 1
+                        ? (MediaQuery.of(context).size.width > 500 ? 35 : 27)
+                        : (MediaQuery.of(context).size.width > 500 ? 30 : 22),
                     color: color,
                     semanticLabel: getTranslated(context, "search_vo")),
                 isIconBlend: true,
               ),
               TabItem(
                 icon: NotificationButton(
-                  size: 24,
+                  size: 24.w,
                   icon: SvgPicture.asset(
                     "assets/svg/icons/messenger.svg",
-                    width: 24,
-                    height: 24,
+                    width: 24.w,
+                    height: 24.w,
                     fit: BoxFit.scaleDown,
                     color: color,
                   ),
@@ -191,7 +196,9 @@ class BottomNavigationState extends State<BottomNavigation> {
               ),
               TabItem(
                 icon: Icon(CustomIcons.favorite_outline,
-                    size: selectedItem == 3 ? 32 : 26,
+                    size: selectedItem == 3
+                        ? (MediaQuery.of(context).size.width > 500 ? 40 : 32)
+                        : ((MediaQuery.of(context).size.width > 500 ? 35 : 26)),
                     color: color,
                     semanticLabel: getTranslated(context, "favourite")),
                 isIconBlend: true,
@@ -199,8 +206,12 @@ class BottomNavigationState extends State<BottomNavigation> {
               TabItem(
                 icon: SvgPicture.asset(
                   "assets/svg/icons/profile.svg",
-                  width: 24,
-                  height: 24,
+                  width: selectedItem == 4
+                      ? (MediaQuery.of(context).size.width > 500 ? 10 : 32)
+                      : ((MediaQuery.of(context).size.width > 500 ? 35 : 26)),
+                  height: selectedItem == 4
+                      ? (MediaQuery.of(context).size.width > 500 ? 10 : 32)
+                      : ((MediaQuery.of(context).size.width > 500 ? 35 : 26)),
                   fit: BoxFit.scaleDown,
                   color: color,
                 ),

@@ -13,8 +13,8 @@ class InAppPurchaseDataRepository {
 
   ValueNotifier<bool> hasActiveSubscription = ValueNotifier<bool>(false);
 
-  StreamSubscription _purchaseUpdatedSubscription;
-  StreamSubscription _purchaseErrorSubscription;
+  StreamSubscription purchaseUpdatedSubscription;
+  StreamSubscription purchaseErrorSubscription;
   StreamSubscription _conectionSubscription;
 
   List<String> _subscriptionIds = [];
@@ -35,7 +35,7 @@ class InAppPurchaseDataRepository {
 
     _inAppPurchase.initialize();
 
-    _purchaseUpdatedSubscription = FlutterInappPurchase.purchaseUpdated.listen(
+    purchaseUpdatedSubscription = FlutterInappPurchase.purchaseUpdated.listen(
       (productItem) {
         log("new productItemIs listened");
         if (Platform.isAndroid) {
@@ -46,7 +46,7 @@ class InAppPurchaseDataRepository {
       },
     );
 
-    _purchaseErrorSubscription = FlutterInappPurchase.purchaseError.listen(
+    purchaseErrorSubscription = FlutterInappPurchase.purchaseError.listen(
       (purchaseError) {
         log("purchase-error: $purchaseError");
       },
@@ -127,6 +127,18 @@ class InAppPurchaseDataRepository {
 
   getSubscriptionIds() async {
     _subscriptionIds = await _apiProvider.getSubscriptionIds();
+  }
+
+  restorePurchase() async {
+    // this functionanlity is obsolete 
+    // since we are checking subscription from backend
+    // therefore, it will only return false
+    for (String sku in _subscriptionIds) {
+      if (await _inAppPurchase.checkSubscribed(sku: sku) == true) {
+        return true;
+      }
+    }
+    return false;
   }
 
   buySubscription(IAPItem item) async {

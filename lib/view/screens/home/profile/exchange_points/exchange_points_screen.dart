@@ -414,10 +414,9 @@ class _CardBuilderState extends State<ResourcesCardBuilder> {
                               data.name != null
                                   ? data.name
                                   : (data.title != null ? data.title : ''),
-                              // textScaleFactor: SizeConfig.textScaleFactor(),
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 18.sp,
+                                fontSize: 14.sp,
                                 color: Color(0XFF6B6F72),
                               ),
                               textAlign: TextAlign.start,
@@ -432,7 +431,6 @@ class _CardBuilderState extends State<ResourcesCardBuilder> {
                               data.title != null
                                   ? data.title
                                   : (data.name != null ? data.name : ''),
-                              // textScaleFactor: SizeConfig.textScaleFactor(),
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14.sp,

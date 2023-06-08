@@ -38,7 +38,7 @@ class BlurredAvatar extends StatelessWidget {
               child: Icon(
                 Icons.add_a_photo,
                 color: Colors.white,
-                size: 30.w,
+                size: 25.sp,
               ),
             )
           : null,

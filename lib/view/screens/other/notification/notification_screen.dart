@@ -279,7 +279,6 @@ class _NotificationScreen extends State<NotificationScreen> {
                                     int _count = 0;
                                     data.forEach((element) {
                                       if (element['unread'] != null) {
-                                        print('${element['unread']}');
                                         _count += toInt(element['unread']);
                                       }
                                     });
@@ -657,16 +656,15 @@ class NoticeCardList extends StatelessWidget {
       itemBuilder: (context, i) {
         DataComment dataComment = _comments[i];
         Map<String, dynamic> data = {
-          'avatar': dataComment.user.avatar,
-          'name': dataComment.user.name,
-          'email': dataComment.user.email,
+          'avatar': dataComment.user != null ? dataComment.user.avatar : "",
+          'name': dataComment.user != null ? dataComment.user.name : "",
+          'email': dataComment.user != null ? dataComment.user.email : "",
           'messages': [
             {'message': dataComment.text}
           ],
           'timecreated': dataComment.created_at * 1000,
           'unread': getUnreadCounter(dataComment.id),
         };
-
         return GestureDetector(
           onTap: () {
             if (hasRedirect) {

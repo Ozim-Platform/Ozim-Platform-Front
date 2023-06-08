@@ -55,6 +55,7 @@ class _PartnerScreenState extends State<PartnerScreen> {
             color: Color(
               0XFF777F83,
             ),
+            size: 22.sp,
           ),
         ),
       ),
@@ -105,7 +106,7 @@ class _PartnerScreenState extends State<PartnerScreen> {
         top: -20,
         curve: Curves.easeInOut,
         curveSize: 75,
-        height: 50,
+        height: 50.h,
         color: AppThemeStyle.colorGrey,
         activeColor: widget.partner.exchangedPoints != true
             ? AppColor.primary
