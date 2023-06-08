@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:charity_app/utils/device_size_config.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomRadioWidget<T> extends StatelessWidget {
   final T value;
@@ -66,10 +68,11 @@ class CustomRadioWidget<T> extends StatelessWidget {
   Widget titleWidget() => Expanded(
         child: Text(
           title,
+          // textScaleFactor: SizeConfig.textScaleFactor(),
           style: titleStyle ??
               TextStyle(
                 // fontFamily: 'Arial',
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: const Color(0xFF758084),
               ),
         ),

@@ -23,8 +23,12 @@ class DiagnosisViewModel extends BaseViewModel {
 
   List<Data> get folders => _folders;
 
+  List<Category> _category;
+
   Future<void> initModel(List<Category> category) async {
     _isLoading = true;
+    _category = category;
+
     List<Future> futures = [
       getDiagnoses(category),
       getBookMarks(),
@@ -43,11 +47,52 @@ class DiagnosisViewModel extends BaseViewModel {
 
   Future<void> getDiagnoses(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     _apiProvider
-        .getDiagnoses(category)
-        .then((value) => {_diagnoses = value})
+        .getDiagnoses(
+          category,
+          1,
+        )
+        .then(
+          (value) => {_diagnoses = value, _category = category},
+        )
         .catchError((error) {
-      print("Error: $error", level: 1);
-    }).whenComplete(() => {_isLoading = false, notifyListeners()});
+      print(
+        "Error: $error",
+        level: 1,
+      );
+    }).whenComplete(
+      () => {
+        _isLoading = false,
+        notifyListeners(),
+      },
+    );
+  }
+
+  Future<void> paginate() {
+    // _isLoading = true;
+
+    if (_diagnoses.page < _diagnoses.pages) {
+      _apiProvider
+          .getDiagnoses(_category, _diagnoses.page + 1)
+          .then(
+            (value) => {
+              _diagnoses.data.addAll(
+                value.data,
+              ),
+              _diagnoses.page = value.page,
+              _diagnoses.pages = value.pages,
+              _isLoading = false,
+            },
+          )
+          .catchError((error) {
+        print("Error: $error", level: 1);
+      }).whenComplete(
+        () => {
+          _isLoading = false,
+          notifyListeners(),
+        },
+      );
+    }
   }
 }

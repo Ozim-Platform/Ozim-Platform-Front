@@ -44,11 +44,16 @@ class ServiceProviderViewModel extends BaseViewModel {
 
   Future<void> getServiceProvider(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     _apiProvider
-        .serviceProvider(category)
+        .serviceProvider(category, 1)
         .then((value) => {
               _category = category,
               _links = value,
+              // _links.data.addAll(value.data) ,
+              // _links.page = value.page,
+              // _links.pages = value.pages,
+              // _isLoading=false,
               // print(_links.toJson(), level: 2),
             })
         .catchError((error) {
@@ -59,6 +64,22 @@ class ServiceProviderViewModel extends BaseViewModel {
   Future<void> reloadData() async {
     if (_category.isNotEmpty) {
       await getServiceProvider(_category);
+    }
+  }
+
+  Future<void> paginate() {
+    // _isLoading = true;
+    if (_links.page < _links.pages) {
+      _apiProvider
+          .serviceProvider(_category, _links.page + 1)
+          .then((value) => {
+                _links.page = value.page,
+                _links.pages = value.pages,
+                _links.data.addAll(value.data),
+              })
+          .catchError((error) {
+        print("Error: $error");
+      }).whenComplete(() => {_isLoading = false, notifyListeners()});
     }
   }
 }

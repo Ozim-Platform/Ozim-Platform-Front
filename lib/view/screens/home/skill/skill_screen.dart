@@ -3,8 +3,6 @@ import 'package:charity_app/model/category.dart';
 import 'package:charity_app/view/screens/common/custom_record_list.dart';
 import 'package:charity_app/view/screens/common/custom_tab_controller.dart';
 import 'package:charity_app/view/screens/home/skill/skill_viewmodel.dart';
-import 'package:charity_app/view/widgets/custom/custom_appbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -27,11 +25,7 @@ class _SkillScreenState extends State<SkillScreen>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {

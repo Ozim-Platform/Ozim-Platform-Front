@@ -15,6 +15,7 @@ import 'package:charity_app/view/theme/themes.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stacked/stacked.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -192,8 +193,8 @@ class _AddPopUpState extends State<AddPopUp> {
     return ViewModelBuilder<ForumAddViewModel>.reactive(
       builder: (context, model, child) => Material(
         child: Container(
-          width: 256,
-          height: 320,
+          width: 256.w,
+          height: 320.w,
           color: Colors.white,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

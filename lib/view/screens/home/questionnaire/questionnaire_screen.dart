@@ -1,13 +1,18 @@
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/utils/device_size_config.dart';
+import 'package:charity_app/utils/toast_utils.dart';
 import 'package:charity_app/view/components/no_data.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_answer_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:stacked/stacked.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionaire_appbar.dart';
+
+import 'package:charity_app/model/child/child.dart';
+import 'package:charity_app/utils/formatters.dart';
 
 class QuestionnaireScreen extends StatefulWidget {
   final QuestionnaireData data;
@@ -37,9 +42,9 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
           return widget.viewModel;
         } else {
           return QuestionnaireViewModel(
-            widget.data,
-            widget.childId,
-            false,
+            passedQuestionnaireData: widget.data,
+            childId: widget.childId,
+            isResultModel: false,
           );
         }
       },
@@ -51,59 +56,86 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
           return Scaffold(
             appBar: customAppbarForQuestionaire(
               context: context,
-              appBarTitle: '',
-              appBarIncome: "Опросник",
+              appBarTitle: getTranslated(context, "questionnaire"),
+              appBarIncome: getTranslated(context, "for_age") +
+                  " " +
+                  getAgeString(
+                    context,
+                    ChildAge.fromInteger(widget.data.age),
+                  ),
+              callback: () => model.previousStep(context),
+              age: widget.data.age,
             ),
             backgroundColor: Colors.white,
-            body: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
+            body: SafeArea(
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 24.w,
+                  right: 24.w,
+                  top: 10.w,
                 ),
-              ),
-              child: ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  getListUI(
-                    context,
-                    model,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
                   ),
-                  SizedBox(height: SizeConfig.calculateBlockVertical(10)),
-                ],
+                ),
+                child: ListView(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  children: <Widget>[
+                    Text(
+                      getTranslated(context, "asses_these_questions"),
+                      style: TextStyle(
+                        color: Color(0XFF777F83),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    getListUI(
+                      context,
+                      model,
+                    ),
+                    SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                  ],
+                ),
               ),
             ),
             bottomNavigationBar: model.currentStep != 5
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        splashColor: Colors.transparent,
-                        onTap: () {
-                          model.saveQuestionnaireAnswersLocally();
-                          Navigator.of(context).popUntil(
-                            (route) => route.isFirst,
-                          );
-                        },
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.only(left: 20),
-                          child: Text(
-                            // "Продолжить позже",
-                            getTranslated(context, "continue_later"),
-
-                            style: TextStyle(
-                              color: Color(0XFFADB1B3),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).padding.bottom),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          onTap: () {
+                            model.saveQuestionnaireAnswersLocally();
+                            Navigator.of(context).popUntil(
+                              (route) => route.isFirst,
+                            );
+                          },
+                          child: Container(
+                            height: 50,
+                            padding: EdgeInsets.only(
+                              left: 24.w,
+                              top: 8.w,
+                            ),
+                            child: Text(
+                              getTranslated(context, "continue_later"),
+                              style: TextStyle(
+                                color: Color(0XFFADB1B3),
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: InkWell(
+                        InkWell(
+                          splashFactory: NoSplash.splashFactory,
                           splashColor: Colors.transparent,
                           onTap: () {
                             if (model.currentQuestionaireAnswer.isComplete() ==
@@ -112,14 +144,18 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                                 context: context,
                                 builder: (BuildContext context) =>
                                     CupertinoAlertDialog(
-                                  title: const Text("questionaire_incomplete"),
+                                  title: Text(
+                                    getTranslated(
+                                      context,
+                                      "questionaire_incomplete",
+                                    ),
+                                  ),
                                   actions: <CupertinoDialogAction>[
                                     CupertinoDialogAction(
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
                                       child: Text(
-                                        // getTranslated(context, 'OK'),
                                         "OK",
                                       ),
                                     ),
@@ -144,18 +180,22 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                           },
                           child: Container(
                             height: 50,
+                            padding: EdgeInsets.only(
+                              right: 24.w,
+                              top: 8.w,
+                            ),
                             child: Text(
                               getTranslated(context, "next_question"),
                               style: TextStyle(
                                 color: Color(0XFFF1BC62),
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   )
                 : null,
           );
@@ -205,58 +245,38 @@ class QuestionWithCommentWidget extends StatefulWidget {
 }
 
 class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
-  List<TextEditingController> textControllersList = [];
-
   _onAnswerSelected(int questionIndex, bool value) {
-    setState(() {
-      widget.model.setAnswerWithCommentValue(questionIndex, value);
-    });
-  }
-
-  _onCommentChanged(int questionIndex, String answer) {
-    setState(() {
-      widget.model.setAnswerComment(questionIndex, answer);
-    });
+    setState(
+      () {
+        widget.model.setAnswerWithCommentValue(questionIndex, value);
+      },
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    int numberOfTextControllers = textControllersList.length;
-    for (int i = 0; i < numberOfTextControllers; i++) {
-      textControllersList[i].dispose();
-    }
   }
 
-  // TODO precache svgassets, since they are static
-  // TODO: Clear all controllers on dispose method
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
-          ),
+          physics: BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: widget.questions.questions.length + 3,
           itemBuilder: (context, index) {
-            TextEditingController _textEditingController =
-                TextEditingController();
             int questionIndex = index - 2;
-            index;
             if (index == 0) {
               return Padding(
-                padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                padding: EdgeInsets.only(top: 20.0.w, bottom: 23.0.w),
                 child: Text(
                   widget.questions.title == null
                       ? "title"
                       : widget.questions.title,
                   style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 20.0.sp,
                     fontWeight: FontWeight.w700,
                     color: const Color(0XFFF1BC62),
                   ),
@@ -272,57 +292,63 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                           ". " +
                           widget.questions.questions[questionIndex],
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 16.0.sp,
                         fontWeight: FontWeight.w400,
                         color: Color(0XFF7F878B),
                       ),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Radio(
-                        value: true,
-                        activeColor: Color(0XFFF1BC62),
-                        groupValue: widget.model.currentQuestionaireAnswer
-                            .answers[questionIndex].value,
-                        onChanged: (value) {
-                          widget.isAnswerScreen == true
-                              ? print(value)
-                              : _onAnswerSelected(questionIndex, value);
-                          // _onAnswerSelected(index, value);
-                        },
-                      ),
-                      Text(getTranslated(context, "yes")),
-                      const SizedBox(width: 16),
-                      Radio(
-                        value: false,
-                        activeColor: Color(0XFFF1BC62),
-                        groupValue: widget.model.currentQuestionaireAnswer
-                            .answers[questionIndex].value,
-                        onChanged: (value) {
-                          widget.isAnswerScreen == true
-                              ? print(value)
-                              : _onAnswerSelected(questionIndex, value);
-                          // _onAnswerSelected(index, value);
-                        },
-                      ),
-                      Text(getTranslated(context, "no")),
-                    ],
-                  ),
-                  TextField(
-                    enabled: !widget.isAnswerScreen,
-                    controller: _textEditingController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      labelText: widget.isAnswerScreen == true
-                          ? widget.answers.answers[questionIndex].comment
-                          : 'Комментарии',
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Radio(
+                          value: true,
+                          activeColor: Color(0XFFF1BC62),
+                          groupValue: widget.model.currentQuestionaireAnswer
+                              .answers[questionIndex].value,
+                          onChanged: (value) {
+                            widget.isAnswerScreen == true
+                                ? print(value)
+                                : _onAnswerSelected(
+                                    questionIndex,
+                                    value,
+                                  );
+                          },
+                        ),
+                        Text(
+                          getTranslated(context, "yes").toUpperCase(),
+                        ),
+                        SizedBox(width: 16.sp),
+                        Radio(
+                          value: false,
+                          activeColor: Color(0XFFF1BC62),
+                          groupValue: widget.model.currentQuestionaireAnswer
+                              .answers[questionIndex].value,
+                          onChanged: (value) {
+                            widget.isAnswerScreen == true
+                                ? print(value)
+                                : _onAnswerSelected(
+                                    questionIndex,
+                                    value,
+                                  );
+                          },
+                        ),
+                        Text(
+                          getTranslated(context, "no").toUpperCase(),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 16.0.sp,
+                    ),
+                    child: questionnaireTextField(
+                      questionIndex,
+                    ),
+                  ),
                 ],
               );
             } else if (index == 8) {
@@ -338,14 +364,18 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                             context: context,
                             builder: (BuildContext context) =>
                                 CupertinoAlertDialog(
-                              title: const Text("questionaire_incomplete"),
+                              title: Text(
+                                getTranslated(
+                                  context,
+                                  "questionaire_incomplete",
+                                ),
+                              ),
                               actions: <CupertinoDialogAction>[
                                 CupertinoDialogAction(
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    // getTranslated(context, 'OK'),
                                     "OK",
                                   ),
                                 ),
@@ -353,31 +383,36 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
                             ),
                           );
                         } else {
-                          bool success =
-                              await widget.model.submitQuestionnaire(context);
-                          if (success) {
-                            widget.model.nextStep();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => QuestionaireAnswerScreen(
-                                  data: widget.model.questionnaireData,
-                                  questionaireAnswers:
-                                      widget.model.questionaireAnswers,
-                                  model: widget.model,
+                          if (widget.model.isLoading.value == false) {
+                            bool status =
+                                await widget.model.submitQuestionnaire(context);
+                            if (status) {
+                              widget.model.nextStep();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      QuestionaireAnswerScreen(
+                                    data: widget.model.questionnaireData,
+                                    questionaireAnswers:
+                                        widget.model.questionaireAnswers,
+                                    model: widget.model,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              ToastUtils.toastErrorGeneral("error", context);
+                            }
                           }
                         }
                       },
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0.w),
                         child: Center(
                           child: Text(
                             getTranslated(context, "get_questionaire_result"),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Color(0XFFF1BC62),
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -391,6 +426,109 @@ class _QuestionWithCommentWidgetState extends State<QuestionWithCommentWidget> {
         ),
       ],
     );
+  }
+
+  Widget questionnaireTextField(
+    int questionIndex,
+  ) {
+    if (widget.isAnswerScreen &&
+        widget.answers.answers[questionIndex].comment != null) {
+      widget.model.commentControllers[questionIndex].text =
+          widget.answers.answers[questionIndex].comment;
+      return TextField(
+        maxLines: null,
+        minLines: 1,
+        enabled: !widget.isAnswerScreen,
+        controller: widget.model.commentControllers[questionIndex],
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(
+              15.0.w,
+            ),
+            borderSide: BorderSide(
+              color: Color(
+                0XFFCECECE,
+              ),
+              width: 1.0,
+            ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(
+              15.0.w,
+            ),
+            borderSide: BorderSide(
+              color: Color(
+                0XFFCECECE,
+              ),
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(
+              15.0.w,
+            ),
+            borderSide: BorderSide(
+              color: Color(
+                0XFFCECECE,
+              ),
+              width: 1.0,
+            ),
+          ),
+          filled: true,
+          fillColor: Color(0XFFF4F4F4),
+        ),
+      );
+    } else if (widget.isAnswerScreen == false) {
+      return TextField(
+        maxLines: null,
+        minLines: 1,
+        enabled: !widget.isAnswerScreen,
+        controller: widget.model.commentControllers[questionIndex],
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(
+              15.0.w,
+            ),
+            borderSide: BorderSide(
+              color: Color(
+                0XFFCECECE,
+              ),
+              width: 1.0,
+            ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(
+              15.0.w,
+            ),
+            borderSide: BorderSide(
+              color: Color(
+                0XFFCECECE,
+              ),
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(
+              15.0.w,
+            ),
+            borderSide: BorderSide(
+              color: Color(
+                0XFFCECECE,
+              ),
+              width: 1.0,
+            ),
+          ),
+          focusColor: Color(
+            0XFFF4F4F4,
+          ),
+          filled: true, //<-- SEE HERE
+          fillColor: Color(0XFFF4F4F4),
+          labelText: 'Комментарии',
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
 
@@ -415,19 +553,22 @@ class _QuestionWidgetState extends State<QuestionWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      physics: BouncingScrollPhysics(),
       scrollDirection: Axis.vertical,
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+      padding: EdgeInsets.only(
+        top: 20.w,
+      ),
       shrinkWrap: true,
       itemCount: widget.question.questions.length + 1,
       itemBuilder: (BuildContext context, int index) {
         final questionIndex = index - 1;
         if (index == 0) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
+            padding: EdgeInsets.only(bottom: 23.0.w),
             child: Text(
               widget.question.title == null ? "title" : widget.question.title,
               style: TextStyle(
-                fontSize: 20.0,
+                fontSize: 20.0.sp,
                 fontWeight: FontWeight.w700,
                 color: const Color(0XFFF1BC62),
               ),
@@ -443,7 +584,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       ". " +
                       widget.question.questions[questionIndex],
                   style: TextStyle(
-                    fontSize: 16.0,
+                    fontSize: 16.0.sp,
                     fontWeight: FontWeight.w400,
                     color: const Color(0XFF7F878B),
                   ),
@@ -464,7 +605,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         },
                       ),
                       Text(
-                        getTranslated(context, "yes"),
+                        getTranslated(context, "yes").toUpperCase(),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -486,9 +627,9 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         },
                       ),
                       Text(
-                        getTranslated(context, "sometimes"),
+                        getTranslated(context, "sometimes").toUpperCase(),
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                           fontFamily: "Helvetica Neue",
                           color: Color(0XFF778083),
@@ -508,9 +649,9 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         },
                       ),
                       Text(
-                        getTranslated(context, "no"),
+                        getTranslated(context, "no").toUpperCase(),
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                           fontFamily: "Helvetica Neue",
                           color: Color(0XFF778083),
@@ -521,7 +662,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                 ],
               ),
               SizedBox(
-                height: 16,
+                height: 27.w,
               ),
             ],
           );

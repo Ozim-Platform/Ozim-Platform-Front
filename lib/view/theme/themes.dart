@@ -3,6 +3,7 @@ import 'package:charity_app/utils/device_size_config.dart';
 import 'package:charity_app/view/theme/app_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 ThemeData lightTheme = ThemeData(
   // fontFamily: 'Arial',
@@ -212,7 +213,7 @@ class AppThemeStyle {
   ///refactor
   static TextStyle headerPrimaryColor = TextStyle(
     // fontFamily: 'Arial',
-    fontSize: 23,
+    fontSize: 23.sp,
     letterSpacing: 0.1,
     color: Constants.mainTextColor,
     fontWeight: FontWeight.bold,
@@ -282,7 +283,7 @@ class AppThemeStyle {
 
   static TextStyle normalText = TextStyle(
     // fontFamily: 'Arial',
-    fontSize: SizeConfig.calculateTextSize(16),
+    fontSize: 16.sp,
     color: Constants.mainTextColor,
     fontWeight: FontWeight.normal,
   );

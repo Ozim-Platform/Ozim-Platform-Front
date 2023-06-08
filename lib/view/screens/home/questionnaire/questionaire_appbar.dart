@@ -1,14 +1,21 @@
 import 'package:charity_app/localization/language_constants.dart';
-import 'package:charity_app/utils/device_size_config.dart';
+// import 'package:charity_app/model/child/child.dart';
+// import 'package:charity_app/utils/device_size_config.dart';
+// import 'package:charity_app/utils/formatters.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-AppBar customAppbarForQuestionaire(
-    {@required BuildContext context,
-    @required String appBarTitle,
-    @required String appBarIncome,
-    controller}) {
+Widget customAppbarForQuestionaire({
+  @required BuildContext context,
+  @required String appBarTitle,
+  @required String appBarIncome,
+  String appBarIncome2,
+  controller,
+  VoidCallback callback,
+  int age,
+}) {
   final _size = MediaQuery.of(context).size;
 
   return AppBar(
@@ -19,16 +26,9 @@ AppBar customAppbarForQuestionaire(
     ),
     title: Column(
       children: [
-        Text(
-          appBarTitle,
-          style: TextStyle(
-            fontSize: SizeConfig.calculateTextSize(18),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        if (appBarIncome != null) ...[
+        if (appBarTitle != null) ...[
           Text(
-            appBarIncome,
+            appBarTitle,
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
@@ -39,7 +39,7 @@ AppBar customAppbarForQuestionaire(
       ],
     ),
     leading: CupertinoButton(
-      onPressed: () => Navigator.pop(context),
+      onPressed: () => callback(),
       child: Icon(
         Icons.arrow_back_ios,
         size: 25,
@@ -48,50 +48,54 @@ AppBar customAppbarForQuestionaire(
       ),
     ),
     bottom: PreferredSize(
-      preferredSize: Size.fromHeight(70.0), // here the desired height
-
+      preferredSize: Size(
+        _size.width,
+        70.0.w,
+      ),
       child: Container(
-        height: 64.0,
         width: _size.width,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 50,
+        padding: EdgeInsets.symmetric(
+          horizontal: 32.w,
         ),
         decoration: BoxDecoration(
-          // color: Color(0XFFf4f4f4),
           color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: const Radius.circular(
-              40,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(
+              40.w,
             ),
-            topRight: const Radius.circular(
-              40,
+            topRight: Radius.circular(
+              40.w,
             ),
           ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                top: 8.0,
+              padding: EdgeInsets.only(
+                top: appBarIncome2 == null ? 43.0.w : 25.2.w,
+                bottom: 4.3.w,
               ),
               child: Text(
-                "Результат",
+                appBarIncome,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color(0XFF778083),
                   fontWeight: FontWeight.w500,
-                  fontSize: 23,
+                  fontSize: 23.sp,
                 ),
               ),
             ),
-            Text(
-              "для возраста 6 месяцев",
-              style: TextStyle(
-                color: Color(0XFF777F83),
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-              ),
-            ),
+            appBarIncome2 != null
+                ? Text(
+                    appBarIncome2,
+                    style: TextStyle(
+                      color: Color(0XFF777F83),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp,
+                    ),
+                  )
+                : SizedBox(),
           ],
         ),
       ),

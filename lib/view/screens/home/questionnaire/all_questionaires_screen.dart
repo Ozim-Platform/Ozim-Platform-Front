@@ -1,3 +1,4 @@
+import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/child/child.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
@@ -16,9 +17,13 @@ class _AllQuesionaresScreenState extends State<AllQuesionaresScreen> {
   AppBar appBar;
   @override
   void initState() {
-    profileScreenAppBar(context, true).then((value) => setState(() {
+    profileScreenAppBar(context, true).then(
+      (value) => setState(
+        () {
           appBar = value;
-        },),);
+        },
+      ),
+    );
     super.initState();
   }
 
@@ -32,10 +37,10 @@ class _AllQuesionaresScreenState extends State<AllQuesionaresScreen> {
           itemCount: widget.child.newQuestionnaires.length + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
-              return const Padding(
-                padding: EdgeInsets.only(top: 32),
+              return Padding(
+                padding: const EdgeInsets.only(top: 24),
                 child: Text(
-                  "Выберите нужный результат",
+                  getTranslated(context, "choose_nedded_result"),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0XFF79BCB7),
@@ -56,7 +61,6 @@ class _AllQuesionaresScreenState extends State<AllQuesionaresScreen> {
   }
 }
 
-// TODO: Display all questionnaires for this child
 class QuestionarePreview extends StatelessWidget {
   QuestionnaireData questionnaireData;
   int childId;
@@ -65,7 +69,8 @@ class QuestionarePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(splashColor: Colors.transparent,
+    return InkWell(
+      splashColor: Colors.transparent,
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -87,7 +92,9 @@ class QuestionarePreview extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              questionnaireData.age.toString() + " месяцев",
+              questionnaireData.age.toString() +
+                  " " +
+                  getTranslated(context, "months"),
               style: const TextStyle(
                 color: Color(0XFF778083),
                 fontSize: 16,

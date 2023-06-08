@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:charity_app/model/data.dart';
 
 class PartnerData {
@@ -35,7 +37,6 @@ class Partner {
     this.id,
     this.name,
     this.title,
-    // this.isPaid,
     this.description,
     this.price,
     this.image,
@@ -47,14 +48,14 @@ class Partner {
     var imageJson = json['image'] as Map<String, dynamic>;
     var imagesJson = json['images'] as List;
     List<ImageData> imageList = [];
-    if (json['images'] == null) {
+    if (json['images'] == []) {
       imageList = [];
     } else {
-      imagesJson.map(
-        (i) => imageList.add(
+      imagesJson.forEach((i) {
+        imageList.add(
           ImageData.fromJson(i),
-        ),
-      );
+        );
+      });
     }
 
     return Partner(

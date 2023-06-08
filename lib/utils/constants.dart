@@ -1,13 +1,22 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Constants {
   static const String MAIN_HTTP = "https://ozimplatform.kz/";
+
   static const Color mainTextColor = Color(0xff758084);
+
   static const Color ligtherMainTextColor = Color(0xffACB1B4);
+
   static FirebaseFirestore db = null;
+
   static List listnablemodels = [];
+
+  static const entitlementId = "premium";
+
+  static const appleKey = "appl_qImmJrZvTwlqWwQRpVCjFcbOgZw";
+
+  static const googleKey = "goog_ZSqsGMrpAKntghQHKGgPZTeNDPj";
 }
 
 final navigationChat = GlobalKey<NavigatorState>();

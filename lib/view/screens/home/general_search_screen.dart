@@ -8,6 +8,7 @@ import 'package:charity_app/view/theme/themes.dart';
 import 'package:charity_app/view/widgets/custom/custom_check_box.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:stacked/stacked.dart';
 
 import 'article/search/search_screen.dart';
@@ -213,7 +214,6 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
           if (query != '') {
             query = query;
             await model.search(query);
-            // print(model.isLoading);
           }
         }
 
@@ -278,6 +278,7 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
                         icon: Icon(
                           Icons.search,
                           color: const Color(0xFF758084),
+                          size: 22.sp,
                         ),
                         onPressed: _startSearching2,
                       ),

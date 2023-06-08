@@ -1,8 +1,14 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:charity_app/data/db/local_questionaires_db.dart';
+import 'package:charity_app/localization/language_constants.dart';
+import 'package:charity_app/localization/user_data.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/persistance/api_provider.dart';
+import 'package:charity_app/utils/toast_utils.dart';
+import 'package:flutter/widgets.dart';
+
 import 'package:http/http.dart';
 import 'package:stacked/stacked.dart';
 
@@ -10,13 +16,30 @@ class QuestionnaireViewModel extends BaseViewModel {
   ApiProvider _apiProvider = ApiProvider();
 
   QuestionnaireData questionnaireData;
+
   List<QuestionPageData> questionairePageData = [];
 
   List<QuestionaireAnswer> questionaireAnswers = [];
 
   QuestionaireAnswers _questionaireAnswersToSend;
+
+  TextEditingController emailController = TextEditingController();
+
   int childId;
+
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
+
+  List<TextEditingController> commentControllers = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+  ];
+
   QuestionaireAnswer _currentQuestionaireAnswer;
+
   QuestionPageData _currentQuestionairePageData;
 
   int _currentStep = 0;
@@ -29,101 +52,36 @@ class QuestionnaireViewModel extends BaseViewModel {
   QuestionPageData get currentQuestionairePageData =>
       _currentQuestionairePageData;
 
-  QuestionnaireViewModel(QuestionnaireData passedQuestionnaireData, int childId,
-      bool isResultModel) {
+  String userEmail;
+
+  QuestionnaireViewModel({
+    QuestionnaireData passedQuestionnaireData,
+    int childId,
+    bool isResultModel,
+  }) {
     this.childId = childId;
     init(passedQuestionnaireData, isResultModel);
   }
 
   Future<void> init(
       QuestionnaireData passedQuestionnaireData, bool isResultModel) async {
+    // refactor all this piece of code
     setBusy(true);
     if (isResultModel) {
-      passedQuestionnaireData.questionList.forEach(
-        (element) {
-          questionairePageData.add(element);
-        },
-      );
-
-      passedQuestionnaireData.questionaireAnswers.answers.forEach(
-        (element) {
-          questionaireAnswers.add(element);
-        },
-      );
-
-      questionnaireData = passedQuestionnaireData;
-      _currentQuestionaireAnswer = questionaireAnswers[5];
-      _currentQuestionairePageData = questionairePageData[5];
+      actionIfResultModel(passedQuestionnaireData);
     } else {
       // check whether we have a local copy of the questionnaire answer
-      // if we do, we need to load it and display it to the user
-      // how to get child id
 
       QuestionaireAnswers locallyStoredAnswer =
           await getAvailableQuestionaireAnswers(
         passedQuestionnaireData.id,
         childId,
       );
-
+      // act accrodingly
       if (locallyStoredAnswer != null) {
-        passedQuestionnaireData.questionList.forEach(
-          (element) {
-            questionairePageData.add(element);
-          },
-        );
-
-        int haveAnswersTillIndex = 0;
-
-        for (int i = 0; i < passedQuestionnaireData.questionList.length; i++) {
-          if (localJsonHasAnyAnswerForThePage(
-                  locallyStoredAnswer.answers.elementAt(i)) ==
-              true) {
-            var currentLocallyStoredAnswer =
-                locallyStoredAnswer.answers.elementAt(i);
-            questionaireAnswers.add(
-              currentLocallyStoredAnswer,
-            );
-            haveAnswersTillIndex += 1;
-          } else {
-            questionaireAnswers.add(
-              QuestionaireAnswer.withAnswerType(
-                i,
-                passedQuestionnaireData.questionList
-                    .elementAt(
-                      i,
-                    )
-                    .title,
-              ),
-            );
-          }
-        }
-
-        _currentStep = haveAnswersTillIndex;
-        questionnaireData = passedQuestionnaireData;
-
-        _currentQuestionaireAnswer = questionaireAnswers[_currentStep];
-        _currentQuestionairePageData = questionairePageData[_currentStep];
+        actionIfStoredLocally(passedQuestionnaireData, locallyStoredAnswer);
       } else {
-        passedQuestionnaireData.questionList.forEach(
-          (element) {
-            questionairePageData.add(element);
-          },
-        );
-
-        passedQuestionnaireData.questionList.forEach(
-          (element) {
-            questionaireAnswers.add(
-              QuestionaireAnswer.withAnswerType(
-                element.questionIndex,
-                element.title,
-              ),
-            );
-          },
-        );
-
-        questionnaireData = passedQuestionnaireData;
-        _currentQuestionaireAnswer = questionaireAnswers[currentStep];
-        _currentQuestionairePageData = questionairePageData[currentStep];
+        actionIfNotStoredLocally(passedQuestionnaireData);
       }
     }
 
@@ -131,69 +89,152 @@ class QuestionnaireViewModel extends BaseViewModel {
     setBusy(false);
   }
 
-  void nextStep() {
-    // check whether a user had provided all answers
+  Future<void> getUserEmail() async {
+    var _userEmail = await UserData().getEmail();
+    emailController.text = _userEmail ?? "";
+  }
 
+  void actionIfResultModel(QuestionnaireData passedQuestionnaireData) {
+    passedQuestionnaireData.questionList.forEach(
+      (element) {
+        questionairePageData.add(element);
+      },
+    );
+
+    passedQuestionnaireData.questionaireAnswers.answers.forEach(
+      (element) {
+        questionaireAnswers.add(element);
+      },
+    );
+
+    questionnaireData = passedQuestionnaireData;
+
+    _currentQuestionaireAnswer = questionaireAnswers[5];
+    _currentQuestionairePageData = questionairePageData[5];
+  }
+
+  void nextStep() {
     _currentStep++;
     if (currentStep == 6) {
-      // _questionaireAnswersToSend = QuestionaireAnswers(
-      //   answers: questionaireAnswers,
-      //   childId: childId,
-      //   // childId: questionnaireData.id,
-      // );
     } else {
       _currentQuestionairePageData = questionairePageData[currentStep];
       _currentQuestionaireAnswer = questionaireAnswers[currentStep];
     }
+
     notifyListeners();
   }
 
-  void previousStep() {
-    _currentStep--;
-    _currentQuestionairePageData = questionairePageData[currentStep];
-    _currentQuestionaireAnswer = questionaireAnswers[currentStep];
-
-    notifyListeners();
+  void previousStep(BuildContext context) {
+    if (currentStep != null && currentStep != 0) {
+      _currentStep--;
+      _currentQuestionairePageData = questionairePageData[currentStep];
+      _currentQuestionaireAnswer = questionaireAnswers[currentStep];
+      notifyListeners();
+    } else {
+      // pop untill first route
+      Navigator.of(context).pop();
+    }
   }
 
   void setAnswerWithoutComment(int questionIndex, int answer) {
-    log("questionIndex: $questionIndex");
     // AnswerWithoutComment
     _currentQuestionaireAnswer.answers[questionIndex].value = answer;
     notifyListeners();
   }
 
-  void setAnswerWithCommentValue(int questionIndex, bool answer) {
+  setAnswerWithCommentValue(int questionIndex, bool answer) {
     // AnswerWithComment
     _currentQuestionaireAnswer.answers[questionIndex].value = answer;
     notifyListeners();
   }
 
-  void setAnswerComment(int questionIndex, String answer) {
-    // AnswerWithComment
+  setAnswerComment() {
+    // iterate through the controllers and set the comment
+    for (int i = 0; i < 6; i++) {
+      _currentQuestionaireAnswer.answers[i].comment =
+          commentControllers[i].text;
+    }
 
-    _currentQuestionaireAnswer.answers[questionIndex].comment = answer;
+    // AnswerWithComment
+    // log(answer);
+    // _currentQuestionaireAnswer.answers[questionIndex].comment = answer;
     notifyListeners();
   }
 
+  void setUserEmail(String email) {
+    userEmail = email;
+  }
+
   Future<bool> submitQuestionnaire(context) async {
+    // get values from the controllers and set them to the answer
+    isLoading.value = true;
+    notifyListeners();
+
+    setAnswerComment();
+    // create an object which will be converted to json and sent to server
     _questionaireAnswersToSend = QuestionaireAnswers(
       answers: questionaireAnswers,
       childId: childId,
-      // childId: questionnaireData.id,
     );
+
     Response response = await _apiProvider.sendQuestionaire(
       _questionaireAnswersToSend.toJson(_questionaireAnswersToSend),
     );
 
     if (response.statusCode == 200) {
+      _questionaireAnswersToSend = QuestionaireAnswers.fromJson(
+        jsonDecode(response.body)["answers"],
+        childId,
+      );
+
+      questionaireAnswers = _questionaireAnswersToSend.answers;
+      _questionaireAnswersToSend.answerId = jsonDecode(response.body)["id"];
+      isLoading.value = false;
+      notifyListeners();
       return true;
     } else {
+      isLoading.value = false;
+      notifyListeners();
       return false;
     }
   }
 
-  void saveQuestionnaireAnswersLocally() async {
+  Future<bool> sendResultsToEmail(BuildContext context) async {
+    isLoading.value = true;
+    notifyListeners();
+    emailController.text.replaceAll(' ', '');
+    if (_questionaireAnswersToSend == null) {
+      _questionaireAnswersToSend = questionnaireData.questionaireAnswers;
+    }
+
+    var responseStatus = await _apiProvider.sendQuestionaireResultsToEmail(
+      answerId: _questionaireAnswersToSend.answerId,
+      email: emailController.text,
+    );
+
+    if (responseStatus.statusCode == 200) {
+      ToastUtils.toastSuccessGeneral(
+        getTranslated(context, "success"),
+        context,
+      );
+      Navigator.of(context).popUntil((route) => route.isFirst);
+
+      isLoading.value = false;
+      notifyListeners();
+      return true;
+    } else {
+      ToastUtils.toastErrorGeneral(
+        getTranslated(context, "error"),
+        context,
+      );
+
+      isLoading.value = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  saveQuestionnaireAnswersLocally() async {
     QuestionaireAnswers _questionaireAnswerToSaveLocally = QuestionaireAnswers(
       answers: questionaireAnswers,
       childId: childId,
@@ -226,6 +267,8 @@ class QuestionnaireViewModel extends BaseViewModel {
 
   bool localJsonHasAnyAnswerForThePage(QuestionaireAnswer questionaireAnswer) {
     bool hasAnyAnswer = false;
+    // iterate through a list of the answers and check untill which page do we have answers
+    // return that page
     questionaireAnswer.answers.forEach(
       (element) {
         if (element.value != null) {
@@ -235,5 +278,88 @@ class QuestionnaireViewModel extends BaseViewModel {
     );
 
     return hasAnyAnswer;
+  }
+
+  int hasAnswersTillScreen(QuestionaireAnswers questionaireAnswers) {
+    int haveAnswersTillIndex = 0;
+    int numberOfAnswersForCurrentPage = 0;
+
+    for (int i = 0; i < 6; i += 1) {
+      for (int j = 0; j < 6; j += 1) {
+        if (questionaireAnswers.answers[i].answers[j].value != null) {
+          numberOfAnswersForCurrentPage += 1;
+        }
+      }
+
+      if (numberOfAnswersForCurrentPage == 6) {
+        haveAnswersTillIndex += 1;
+        numberOfAnswersForCurrentPage = 0;
+      } else {
+        return haveAnswersTillIndex;
+      }
+    }
+
+    return haveAnswersTillIndex;
+  }
+
+  actionIfStoredLocally(
+    QuestionnaireData passedQuestionnaireData,
+    QuestionaireAnswers locallyStoredAnswer,
+  ) {
+    passedQuestionnaireData.questionList.forEach(
+      (element) {
+        questionairePageData.add(element);
+      },
+    );
+
+    int haveAnswersTillIndex = hasAnswersTillScreen(locallyStoredAnswer);
+
+    for (int i = 0; i < passedQuestionnaireData.questionList.length; i++) {
+      if (i <= haveAnswersTillIndex) {
+        questionaireAnswers.add(
+          locallyStoredAnswer.answers.elementAt(
+            i,
+          ),
+        );
+      } else {
+        questionaireAnswers.add(
+          QuestionaireAnswer.withAnswerType(
+            i,
+            passedQuestionnaireData.questionList.elementAt(i).title,
+          ),
+        );
+      }
+    }
+
+    _currentStep = haveAnswersTillIndex;
+    questionnaireData = passedQuestionnaireData;
+
+    _currentQuestionaireAnswer = questionaireAnswers[_currentStep];
+    _currentQuestionairePageData = questionairePageData[_currentStep];
+  }
+
+  actionIfNotStoredLocally(
+    QuestionnaireData passedQuestionnaireData,
+  ) {
+    passedQuestionnaireData.questionList.forEach(
+      (element) {
+        questionairePageData.add(element);
+      },
+    );
+
+    passedQuestionnaireData.questionList.forEach(
+      (element) {
+        questionaireAnswers.add(
+          QuestionaireAnswer.withAnswerType(
+            element.questionIndex,
+            element.title,
+          ),
+        );
+      },
+    );
+
+    questionnaireData = passedQuestionnaireData;
+    _currentQuestionaireAnswer = questionaireAnswers[currentStep];
+    _currentQuestionairePageData = questionairePageData[currentStep];
   }
 }

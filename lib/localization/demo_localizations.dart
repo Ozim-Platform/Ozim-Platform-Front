@@ -25,7 +25,6 @@ class DemoLocalization {
     // print(_localizedValues['change_username'], level: 2);
     var travel = "";
     _localizedValues.forEach((_key, value) {
-      // //print(key + ' ' + value);
       if (_key == key) {
         travel = value;
       }
@@ -44,7 +43,7 @@ class _DemoLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) {
-    return ['uz', 'ru'].contains(locale.languageCode);
+    return ['kk', 'ru'].contains(locale.languageCode);
   }
 
   @override

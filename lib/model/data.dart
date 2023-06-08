@@ -27,6 +27,7 @@ class Data {
   String phone;
   String email;
   String link;
+  BookInformation bookInformation;
 
   Data({
     this.id,
@@ -53,6 +54,7 @@ class Data {
     this.phone,
     this.email,
     this.link,
+    this.bookInformation,
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -81,7 +83,6 @@ class Data {
     if (json['comments'] != null) {
       comments = <DataComment>[];
       json['comments'].forEach((v) {
-        // print(v['replies'].toString());
         comments.add(new DataComment.fromJson(v));
       });
     } else {
@@ -100,6 +101,8 @@ class Data {
     phone = json['phone'] != null ? json['phone'] : null;
     email = json['email'] != null ? json['email'] : null;
     link = json['link'] != null ? json['link'] : null;
+    bookInformation =
+        json['book'] != null ? BookInformation.fromJson(json['book']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -260,5 +263,19 @@ class UserComment {
     data['email'] = this.email != null ? this.email : null;
     data['avatar'] = this.avatar != null ? this.avatar : null;
     return data;
+  }
+}
+
+class BookInformation {
+  String path;
+  String extension;
+  String originalName;
+
+  BookInformation({this.path, this.extension, this.originalName});
+
+  BookInformation.fromJson(Map<String, dynamic> json) {
+    path = json['path'];
+    extension = json['extension'];
+    originalName = json['original_name'];
   }
 }

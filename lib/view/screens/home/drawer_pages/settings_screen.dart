@@ -1,6 +1,14 @@
+import 'dart:io';
+
+import 'package:charity_app/data/in_app_purchase/in_app_purchase_data_repository.dart';
 import 'package:charity_app/localization/language_constants.dart';
+import 'package:charity_app/localization/user_data.dart';
+import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/device_size_config.dart';
+import 'package:charity_app/utils/toast_utils.dart';
 import 'package:charity_app/view/components/custom/custom_radio_widget.dart';
+import 'package:charity_app/view/screens/auth/access_via_social_media_screen.dart';
+import 'package:charity_app/view/screens/auth/splash_screen.dart';
 import 'package:charity_app/view/screens/home/drawer/drawer_viewmodel.dart';
 import 'package:charity_app/view/screens/home/drawer_pages/settings_viewmodel.dart';
 import 'package:charity_app/view/theme/app_color.dart';
@@ -9,6 +17,7 @@ import 'package:charity_app/view/widgets/blurred_avatar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'change_username_screen.dart';
 
@@ -37,7 +46,6 @@ class SettingsScreen extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                // BottomNavigationState.hideBottomBar.value = false;
               },
             ),
           ),
@@ -52,20 +60,24 @@ class SettingsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(width: 30),
-                    InkWell(splashColor: Colors.transparent,
-                        onTap: () {
-                          model.pickFile();
-                        },
-                        child: model.processloadingImage
-                            ? CupertinoActivityIndicator(
-                                radius: 25,
-                              )
-                            : Semantics(
-                                label: getTranslated(context, 'add_user_photo'),
-                                child: BlurredAvatar(
-                                    imageUrl: model.imageUrl, size: 70.0))),
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        model.pickFile();
+                      },
+                      child: model.processloadingImage
+                          ? CupertinoActivityIndicator(
+                              radius: 25,
+                            )
+                          : Semantics(
+                              label: getTranslated(context, 'add_user_photo'),
+                              child: BlurredAvatar(
+                                  imageUrl: model.imageUrl, size: 70.0),
+                            ),
+                    ),
                     SizedBox(width: 10),
-                    InkWell(splashColor: Colors.transparent,
+                    InkWell(
+                      splashColor: Colors.transparent,
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => ChangeUsernameScreen()));
@@ -194,6 +206,49 @@ class SettingsScreen extends StatelessWidget {
                               onChanged: (newValue) {
                                 model.permissionNotificationFunc(newValue);
                               }),
+                        ],
+                      ),
+                      SizedBox(height: SizeConfig.calculateBlockVertical(30)),
+                      Text(
+                        getTranslated(context, 'account_management'),
+                        textAlign: TextAlign.start,
+                        style: AppThemeStyle.listStyle,
+                      ),
+                      SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                      Divider(
+                        height: 2,
+                        color: Colors.grey.withOpacity(0.7),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            getTranslated(context, 'delete_account'),
+                            textAlign: TextAlign.start,
+                            style: AppThemeStyle.subtitleList,
+                          ),
+                          SizedBox(
+                              height: SizeConfig.calculateBlockVertical(20)),
+                          IconButton(
+                            onPressed: () async {
+                              // required for AppStore
+                              if (await ApiProvider().deleteAccount()) {
+                                UserData().clearData();
+
+                                logOutGoogle();
+
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => SplashScreen()),
+                                    (Route<dynamic> route) => false);
+                              } else {
+                                ToastUtils.toastErrorGeneral(
+                                    "error deleting account", context);
+                              }
+                            },
+                            icon: Icon(Icons.delete),
+                            color: Colors.red,
+                          ),
                         ],
                       ),
                     ],

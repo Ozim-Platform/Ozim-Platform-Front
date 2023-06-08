@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/localization/user_data.dart';
@@ -71,7 +73,8 @@ class CommentViewModel extends BaseViewModel {
     setSendCallback(null);
     setWritting(hint: 'your_comment');
     notifyListeners();
-    ToastUtils.toastInfoGeneral(getTranslated(context, 'message_is_sended'), context);
+    ToastUtils.toastInfoGeneral(
+        getTranslated(context, 'message_is_sended'), context);
   }
 
   setSendCallback(callback) {
@@ -195,7 +198,8 @@ class CommentViewModel extends BaseViewModel {
         phone: ownProfile.phone,
         name: ownProfile.name,
         avatar: ownProfile.avatar);
-    final DataComment comment = data.comments.firstWhere((element) => element.id == commentId);
+
+    final DataComment comment = findReplyById(data.comments, commentId);
     comment.replies.insert(0, reply);
     scrollToComment = reply.id;
     notifyListeners();
@@ -206,6 +210,7 @@ class CommentViewModel extends BaseViewModel {
     if (_commentid != null) {
       data['comment_id'] = _commentid;
     }
+    
     data['text'] = comment;
 
     if (type == 'article') {
@@ -246,6 +251,7 @@ class CommentViewModel extends BaseViewModel {
       data['type'] = type;
       _isLoading = true;
       _apiProvider.otherCommentStore(data).then((value) async {
+        // TODO: Here is the bug related to comments not displayed in rights
         if (value.error == null) {
           if (value.data != null) {
             if (_commentid != null) {
@@ -273,5 +279,20 @@ class CommentViewModel extends BaseViewModel {
     //         //print("Error: $error");
     //       }).whenComplete(() => {_isLoading = false, notifyListeners()}),
     //     });
+  }
+
+  DataComment findReplyById(List<DataComment> comments, int targetId) {
+    for (var comment in comments) {
+      if (comment.id == targetId) {
+        return comment;
+      }
+
+      var result = findReplyById(comment.replies, targetId);
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return null;
   }
 }

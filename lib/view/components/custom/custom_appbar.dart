@@ -2,10 +2,6 @@ import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// CustomAppBar extends PreferredSizeWidget {
-//
-// }
-///@deprecated
 AppBar appBarPage(
     {BuildContext context,
     String appBarTitle,
@@ -15,7 +11,7 @@ AppBar appBarPage(
   return AppBar(
     elevation: 1.0,
     shadowColor: Colors.black45,
-    // automaticallyImplyLeading: existArrow ? true : false,
+    automaticallyImplyLeading: false,
     leading: existArrow
         ? CupertinoButton(
             onPressed: () => Navigator.pop(context),

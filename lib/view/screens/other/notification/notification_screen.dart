@@ -22,6 +22,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 
@@ -48,7 +49,7 @@ class _NotificationScreen extends State<NotificationScreen> {
   Stream<DocumentSnapshot<Map<String, dynamic>>> _usersStream;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User _user;
-
+  bool _hideAppBar = false;
   int _countPrivate = 0;
   int _countComment = 0;
   int _countForum = 0;
@@ -62,50 +63,56 @@ class _NotificationScreen extends State<NotificationScreen> {
         .collection('chat')
         .doc(_user.email)
         .snapshots();
-    _usersStream.forEach((element) {
-      Map<String, dynamic> data = element.data();
-      if (data != null) {
-        if (data['rooms'] != null) {
-          List rooms = data['rooms'];
-          rooms.forEach((element) {
-            if (element['unread'] != null) {
-              _countPrivate += toInt(element['unread']);
-            }
-          });
-        }
-      }
-    });
     profileScreenAppBar(context, true).then(
-      (value) => appBar = value,
+      (value) => (setState(
+        () {
+          appBar = value;
+        },
+      )),
     );
-    _scrollController.addListener(_onScroll);
-    super.initState();
+    _usersStream.forEach(
+      (element) {
+        Map<String, dynamic> data = element.data();
+        if (data != null) {
+          if (data['rooms'] != null) {
+            List rooms = data['rooms'];
+            rooms.forEach((element) {
+              if (element['unread'] != null) {
+                _countPrivate += toInt(element['unread']);
+              }
+            });
+          }
+        }
+      },
+    );
+
+    // _scrollController.addListener(
+    //   () {
+    //     log("scrolling");
+    //     _onScroll();
+    //   },
+    // );
+
     getComments();
+    super.initState();
   }
 
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent * 0.9) {
-      log("scroll");
-
-      setState(
-        () {
-          _showSearchMessages = true;
-        },
-      );
-    } else {
-      log("scroll");
-      setState(
-        () {
-          _showSearchMessages = true;
-        },
-      );
-    }
-  }
+  // _onScroll() {
+  //   if (_scrollController.hasClients) {
+  //     if (_scrollController.position.pixels >=
+  //         _scrollController.position.maxScrollExtent * 1) {
+  //       WidgetsBinding.instance.addPostFrameCallback((_) => setState(
+  //             () {
+  //               _showSearchMessages = true;
+  //             },
+  //           ));
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
+    // _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -114,6 +121,22 @@ class _NotificationScreen extends State<NotificationScreen> {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
         _hideBottomBar = true;
+      });
+    });
+  }
+
+  hideAppBar() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      setState(() {
+        _hideAppBar = true;
+      });
+    });
+  }
+
+  showAppBar() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      setState(() {
+        _hideAppBar = false;
       });
     });
   }
@@ -128,7 +151,6 @@ class _NotificationScreen extends State<NotificationScreen> {
 
   @override
   void setState(VoidCallback fn) {
-    // TODO: implement setState
     super.setState(fn);
   }
 
@@ -201,7 +223,7 @@ class _NotificationScreen extends State<NotificationScreen> {
     return ViewModelBuilder<NotificationViewModel>.reactive(
       builder: (context, model, child) {
         return Scaffold(
-          appBar: appBar,
+          appBar: _hideAppBar == false ? appBar : null,
           key: _noticeScafold,
           resizeToAvoidBottomInset: true,
           body: SafeArea(
@@ -229,8 +251,8 @@ class _NotificationScreen extends State<NotificationScreen> {
                           children: [
                             SvgPicture.asset(
                               'assets/svg/icons/email.svg',
-                              width: 26,
-                              height: 18,
+                              width: 26.w,
+                              height: 18.w,
                               color: _currentIndex == 0
                                   ? AppColor.primary
                                   : AppColor.lightGrey,
@@ -257,7 +279,6 @@ class _NotificationScreen extends State<NotificationScreen> {
                                     int _count = 0;
                                     data.forEach((element) {
                                       if (element['unread'] != null) {
-                                        // print('${element['unread']}');
                                         _count += toInt(element['unread']);
                                       }
                                     });
@@ -282,8 +303,8 @@ class _NotificationScreen extends State<NotificationScreen> {
                           children: [
                             SvgPicture.asset(
                               'assets/svg/icons/sending.svg',
-                              width: 23,
-                              height: 23,
+                              width: 23.w,
+                              height: 23.w,
                               color: _currentIndex == 1
                                   ? AppColor.primary
                                   : AppColor.lightGrey,
@@ -310,16 +331,12 @@ class _NotificationScreen extends State<NotificationScreen> {
                           children: [
                             SvgPicture.asset(
                               'assets/svg/icons/forum_icon.svg',
-                              width: 32,
-                              height: 20,
+                              width: 32.w,
+                              height: 20.w,
                               color: _currentIndex == 2
                                   ? AppColor.primary
                                   : AppColor.lightGrey,
                             ),
-                            /*Icon(
-                                Icons.people_outline,
-                                size: 26,
-                              ),*/
                             Positioned(
                               right: -1,
                               top: 0,
@@ -344,18 +361,32 @@ class _NotificationScreen extends State<NotificationScreen> {
     );
   }
 
+  Future<void> _refresh() async {
+    setState(() {
+      _showSearchMessages = true;
+    });
+  }
+
   Widget buildModel(BuildContext context, NotificationViewModel model) {
+    // _scrollController.addListener(_onScroll());
+
     if (model.isLoading) {
       return Center(child: CupertinoActivityIndicator());
     }
-    return SingleChildScrollView(
-      controller: _scrollController,
-      child: Column(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (_showSearchMessages) SearchMessagesWidget(search: search),
-          mainUI(_currentIndex),
-        ],
+
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      color: Colors.white,
+      backgroundColor: Colors.white,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: <Widget>[
+            if (_showSearchMessages) SearchMessagesWidget(search: search),
+            mainUI(_currentIndex),
+          ],
+        ),
       ),
     );
   }
@@ -364,7 +395,6 @@ class _NotificationScreen extends State<NotificationScreen> {
     setState(() {
       _currentIndex = index;
     });
-
     if (navigationChat.currentState != null &&
         navigationChat.currentState.canPop()) {
       navigationChat.currentState.pop();
@@ -480,8 +510,10 @@ class CustomList extends StatelessWidget {
       return Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 15),
-          child: Text(getTranslated(context, 'no_comment'),
-              style: AppThemeStyle.normalText),
+          child: Text(
+            getTranslated(context, 'no_comment'),
+            style: AppThemeStyle.normalText,
+          ),
         ),
       );
     } else {
@@ -524,6 +556,23 @@ class NoticeCardList extends StatelessWidget {
       }
     }
 
+    _hideAppBar() {
+      if (NotificationScreen.of(context) != null) {
+        NotificationScreen.of(context).hideAppBar();
+      }
+    }
+
+    _showAppBar() {
+      if (NotificationScreen.of(context) != null) {
+        NotificationScreen.of(context).showAppBar();
+      }
+    }
+
+    _showBottomBarAndAppBar() {
+      _showBottomBar();
+      _showAppBar();
+    }
+
     // print(dataComment.instance);
     // print(dataComment.instance_id);
     // print(dataComment.instance_rus);
@@ -532,12 +581,16 @@ class NoticeCardList extends StatelessWidget {
       switch (dataComment.instance) {
         case 'forum':
           _hideBottomBar();
-          Navigator.of(context).push(MaterialPageRoute(
+          _hideAppBar();
+          Navigator.of(context).push(
+            MaterialPageRoute(
               builder: (context) => ForumDetailScreen(
-                    title: dataComment.instance_rus,
-                    subcategory: dataComment.instance_id,
-                    disposeCallback: _showBottomBar,
-                  )));
+                title: dataComment.instance_rus,
+                subcategory: dataComment.instance_id,
+                disposeCallback: _showBottomBarAndAppBar,
+              ),
+            ),
+          );
           break;
         case 'article':
           model = await _apiProvider.getArticle(
@@ -603,16 +656,15 @@ class NoticeCardList extends StatelessWidget {
       itemBuilder: (context, i) {
         DataComment dataComment = _comments[i];
         Map<String, dynamic> data = {
-          'avatar': dataComment.user.avatar,
-          'name': dataComment.user.name,
-          'email': dataComment.user.email,
+          'avatar': dataComment.user != null ? dataComment.user.avatar : "",
+          'name': dataComment.user != null ? dataComment.user.name : "",
+          'email': dataComment.user != null ? dataComment.user.email : "",
           'messages': [
             {'message': dataComment.text}
           ],
           'timecreated': dataComment.created_at * 1000,
           'unread': getUnreadCounter(dataComment.id),
         };
-
         return GestureDetector(
           onTap: () {
             if (hasRedirect) {

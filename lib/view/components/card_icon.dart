@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CardIcon extends StatefulWidget {
@@ -22,42 +23,51 @@ class _CardIcon extends State<CardIcon> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = SizeConfig.screenWidth;
-    // final double iconSize = max(screenWidth / 8, 43);
+    String category = getTranslated(context, widget.category);
+    final pattern = RegExp('^(Видео уроки|Бейне сабақтар)\$');
+    String toDisplay =
+        pattern.hasMatch(category) ? category.replaceAll(' ', '\n') : category;
+    final double containerSize = max(
+      screenWidth / 6,
+      73,
+    );
+
+    final double iconSize = MediaQuery.of(context).size.width > 500 ? 80 : 60;
+
     return InkWell(
       splashColor: Colors.transparent,
       onTap: widget.onTap,
       child: IgnorePointer(
         child: Container(
+          height: 95.h,
+          width: containerSize.h,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(screenWidth / 23),
+            borderRadius: BorderRadius.circular(20.h),
             color: colorDecider(widget.category),
           ),
-          width: screenWidth / 4,
-          height: screenWidth / 4,
+          padding: EdgeInsets.only(
+            bottom: 5.07.h,
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
+              iconDecider(widget.iconPath, iconSize.h),
+              FittedBox(
+                fit: BoxFit.contain,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 5.0.h, right: 5.0.h),
+                  child: Text(
+                    toDisplay,
+                    maxLines: 2,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontFamily: "Inter",
+                      fontSize: 15.sp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                child: SvgPicture.asset(
-                  widget.iconPath,
-                  // width: iconSize,;
-                  // height: iconSize,
-                ),
-              ),
-              Text(
-                Localizations.localeOf(context).languageCode == 'ru'
-                    ? ' ${widget.operation}'
-                    : ' ${getTranslated(context, 'section')}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  fontFamily: "Inter",
-                ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -100,5 +110,72 @@ class _CardIcon extends State<CardIcon> {
         throw Exception('Invalid category: $category');
     }
     return color;
+  }
+
+  Widget iconDecider(String iconPath, double iconSize) {
+    Widget icon;
+
+    switch (iconPath) {
+      case 'assets/svg/services/diagnosis.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      case 'assets/svg/services/skill.svg':
+        icon = Padding(
+          padding: EdgeInsets.only(top: 7.0.h),
+          child: SvgPicture.asset(
+            iconPath,
+            height: iconSize - 15.h,
+          ),
+        );
+        break;
+      case 'assets/svg/services/link.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      case 'assets/svg/services/service_provider.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      case 'assets/svg/services/right.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      case 'assets/svg/services/inclusion.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      case 'assets/svg/services/article.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      case 'assets/svg/services/forum.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      case 'assets/svg/services/for_parent.svg':
+        icon = SvgPicture.asset(
+          iconPath,
+          height: iconSize,
+        );
+        break;
+      default:
+        throw Exception('Invalid category: $iconPath');
+    }
+    return icon;
   }
 }

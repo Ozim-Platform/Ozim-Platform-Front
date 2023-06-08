@@ -1,6 +1,7 @@
 import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class BtnUIIcon extends StatefulWidget {
@@ -30,7 +31,8 @@ class BtnUIIcon extends StatefulWidget {
   _BtnUIIconState createState() => _BtnUIIconState();
 }
 
-class _BtnUIIconState extends State<BtnUIIcon> with SingleTickerProviderStateMixin {
+class _BtnUIIconState extends State<BtnUIIcon>
+    with SingleTickerProviderStateMixin {
   double _scale;
   AnimationController _controller;
 
@@ -80,22 +82,36 @@ class _BtnUIIconState extends State<BtnUIIcon> with SingleTickerProviderStateMix
             children: [
               Align(
                 alignment: Alignment.center,
-                child: Text(
-                  widget.text,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: widget.textColor,
-                    fontSize: SizeConfig.calculateTextSize(16),
-                    // fontFamily: 'Arial',
-                  ),
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: widget.isLoading == false
+                      ? Text(
+                          widget.text,
+                          // textScaleFactor: SizeConfig.textScaleFactor(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: widget.textColor,
+                            fontSize: 16.sp,
+                            // fontFamily: 'Arial',
+                          ),
+                        )
+                      : CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            widget.textColor,
+                          ),
+                        ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                ),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 12),
+                    padding: const EdgeInsets.only(
+                      left: 12,
+                    ),
                     child: widget.icon,
                   ),
                 ),

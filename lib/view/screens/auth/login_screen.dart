@@ -18,6 +18,7 @@ import 'package:charity_app/view/widgets/custom/getWidgetLogoHorizontal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 
@@ -33,8 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
-    print(_size.height);
-    print(_size.width);
+    // print(_size.height);
+    // print(_size.width);
     final _padding = MediaQuery.of(context).padding;
     final _height =
         _size.height - kToolbarHeight - _padding.bottom - _padding.top;
@@ -46,172 +47,208 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/image/login_background.png"),
-                fit: BoxFit.cover,
+                // fit: BoxFit.cover,
+                // fit: BoxFit.contain,
+                fit: BoxFit.fill,
               ),
             ),
             child: Scaffold(
               backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInset: true,
               appBar: widgetAppBarTitle(context),
               body: Container(
                 width: _size.width,
-                height: _height,
                 alignment: Alignment.center,
-                constraints: BoxConstraints(maxWidth: 550),
-                child: Stack(
-                  alignment: Alignment.center,
+                padding: EdgeInsets.only(
+                  left: 20.w,
+                  right: 20.w,
+                ),
+                child: ListView(
                   children: [
-                    Container(
-                      width: _size.width,
-                      height: _height,
-                      padding: EdgeInsets.fromLTRB(
-                          SizeConfig.calculateBlockHorizontal(10),
-                          0,
-                          SizeConfig.calculateBlockHorizontal(10),
-                          SizeConfig.calculateBlockVertical(33)),
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomLeft,
-                            child: SvgPicture.asset('assets/svg/welcome.svg',
-                                height: SizeConfig.calculateBlockVertical(200)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
+                    Padding(
                       padding: EdgeInsets.only(
-                        left: SizeConfig.calculateBlockHorizontal(25),
-                        right: SizeConfig.calculateBlockHorizontal(25),
+                        left: SizeConfig.calculateBlockHorizontal(40),
                       ),
-                      child: ListView(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
-                        // mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: SizeConfig.calculateBlockHorizontal(40),
-                            ),
-                            child: Align(
-                                alignment: Alignment.center,
-                                child: _size.height < 600
-                                    ? Container(
-                                        height: 18,
-                                        child: getWidgetLogoHorizontal,
-                                      )
-                                    : getWidgetLogoHorizontal),
-                          ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(
-                                  _size.height > 600 ? 25 : 8)),
-                          Text(
-                            getTranslated(context, 'enter'),
-                            style: TextStyle(
-                                // fontFamily: 'Arial',
-                                fontSize: SizeConfig.calculateTextSize2(
-                                    _size.height > 600 ? 30.0 : 21),
-                                letterSpacing: 0.4,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(10)),
-                          _size.height > 600
-                              ? TextField(
-                                  controller: model.emailController,
-                                  style: const TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                    hintText: getTranslated(context, 'email'),
-                                    hintStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                          SizeConfig.calculateTextSize2(14),
-                                      // fontFamily: 'Arial',
-                                    ),
-                                    prefixIcon: SvgPicture.asset(
-                                      'assets/svg/icons/mail.svg',
-                                      width:
-                                          SizeConfig.calculateBlockHorizontal(
-                                              24),
-                                      height:
-                                          SizeConfig.calculateBlockVertical(24),
-                                      fit: BoxFit.scaleDown,
-                                    ),
-                                    enabledBorder: new UnderlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                        width: 1.0,
-                                      ),
-                                    ),
-                                    focusedBorder: new UnderlineInputBorder(
-                                      borderSide:
-                                          const BorderSide(color: Colors.white),
-                                    ),
-                                  ),
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: _size.height < 600
+                              ? Container(
+                                  height: 18,
+                                  child: getWidgetLogoHorizontal,
                                 )
-                              : Container(
-                                  height: 25,
-                                  child: TextField(
-                                    controller: model.emailController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: getTranslated(context, 'email'),
-                                      hintStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                            SizeConfig.calculateTextSize2(14),
-                                      ),
-                                      prefixIconConstraints: BoxConstraints(
-                                        minHeight: 15,
-                                        minWidth: 32,
-                                        maxWidth: 32,
-                                        maxHeight: 18,
-                                      ),
-                                      prefixIcon: SvgPicture.asset(
-                                        'assets/svg/icons/mail.svg',
-                                        fit: BoxFit.scaleDown,
-                                      ),
-                                      enabledBorder: new UnderlineInputBorder(
-                                        borderSide: const BorderSide(
-                                          color: Colors.white,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                      focusedBorder: new UnderlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.white),
-                                      ),
-                                    ),
+                              : getWidgetLogoHorizontal),
+                    ),
+                    SizedBox(height: SizeConfig.calculateBlockVertical(10.w)),
+                    Text(
+                      getTranslated(context, 'enter'),
+                      style: TextStyle(
+                          fontSize: SizeConfig.calculateTextSize2(
+                              _size.height > 600 ? 30.0 : 21),
+                          letterSpacing: 0.4,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                    _size.height > 600
+                        ? TextField(
+                            controller: model.emailController,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: SizeConfig.calculateTextSize2(14),
+                              // fontFamily: 'Arial',
+                            ),
+                            decoration: InputDecoration(
+                              hintText: getTranslated(context, 'email'),
+                              hintStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: SizeConfig.calculateTextSize2(14),
+                                // fontFamily: 'Arial',
+                              ),
+                              prefixIcon: SvgPicture.asset(
+                                'assets/svg/icons/mail.svg',
+                                width: SizeConfig.calculateBlockHorizontal(24),
+                                height: SizeConfig.calculateBlockVertical(24),
+                                fit: BoxFit.scaleDown,
+                              ),
+                              enabledBorder: new UnderlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                  width: 1.0,
+                                ),
+                              ),
+                              focusedBorder: new UnderlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.white),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            height: 25,
+                            child: TextField(
+                              controller: model.emailController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: getTranslated(context, 'email'),
+                                hintStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: SizeConfig.calculateTextSize2(14),
+                                ),
+                                prefixIconConstraints: BoxConstraints(
+                                  minHeight: 15,
+                                  minWidth: 32,
+                                  maxWidth: 32,
+                                  maxHeight: 18,
+                                ),
+                                prefixIcon: SvgPicture.asset(
+                                  'assets/svg/icons/mail.svg',
+                                  fit: BoxFit.scaleDown,
+                                ),
+                                enabledBorder: new UnderlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: Colors.white,
+                                    width: 1.0,
                                   ),
                                 ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(10)),
-                          _size.height > 600
-                              ? TextField(
-                                  obscureText: _obscure,
-                                  controller: model.passwordController,
-                                  style: const TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        getTranslated(context, 'password'),
-                                    hintStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                          SizeConfig.calculateTextSize2(14),
-                                      // fontFamily: 'Arial',
-                                    ),
-                                    prefixIcon: SvgPicture.asset(
-                                      'assets/svg/icons/lock.svg',
-                                      width:
-                                          SizeConfig.calculateBlockHorizontal(
-                                              24),
-                                      height:
-                                          SizeConfig.calculateBlockVertical(24),
-                                      fit: BoxFit.scaleDown,
-                                    ),
-                                    suffixIcon: IconButton(
-                                      onPressed: () =>
-                                          setState(() => _obscure = !_obscure),
-                                      icon: SvgPicture.asset(
+                                focusedBorder: new UnderlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                    SizedBox(height: SizeConfig.calculateBlockVertical(10)),
+                    _size.height > 600
+                        ? TextField(
+                            obscureText: _obscure,
+                            controller: model.passwordController,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: SizeConfig.calculateTextSize2(14),
+                              // fontFamily: 'Arial',
+                            ),
+                            decoration: InputDecoration(
+                              hintText: getTranslated(context, 'password'),
+                              hintStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: SizeConfig.calculateTextSize2(14),
+                                // fontFamily: 'Arial',
+                              ),
+                              prefixIcon: SvgPicture.asset(
+                                'assets/svg/icons/lock.svg',
+                                width: SizeConfig.calculateBlockHorizontal(24),
+                                height: SizeConfig.calculateBlockVertical(24),
+                                fit: BoxFit.scaleDown,
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: () =>
+                                    setState(() => _obscure = !_obscure),
+                                icon: _obscure == true
+                                    ? SvgPicture.asset(
+                                        'assets/image/eye.svg',
+                                        width:
+                                            SizeConfig.calculateBlockHorizontal(
+                                                24.w),
+                                        height:
+                                            SizeConfig.calculateBlockVertical(
+                                                24.w),
+                                        fit: BoxFit.scaleDown,
+                                      )
+                                    : Image.asset(
+                                        'assets/image/open_eye.png',
+                                        width:
+                                            SizeConfig.calculateBlockHorizontal(
+                                                35.w),
+                                        height:
+                                            SizeConfig.calculateBlockVertical(
+                                                35.w),
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                              ),
+                              enabledBorder: new UnderlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                  width: 1.0,
+                                ),
+                              ),
+                              focusedBorder: new UnderlineInputBorder(
+                                borderSide:
+                                    const BorderSide(color: Colors.white),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            height: 30,
+                            child: TextField(
+                                obscureText: _obscure,
+                                controller: model.passwordController,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  hintText: getTranslated(context, 'password'),
+                                  hintStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: SizeConfig.calculateTextSize2(14),
+                                  ),
+                                  prefixIconConstraints: BoxConstraints(
+                                    minHeight: 15,
+                                    minWidth: 32,
+                                    maxWidth: 32,
+                                    maxHeight: 18,
+                                  ),
+                                  prefixIcon: SvgPicture.asset(
+                                    'assets/svg/icons/lock.svg',
+                                    width:
+                                        SizeConfig.calculateBlockHorizontal(24),
+                                    height:
+                                        SizeConfig.calculateBlockVertical(24),
+                                    fit: BoxFit.scaleDown,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () =>
+                                        setState(() => _obscure = !_obscure),
+                                    icon: SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: SvgPicture.asset(
                                         'assets/image/eye.svg',
                                         width:
                                             SizeConfig.calculateBlockHorizontal(
@@ -222,122 +259,74 @@ class _LoginScreenState extends State<LoginScreen> {
                                         fit: BoxFit.scaleDown,
                                       ),
                                     ),
-                                    enabledBorder: new UnderlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                        width: 1.0,
-                                      ),
-                                    ),
-                                    focusedBorder: new UnderlineInputBorder(
-                                      borderSide:
-                                          const BorderSide(color: Colors.white),
+                                  ),
+                                  enabledBorder: new UnderlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Colors.white,
+                                      width: 1.0,
                                     ),
                                   ),
-                                )
-                              : Container(
-                                  height: 30,
-                                  child: TextField(
-                                      obscureText: _obscure,
-                                      controller: model.passwordController,
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                      decoration: InputDecoration(
-                                        hintText:
-                                            getTranslated(context, 'password'),
-                                        hintStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontSize:
-                                              SizeConfig.calculateTextSize2(14),
-                                        ),
-                                        prefixIconConstraints: BoxConstraints(
-                                          minHeight: 15,
-                                          minWidth: 32,
-                                          maxWidth: 32,
-                                          maxHeight: 18,
-                                        ),
-                                        prefixIcon: SvgPicture.asset(
-                                          'assets/svg/icons/lock.svg',
-                                          width: SizeConfig
-                                              .calculateBlockHorizontal(24),
-                                          height:
-                                              SizeConfig.calculateBlockVertical(
-                                                  24),
-                                          fit: BoxFit.scaleDown,
-                                        ),
-                                        suffixIcon: IconButton(
-                                          onPressed: () => setState(
-                                              () => _obscure = !_obscure),
-                                          icon: SizedBox(
-                                            width: 18,
-                                            height: 18,
-                                            child: SvgPicture.asset(
-                                              'assets/image/eye.svg',
-                                              width: SizeConfig
-                                                  .calculateBlockHorizontal(24),
-                                              height: SizeConfig
-                                                  .calculateBlockVertical(24),
-                                              fit: BoxFit.scaleDown,
-                                            ),
-                                          ),
-                                        ),
-                                        enabledBorder: new UnderlineInputBorder(
-                                          borderSide: const BorderSide(
-                                            color: Colors.white,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        focusedBorder: new UnderlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white),
-                                        ),
-                                      )),
-                                ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(15)),
-                          InkWell(
-                            splashColor: Colors.transparent,
-                            onTap: () {
-                              _forgotPassword(context, model);
-                            },
-                            child: Text(
-                              getTranslated(context, 'forgot_password'),
-                              style: TextStyle(
-                                  fontSize: SizeConfig.calculateTextSize2(15.0),
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
+                                  focusedBorder: new UnderlineInputBorder(
+                                    borderSide:
+                                        const BorderSide(color: Colors.white),
+                                  ),
+                                )),
                           ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(120)),
+                    SizedBox(height: SizeConfig.calculateBlockVertical(15)),
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        _forgotPassword(context, model);
+                      },
+                      child: Text(
+                        getTranslated(context, 'forgot_password'),
+                        style: TextStyle(
+                            fontSize: SizeConfig.calculateTextSize2(15.0),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * (1 / 7),
+                    ),
+                    Center(
+                      child: Column(
+                        children: [
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal:
                                   SizeConfig.calculateBlockHorizontal(15.0),
                             ),
                             child: BtnUI(
-                              height: SizeConfig.calculateBlockVertical(55),
+                              height: 55.w,
                               isLoading: _isLoading,
                               textColor: Colors.white,
                               color: AppThemeStyle.primaryColor,
                               text:
                                   getTranslated(context, 'enter').toUpperCase(),
                               onTap: () {
-                                if (_isLoading) return;
-                                if (checkTextFieldEmptyOrNot(context, model)) {
-                                  _signInWithEmailAndPassword(model);
+                                if (!_isLoading) {
+                                  if (checkTextFieldEmptyOrNot(
+                                      context, model)) {
+                                    _signInWithEmailAndPassword(model);
+                                  }
                                 }
                               },
                             ),
                           ),
                           SizedBox(
-                              height: SizeConfig.calculateBlockVertical(16)),
+                            height: SizeConfig.calculateBlockVertical(
+                              16,
+                            ),
+                          ),
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal:
                                   SizeConfig.calculateBlockHorizontal(15.0),
                             ),
                             child: BtnUI(
-                              height: SizeConfig.calculateBlockVertical(55),
+                              // height: SizeConfig.calculateBlockVertical(55),
+                              height: 55.w,
                               isLoading: false,
                               textColor: Colors.white,
                               color: AppThemeStyle.orangeColor,
@@ -352,9 +341,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                           ),
-                          SizedBox(
-                              height: SizeConfig.calculateBlockVertical(50)),
                         ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: SvgPicture.asset(
+                        'assets/svg/welcome.svg',
+                        height: MediaQuery.of(context).size.height * (1 / 4),
                       ),
                     ),
                   ],

@@ -1,6 +1,7 @@
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:charity_app/utils/device_size_config.dart';
 
 class EmptyData extends StatelessWidget {
   final String text;
@@ -25,10 +26,13 @@ class EmptyData extends StatelessWidget {
           child: Text(
             _message,
             textAlign: TextAlign.center,
+            // textScaleFactor: SizeConfig.textScaleFactor(),
+
             style: TextStyle(
-                fontSize: SizeConfig.calculateTextSize(15),
-                fontWeight: FontWeight.w500,
-                color: Colors.grey),
+              fontSize: SizeConfig.calculateTextSize(15),
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+            ),
           ),
         )
       ],

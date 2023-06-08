@@ -32,4 +32,22 @@ class SharedPreferencesHelper {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
   }
+
+  Future<String> readNotificationDate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonData = prefs.get(_key);
+    if (jsonData == null) return null;
+    final data = json.decode(jsonData);
+    return data;
+  }
+
+  Future<void> saveNotificationDate(String date) async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    final jsonData = jsonEncode(date);
+    
+    await prefs.setString(_key, jsonData);
+  }
+
+  
 }

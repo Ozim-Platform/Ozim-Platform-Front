@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:charity_app/data/db/local_questionaires_db.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/data.dart';
 import 'package:charity_app/persistance/api_provider.dart';
@@ -19,9 +22,17 @@ class BottomBarDetailViewModel extends BaseViewModel {
 
   ApiProvider _apiProvider = new ApiProvider();
   BuildContext context;
+
+  ValueNotifier<Data> _dataValueNotifier = ValueNotifier(null);
+
+  ValueNotifier<Data> get dataValueNotifier => _dataValueNotifier;
+
   Data _data;
+
   int _id;
+
   bool _isLoading = false;
+
   List<Data> _folders = [];
 
   var _currentIndex = 0;
@@ -45,7 +56,9 @@ class BottomBarDetailViewModel extends BaseViewModel {
   Future<void> initContext(BuildContext context, Data article) async {
     this.context = context;
     _data = article;
+    _dataValueNotifier = ValueNotifier(_data);
     _id = article.id;
+    await view();
     await getBookmarksFolders();
   }
 
@@ -58,8 +71,8 @@ class BottomBarDetailViewModel extends BaseViewModel {
         }
         break;
       case 1:
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => CommentScreen(instance, _data)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => CommentScreen(instance, _data)));
         break;
       case 2:
         await onShareData(context, _data);
@@ -101,6 +114,8 @@ class BottomBarDetailViewModel extends BaseViewModel {
         _data.isLiked = true;
       }
     }
+
+    _dataValueNotifier.notifyListeners();
   }
 
   Future<void> view() async {
@@ -116,8 +131,26 @@ class BottomBarDetailViewModel extends BaseViewModel {
     String type = data.type;
     int id = data.id;
     String url = PostUrlHelper.generateUrl(type, id);
+
     {
-      await Share.share(url, sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      await Share.share(url,
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    }
+
+    var localData = await SharedPreferencesHelper(key: url).readData();
+    // store the datetime of the share
+    if (localData == null) {
+      // if this article had already been shared within previous 15 minutes, then do not add points
+      await _apiProvider.receivePoints(20);
+      Map<String, dynamic> data = new Map<String, dynamic>();
+      data["article_id"] = _id;
+      data["share_date"] = DateTime.now().toString();
+
+      SharedPreferencesHelper(key: url).saveData(data);
+    } else if (DateTime.parse(localData["share_date"])
+            .compareTo(DateTime.now().add(Duration(minutes: 15))) >
+        0) {
+      await _apiProvider.receivePoints(20);
     }
   }
 
@@ -125,7 +158,17 @@ class BottomBarDetailViewModel extends BaseViewModel {
     Map<String, dynamic> data = new Map<String, dynamic>();
     data['article_id'] = _id;
     _isLoading = true;
-    _apiProvider.articleView(data).then((value) => {}).catchError((error, trace) {
+    _apiProvider
+        .articleView(data)
+        .then(
+          (value) => {
+            if (value.error == null)
+              {_data.views++}
+            else
+              {log("Error: ${value.error}", level: 1)}
+          },
+        )
+        .catchError((error, trace) {
       print("Error: $error", level: 1);
       print(trace, level: 1);
     }).whenComplete(() => {_isLoading = false, notifyListeners()});
@@ -137,7 +180,7 @@ class BottomBarDetailViewModel extends BaseViewModel {
     _isLoading = true;
     _apiProvider.articleLike(data).then((value) {
       if (value.error == null) {
-        _data.likes != null ? _data.likes++ : _data.likes = 1;
+        _data.likes++;
       }
     }).catchError((error) {
       print("Error: $error", level: 1);
@@ -150,7 +193,7 @@ class BottomBarDetailViewModel extends BaseViewModel {
     _isLoading = true;
     _apiProvider.articleDislike(data).then((value) {
       if (value.error == null) {
-        _data.likes != null ? _data.likes-- : _data.likes = 0;
+        _data.likes--;
       }
     }).catchError((error) {
       print("Error: $error", level: 1);
@@ -162,7 +205,15 @@ class BottomBarDetailViewModel extends BaseViewModel {
     data['record_id'] = _id;
     data['type'] = _data.type;
     _isLoading = true;
-    _apiProvider.otherView(data).then((value) => {}).catchError((error) {
+    _apiProvider
+        .otherView(data)
+        .then((value) => {
+              if (value.error == null)
+                {_data.views++}
+              else
+                {log("Error: ${value.error}", level: 1)}
+            })
+        .catchError((error) {
       print("Error: $error", level: 1);
     }).whenComplete(() => {_isLoading = false, notifyListeners()});
   }
@@ -205,7 +256,9 @@ class BottomBarDetailViewModel extends BaseViewModel {
   }
 
   Future<void> createFolder(String foldername,
-      {Function initCallbak, Function afterDoCallback, bool addToBookmark = false}) async {
+      {Function initCallbak,
+      Function afterDoCallback,
+      bool addToBookmark = false}) async {
     ///Закрыть модалку
     initCallbak();
 
@@ -237,11 +290,15 @@ class BottomBarDetailViewModel extends BaseViewModel {
         print(trace, level: 1);
 
         ///Получить список папок
-      }).whenComplete(() => {getBookmarksFolders()});
+      }).whenComplete(() => {
+            getBookmarksFolders(),
+            _dataValueNotifier.notifyListeners(),
+          });
     }
   }
 
-  Future<void> deleteFolder(List<Data> folders, int index, Function updateCallback) async {
+  Future<void> deleteFolder(
+      List<Data> folders, int index, Function updateCallback) async {
     int folderid = folders[index].id;
     _apiProvider.bookMarkDelete(folderid, _data.type).then((value) {
       if (value.error == null) {
@@ -250,7 +307,11 @@ class BottomBarDetailViewModel extends BaseViewModel {
       }
     }).catchError((onError) {
       print("Error: $error", level: 1);
-    }).whenComplete(() => {_isLoading = false, getBookmarksFolders()});
+    }).whenComplete(() => {
+          _isLoading = false,
+          getBookmarksFolders(),
+          _dataValueNotifier.notifyListeners(),
+        });
   }
 
   Future<void> renameFolder(String folderName, List<Data> folders, int index,
@@ -258,7 +319,10 @@ class BottomBarDetailViewModel extends BaseViewModel {
     print('rename');
     // initCallback();
     if (folderName != null && folderName != '') {
-      Map<String, dynamic> data = {"name": folderName, "folder": folders[index].id};
+      Map<String, dynamic> data = {
+        "name": folderName,
+        "folder": folders[index].id
+      };
       _apiProvider.bookMarkUpdate(data, _data.type).then((value) async {
         if (value.error == null) {
           folders[index].name = folderName;
@@ -267,8 +331,12 @@ class BottomBarDetailViewModel extends BaseViewModel {
         }
       }).catchError((error) {
         print("Error: $error", level: 1);
-      }).whenComplete(
-          () => {_isLoading = false, getBookmarksFolders(), onBookMarks(context, _data)});
+      }).whenComplete(() => {
+            _isLoading = false,
+            getBookmarksFolders(),
+            onBookMarks(context, _data),
+            _dataValueNotifier.notifyListeners(),
+          });
     }
   }
 
@@ -289,7 +357,8 @@ class BottomBarDetailViewModel extends BaseViewModel {
             _data.inBookmarks = true,
             getBookmarksFolders(),
             closeModal(),
-            notifyListeners()
+            notifyListeners(),
+            _dataValueNotifier.notifyListeners(),
           });
     } else {
       _apiProvider.storeBookmark(data).catchError((error, trace) {
@@ -300,19 +369,24 @@ class BottomBarDetailViewModel extends BaseViewModel {
             _data.inBookmarks = true,
             getBookmarksFolders(),
             closeModal(),
-            notifyListeners()
+            notifyListeners(),
+            _dataValueNotifier.notifyListeners(),
           });
     }
   }
 
   Future<void> updateFolderPopup(
       Function initcallback, TextEditingController controller, updateCallback,
-      {renameold = false, Data folder, int index, bool addToBookmark = false}) async {
+      {renameold = false,
+      Data folder,
+      int index,
+      bool addToBookmark = false}) async {
     assert(renameold ? folder != null && index != null : true);
 
     _createFolder(String text) {
       if (renameold) {
-        renameFolder(controller.text, folders, index, updateCallback, initcallback);
+        renameFolder(
+            controller.text, folders, index, updateCallback, initcallback);
       } else {
         createFolder(text, initCallbak: initcallback);
       }
@@ -349,7 +423,8 @@ class BottomBarDetailViewModel extends BaseViewModel {
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),
                   ),
-                  contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),
                     borderRadius: BorderRadius.circular(30.0),
@@ -388,10 +463,12 @@ class BottomBarDetailViewModel extends BaseViewModel {
                   text: getTranslated(context, 'save'),
                   onTap: () {
                     if (renameold) {
-                      renameFolder(controller.text, folders, index, updateCallback, initcallback);
+                      renameFolder(controller.text, folders, index,
+                          updateCallback, initcallback);
                     } else {
                       createFolder(controller.text,
-                          initCallbak: initcallback, addToBookmark: addToBookmark);
+                          initCallbak: initcallback,
+                          addToBookmark: addToBookmark);
                     }
                   },
                 ),
@@ -413,8 +490,13 @@ class BottomBarDetailViewModel extends BaseViewModel {
     // } else {
     data['record_id'] = id;
     // }
-    _apiProvider.removeFromBookmarkStore(data).then((value) {}).catchError((error) {
+    _apiProvider
+        .removeFromBookmarkStore(data)
+        .then((value) {})
+        .catchError((error) {
       print("Error: $error", level: 1);
+    }).whenComplete(() {
+      _dataValueNotifier.notifyListeners();
     });
   }
 
@@ -473,7 +555,8 @@ class BottomBarDetailViewModel extends BaseViewModel {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 25),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 25),
                               height: 60.0,
                               color: Color(0xfff2f2f2),
                               child: Row(
@@ -486,7 +569,8 @@ class BottomBarDetailViewModel extends BaseViewModel {
                                     width: 5,
                                   ),
                                   Text(
-                                    getTranslated(context, 'already_added_to_bookmarks'),
+                                    getTranslated(
+                                        context, 'already_added_to_bookmarks'),
                                     style: AppThemeStyle.subHeaderPrimary,
                                   ),
                                 ],
@@ -495,17 +579,21 @@ class BottomBarDetailViewModel extends BaseViewModel {
                             GestureDetector(
                               onTap: _addToAnother,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 25),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 25),
                                 height: 60.0,
                                 alignment: Alignment.centerLeft,
                                 decoration: BoxDecoration(
                                   border: Border(
-                                    top: BorderSide(color: Constants.ligtherMainTextColor),
-                                    bottom: BorderSide(color: Constants.ligtherMainTextColor),
+                                    top: BorderSide(
+                                        color: Constants.ligtherMainTextColor),
+                                    bottom: BorderSide(
+                                        color: Constants.ligtherMainTextColor),
                                   ),
                                 ),
                                 child: Text(
-                                  getTranslated(context, 'add_to_another_folder'),
+                                  getTranslated(
+                                      context, 'add_to_another_folder'),
                                   style: AppThemeStyle.subHeaderLigther,
                                 ),
                               ),
@@ -522,44 +610,53 @@ class BottomBarDetailViewModel extends BaseViewModel {
                               itemCount: folders.length,
                               itemBuilder: (context, i) {
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
                                   child: Row(
                                     children: [
                                       Expanded(
                                         child: GestureDetector(
                                           behavior: HitTestBehavior.translucent,
                                           onTap: () {
-                                            addToFolder(folders[i].id, closeModal: _closeModal);
+                                            addToFolder(folders[i].id,
+                                                closeModal: _closeModal);
                                           },
                                           child: Text(
                                             folders[i].name,
-                                            style: AppThemeStyle.normalTextBigger,
+                                            style:
+                                                AppThemeStyle.normalTextBigger,
                                           ),
                                         ),
                                       ),
                                       Container(
                                         width: 70,
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                updateFolderPopup(
-                                                    _closeModal, _controller, _updateWidget,
-                                                    renameold: true, folder: folders[i], index: i);
+                                                updateFolderPopup(_closeModal,
+                                                    _controller, _updateWidget,
+                                                    renameold: true,
+                                                    folder: folders[i],
+                                                    index: i);
                                               },
                                               child: Icon(
                                                 Icons.edit,
-                                                color: AppThemeStyle.primaryColor,
+                                                color:
+                                                    AppThemeStyle.primaryColor,
                                               ),
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                deleteFolder(folders, i, _updateWidget);
+                                                deleteFolder(
+                                                    folders, i, _updateWidget);
                                               },
                                               child: Icon(
                                                 Icons.delete,
-                                                color: AppThemeStyle.primaryColor,
+                                                color:
+                                                    AppThemeStyle.primaryColor,
                                               ),
                                             )
                                           ],
@@ -583,7 +680,8 @@ class BottomBarDetailViewModel extends BaseViewModel {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          updateFolderPopup(_closeModal, _controller, _updateWidget,
+                          updateFolderPopup(
+                              _closeModal, _controller, _updateWidget,
                               addToBookmark: true);
                         },
                         child: Container(

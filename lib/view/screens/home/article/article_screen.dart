@@ -19,19 +19,19 @@ class ArticleScreen extends StatefulWidget {
 
 class _ArticleScreenState extends State<ArticleScreen>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController tabController;
 
   @override
   void initState() {
-    _tabController = TabController(length: widget.category.length, vsync: this);
+    tabController = TabController(length: widget.category.length, vsync: this);
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   tabController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class _ArticleScreenState extends State<ArticleScreen>
         needBackArrow: widget.existArrow,
         model: model,
         buildMethod: getSecondMainUI,
-        controller: _tabController,
+        controller: tabController,
       ),
       onViewModelReady: (model) {
         model.initModel(widget.category);
@@ -54,9 +54,10 @@ class _ArticleScreenState extends State<ArticleScreen>
   Widget getSecondMainUI(context, ArticleViewModel viewmodel, String category,
       List<Category> allCategories) {
     return CustomRecordList<ArticleViewModel>(
-        model: viewmodel,
-        category: category,
-        allCategories: allCategories,
-        parentController: _tabController);
+      model: viewmodel,
+      category: category,
+      allCategories: allCategories,
+      parentController: tabController,
+    );
   }
 }

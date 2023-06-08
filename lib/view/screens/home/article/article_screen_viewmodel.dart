@@ -14,6 +14,8 @@ class ArticleViewModel extends BaseViewModel {
 
   Article _article;
 
+  List<Category> _category;
+
   Article get article => _article;
 
   CommonModel get instance => _article;
@@ -34,9 +36,10 @@ class ArticleViewModel extends BaseViewModel {
 
   Future<void> getAllArticle(List<Category> category) async {
     _isLoading = true;
+    _category = category;
     _apiProvider
         .getArticle(category: category)
-        .then((value) => {_article = value})
+        .then((value) => {_article = value,_category = category })
         .catchError((error, stacktrace) {
       print("Error: $error", level: 1);
     }).whenComplete(() => {_isLoading = false, notifyListeners()});

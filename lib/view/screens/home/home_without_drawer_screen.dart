@@ -1,6 +1,4 @@
-import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_app/custom_icons_icons.dart';
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/article/article.dart';
 import 'package:charity_app/model/category.dart';
@@ -28,12 +26,11 @@ import 'package:charity_app/view/screens/home/service_provider/service_provider_
 import 'package:charity_app/view/screens/home/skill/skill_screen.dart';
 import 'package:charity_app/view/widgets/custom/cutom_image_listview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:stacked/stacked.dart';
 
 class HomeWithoutDrawerScreen extends StatelessWidget {
   HomeWithoutDrawerScreen(this.banner);
-
-  ScrollController _scrollController;
 
   final CommonModel banner;
   final List<String> imgList = [];
@@ -92,7 +89,6 @@ class HomeWithoutDrawerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _size = MediaQuery.of(context).size;
     if (banner != null) {
       banner.data.forEach((element) {
         if (element.preview != null) {
@@ -106,46 +102,87 @@ class HomeWithoutDrawerScreen extends StatelessWidget {
     return ViewModelBuilder<HomeViewModel>.reactive(
       builder: (context, model, child) => Scaffold(
         appBar: getAppBar(context),
-        body: Container(
-          padding: const EdgeInsets.only(left: 32, right: 32, top: 30),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                if (imgList.isNotEmpty)
-                  ImageListview(
-                    imgList: imgList,
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              if (imgList.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 32.h,
+                    bottom: MediaQuery.of(context).size.width > 500 ? 4.h : 8.h,
                   ),
-                SizedBox(height: SizeConfig.calculateBlockVertical(15) + 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    buildCard(context, model, 'diagnosis'),
-                    buildCard(context, model, 'skill'),
-                    buildCard(context, model, 'link'),
-                  ],
+                  child: ImageListview(
+                    imgList: imgList,
+                    context: context,
+                    goToBanner: _goToBanner,
+                  ),
                 ),
-                SizedBox(height: SizeConfig.calculateBlockVertical(10)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    buildCard(context, model, 'article'),
-                    buildCard(context, model, 'inclusion'),
-                    buildCard(context, model, 'for_parent'),
-                  ],
+              Expanded(
+                child: Center(
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left:
+                          MediaQuery.of(context).size.width > 500 ? 55.h : 37.h,
+                      right:
+                          MediaQuery.of(context).size.width > 500 ? 55.h : 37.h,
+                    ),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 15.h,
+                    crossAxisSpacing: 15.h,
+                    children: [
+                      buildCard(
+                        context,
+                        model,
+                        'diagnosis',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'skill',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'link',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'article',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'inclusion',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'for_parent',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'service_provider',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'forum',
+                      ),
+                      buildCard(
+                        context,
+                        model,
+                        'right',
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(height: SizeConfig.calculateBlockVertical(10)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    buildCard(context, model, 'service_provider'),
-                    buildCard(context, model, 'forum'),
-                    buildCard(context, model, 'right'),
-                  ],
-                ),
-                SizedBox(height: SizeConfig.calculateBlockVertical(30)),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -168,12 +205,13 @@ class HomeWithoutDrawerScreen extends StatelessWidget {
         getRouteBuilder(category, _categories);
 
     return CardIcon(
-        category: category,
-        operation: getTranslated(context, category),
-        iconPath: iconPath,
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: _builder));
-        });
+      category: category,
+      operation: (getTranslated(context, category)),
+      iconPath: iconPath,
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: _builder));
+      },
+    );
   }
 
   Widget Function(BuildContext context) getRouteBuilder(
@@ -225,9 +263,20 @@ class HomeWithoutDrawerScreen extends StatelessWidget {
       automaticallyImplyLeading: false,
       title: Text(''),
       actions: <Widget>[
-        Align(
-          alignment: Alignment.center,
-          child: NotificationButton(),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0.h),
+          child: Align(
+            alignment: Alignment.center,
+            child: NotificationButton(
+              size: 24,
+              icon: Icon(
+                CustomIcons.bell,
+                color: Constants.mainTextColor,
+                size: 24,
+              ),
+              isBottomBar: false,
+            ),
+          ),
         ),
       ],
     );

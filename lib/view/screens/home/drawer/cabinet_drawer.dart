@@ -15,6 +15,7 @@ import 'package:charity_app/view/screens/home/favourite/favourite_screen.dart';
 import 'package:charity_app/view/screens/home/for_mother/for_mother_screen.dart';
 import 'package:charity_app/view/screens/home/forum/forum_screen.dart';
 import 'package:charity_app/view/screens/home/inclusion/inclusion_screen.dart';
+import 'package:charity_app/view/screens/home/profile/child_results/child_results_screen.dart';
 import 'package:charity_app/view/screens/home/resource/resource_screen.dart';
 import 'package:charity_app/view/screens/home/rights/rights_screen.dart';
 import 'package:charity_app/view/screens/home/service_provider/service_provider_screen.dart';
@@ -23,6 +24,7 @@ import 'package:charity_app/view/theme/app_color.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:charity_app/view/widgets/exit_modal_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
 
@@ -61,7 +63,10 @@ class CabinetDrawer extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 25, bottom: 4),
-                          child: NotificationButton(removePaddings: true),
+                          child: NotificationButton(
+                            removePaddings: true,
+                            isBottomBar: false,
+                          ),
                         ),
                         // SizedBox(
                         //     height: SizeConfig.calculateBlockVertical(50)),
@@ -224,6 +229,8 @@ class CabinetDrawer extends StatelessWidget {
                                     left: 10),
                                 child: Row(
                                   children: [
+                                    Icon(Icons.bookmark_outline,
+                                        color: Colors.white),
                                     // Icon(FlevaIcons.bookmark_outline,
                                     //     color: Colors.white),
                                     SizedBox(
@@ -240,7 +247,8 @@ class CabinetDrawer extends StatelessWidget {
                             ),
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(5)),
-                            InkWell(splashColor: Colors.transparent,
+                            InkWell(
+                              splashColor: Colors.transparent,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => FaqScreen()));
@@ -269,7 +277,8 @@ class CabinetDrawer extends StatelessWidget {
                             ),
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(5)),
-                            InkWell(splashColor: Colors.transparent,
+                            InkWell(
+                              splashColor: Colors.transparent,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
@@ -299,7 +308,8 @@ class CabinetDrawer extends StatelessWidget {
                             ),
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(5)),
-                            InkWell(splashColor: Colors.transparent,
+                            InkWell(
+                              splashColor: Colors.transparent,
                               onTap: () {
                                 _modalInfo(context, model);
                               },
@@ -383,12 +393,13 @@ class CabinetDrawer extends StatelessWidget {
       case 'forum':
         widget = ForumScreen(existArrow: true);
         break;
-      // case 'questionnaire':
-      //   widget = QuestionnaireCategoryScreen(category: category);
-      //   break;
+      case 'questionnaire':
+        widget = ChildResultsScreen();
+        break;
     }
 
-    return InkWell(splashColor: Colors.transparent,
+    return InkWell(
+      splashColor: Colors.transparent,
       onTap: () {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => widget));

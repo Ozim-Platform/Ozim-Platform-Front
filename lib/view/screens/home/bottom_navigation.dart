@@ -7,8 +7,8 @@ import 'package:charity_app/model/data.dart';
 import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/utils/constants.dart';
 import 'package:charity_app/utils/post_url_helper.dart';
+import 'package:charity_app/view/components/notification_button.dart';
 import 'package:charity_app/view/screens/home/favourite/favourite_screen.dart';
-// import 'package:charity_app/view/screens/home/forum/forum_screen.dart';
 import 'package:charity_app/view/screens/home/general_search_screen.dart';
 import 'package:charity_app/view/screens/home/home_screen.dart';
 import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
@@ -16,11 +16,17 @@ import 'package:charity_app/view/screens/other/notification/notification_screen.
 import 'package:charity_app/view/theme/app_color.dart';
 import 'package:charity_app/view/theme/themes.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:uni_links/uni_links.dart';
 
 class BottomNavigation extends StatefulWidget {
+  bool isFromNotification;
+  int childId;
+  BottomNavigation({this.isFromNotification = false, this.childId});
+
   @override
   BottomNavigationState createState() => BottomNavigationState();
 
@@ -35,39 +41,78 @@ class BottomNavigation extends StatefulWidget {
 
 class BottomNavigationState extends State<BottomNavigation> {
   static bool rebuild = false;
+  bool _isFromNotification = false;
+  int _childId = 0;
+
   GlobalKey globalKey = new GlobalKey(debugLabel: 'btm_app_bar');
+  GlobalKey<ConvexAppBarState> _bottomAppBarKey =
+      GlobalKey<ConvexAppBarState>();
 
   int selectedItem = 0;
   ApiProvider _apiProvider = new ApiProvider();
   List<Category> _category = [];
   List<Data> _folders = [];
   StreamSubscription _uriSub;
+  RemoteMessage messageWhenTerminated;
 
   void _onItemTap(int index) async {
     if (index == 2) {
-      await Navigator.push(
+      var someValue = Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => NotificationScreen(),
         ),
       );
-      selectedItem = 0;
-      index = 0;
-      setState(() {});
-    } else {
-      setState(() {
-        selectedItem = index;
+
+      someValue.then((value) {
+        setState(
+          () {
+            selectedItem = 0;
+            _bottomAppBarKey.currentState.animateTo(
+              0,
+            );
+          },
+        );
       });
+    } else {
+      setState(
+        () {
+          selectedItem = index;
+        },
+      );
+    }
+  }
+
+  Future<void> getMessageWhenClosed() async {
+    messageWhenTerminated =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (messageWhenTerminated != null) {
+      if (messageWhenTerminated.data["child_id"] != null) {
+        _isFromNotification = true;
+        _childId = int.parse(messageWhenTerminated.data["child_id"]);
+        selectedItem = 4;
+        _bottomAppBarKey.currentState.animateTo(
+          selectedItem,
+        );
+      }
     }
   }
 
   @override
   void initState() {
-    _uriSub = uriLinkStream.listen((Uri link) {
-      PostUrlHelper.handleUrl(link, context);
-    }, onError: (err) {
-      // ignore
-    });
+    _isFromNotification = widget.isFromNotification;
+    _childId = widget.childId;
+
+    getMessageWhenClosed();
+    _uriSub = uriLinkStream.listen(
+      (Uri link) {
+        PostUrlHelper.handleUrl(link, context);
+      },
+      onError: (err) {
+        // ignore
+      },
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final initialUri = await getInitialUri();
       if (initialUri != null) {
@@ -76,6 +121,9 @@ class BottomNavigationState extends State<BottomNavigation> {
     });
     getCategory();
     getBookmarksFolders();
+    if (_isFromNotification) {
+      selectedItem = 4;
+    }
     super.initState();
   }
 
@@ -93,73 +141,89 @@ class BottomNavigationState extends State<BottomNavigation> {
       GeneralSearchScreen(),
       NotificationScreen(),
       FavouriteScreen(folders: _folders),
-      ProfileScreen(),
+      ProfileScreen(
+        childId: _isFromNotification ? _childId : null,
+      ),
     ];
     return Builder(
       builder: (BuildContext context) {
         Color color = Constants.ligtherMainTextColor;
         return Scaffold(
-            body: tabs[selectedItem],
-            bottomNavigationBar: ConvexAppBar(
-              style: TabStyle.reactCircle,
-              top: -20,
-              curve: Curves.easeInOut,
-              curveSize: 75,
-              height: 50,
-              color: AppThemeStyle.colorGrey,
-              activeColor: AppColor.primary,
-              elevation: 0,
-              backgroundColor: Colors.white,
-              items: [
-                TabItem(
-                  icon: Icon(CustomIcons.home,
-                      size: selectedItem == 0 ? 31 : 23,
-                      color: color,
-                      semanticLabel: getTranslated(context, "on_main")),
-                  isIconBlend: true,
+          body: tabs[selectedItem],
+          bottomNavigationBar: ConvexAppBar(
+            key: _bottomAppBarKey,
+            style: TabStyle.reactCircle,
+            top: -20,
+            curve: Curves.easeInOut,
+            curveSize: 75,
+            height: 50.h,
+            color: AppThemeStyle.colorGrey,
+            activeColor: AppColor.primary,
+            elevation: 0,
+            backgroundColor: Colors.white,
+            onTabNotify: (index) => true,
+            items: [
+              TabItem(
+                icon: Icon(CustomIcons.home,
+                    size: selectedItem == 0
+                        ? (MediaQuery.of(context).size.width > 500 ? 40 : 31)
+                        : (MediaQuery.of(context).size.width > 500 ? 30 : 23),
+                    color: color,
+                    semanticLabel: getTranslated(context, "on_main")),
+                isIconBlend: true,
+              ),
+              TabItem(
+                icon: Icon(CustomIcons.search,
+                    size: selectedItem == 1
+                        ? (MediaQuery.of(context).size.width > 500 ? 35 : 27)
+                        : (MediaQuery.of(context).size.width > 500 ? 30 : 22),
+                    color: color,
+                    semanticLabel: getTranslated(context, "search_vo")),
+                isIconBlend: true,
+              ),
+              TabItem(
+                icon: NotificationButton(
+                  size: 24.w,
+                  icon: SvgPicture.asset(
+                    "assets/svg/icons/messenger.svg",
+                    width: 24.w,
+                    height: 24.w,
+                    fit: BoxFit.scaleDown,
+                    color: color,
+                  ),
+                  isBottomBar: true,
                 ),
-                TabItem(
-                  icon: Icon(CustomIcons.search,
-                      size: selectedItem == 2 ? 27 : 22,
-                      color: color,
-                      semanticLabel: getTranslated(context, "search_vo")),
-                  isIconBlend: true,
+              ),
+              TabItem(
+                icon: Icon(CustomIcons.favorite_outline,
+                    size: selectedItem == 3
+                        ? (MediaQuery.of(context).size.width > 500 ? 40 : 32)
+                        : ((MediaQuery.of(context).size.width > 500 ? 35 : 26)),
+                    color: color,
+                    semanticLabel: getTranslated(context, "favourite")),
+                isIconBlend: true,
+              ),
+              TabItem(
+                icon: SvgPicture.asset(
+                  "assets/svg/icons/profile.svg",
+                  width: selectedItem == 4
+                      ? (MediaQuery.of(context).size.width > 500 ? 10 : 32)
+                      : ((MediaQuery.of(context).size.width > 500 ? 35 : 26)),
+                  height: selectedItem == 4
+                      ? (MediaQuery.of(context).size.width > 500 ? 10 : 32)
+                      : ((MediaQuery.of(context).size.width > 500 ? 35 : 26)),
+                  fit: BoxFit.scaleDown,
+                  color: color,
                 ),
-                TabItem(
-                  icon: SvgPicture.asset("assets/svg/icons/messenger.svg",
-                      width: 24,
-                      height: 24,
-                      fit: BoxFit.scaleDown,
-                      color: color),
-                  // icon: Icon(Icons.message,
-                  //     size: selectedItem == 2 ? 27 : 22,
-                  //     color: color,
-                  //     semanticLabel: getTranslated(context, "search_vo")),
-                  isIconBlend: true,
-                ),
-                TabItem(
-                  icon: Icon(CustomIcons.favorite_outline,
-                      size: selectedItem == 3 ? 32 : 26,
-                      color: color,
-                      semanticLabel: getTranslated(context, "favourite")),
-                  isIconBlend: true,
-                ),
-                TabItem(
-                  icon: SvgPicture.asset("assets/svg/icons/profile.svg",
-                      width: 24,
-                      height: 24,
-                      fit: BoxFit.scaleDown,
-                      
-                      color: color,),
-                      // semanticLabel: getTranslated(context, "forum"),
-                  isIconBlend: true,
-                ),
-              ],
-              initialActiveIndex: 0,
-              onTap: (int i) => {
-                _onItemTap(i),
-              },
-            ));
+                isIconBlend: true,
+              ),
+            ],
+            initialActiveIndex: selectedItem,
+            onTap: (int i) => {
+              _onItemTap(i),
+            },
+          ),
+        );
       },
     );
   }

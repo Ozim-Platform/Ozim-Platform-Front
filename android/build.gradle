@@ -1,5 +1,5 @@
 buildscript {
-    // upgraded kotlin versoin for iap
+    // upgraded kotlin version for iap
     ext.kotlin_version = '1.8.0'
     repositories {
         google()

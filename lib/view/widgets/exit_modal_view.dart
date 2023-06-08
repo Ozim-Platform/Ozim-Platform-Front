@@ -11,13 +11,16 @@ class ExitModalView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: EdgeInsets.fromLTRB(
+          24.0, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
       child: new Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 10.0,
+            ),
             child: getTextInfo(context),
           ),
           Row(

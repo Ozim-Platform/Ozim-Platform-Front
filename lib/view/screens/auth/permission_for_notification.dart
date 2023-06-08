@@ -8,6 +8,7 @@ import 'package:charity_app/view/screens/home/bottom_navigation.dart';
 import 'package:charity_app/view/theme/app_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:notification_permissions/notification_permissions.dart';
 
@@ -85,9 +86,9 @@ class _PermissionForNotification extends State<PermissionForNotification>
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12.w),
             child: Container(
-              constraints: BoxConstraints(maxWidth: 450),
+              // constraints: BoxConstraints(maxWidth: 450),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -100,7 +101,7 @@ class _PermissionForNotification extends State<PermissionForNotification>
                           borderRadius: BorderRadius.circular(25.0)),
                       color: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20.w),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -109,9 +110,11 @@ class _PermissionForNotification extends State<PermissionForNotification>
                                 height: SizeConfig.calculateBlockVertical(20)),
                             Text(
                               getTranslated(context, 'give_permission'),
+                              // textScaleFactor: SizeConfig.textScaleFactor(),
+
                               style: TextStyle(
                                 // fontFamily: 'Arial',
-                                fontSize: 23.0,
+                                fontSize: 23.0.sp,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF758084),
                               ),
@@ -123,9 +126,10 @@ class _PermissionForNotification extends State<PermissionForNotification>
                                 height: SizeConfig.calculateBlockVertical(20)),
                             Text(
                               getTranslated(context, 'permission_info'),
-                              style: const TextStyle(
+                              // textScaleFactor: SizeConfig.textScaleFactor(),
+                              style: TextStyle(
                                 // fontFamily: 'Arial',
-                                fontSize: 16.0,
+                                fontSize: 16.0.sp,
                                 fontWeight: FontWeight.normal,
                                 color: const Color(0xFF758084),
                               ),
@@ -134,7 +138,7 @@ class _PermissionForNotification extends State<PermissionForNotification>
                             SizedBox(
                                 height: SizeConfig.calculateBlockVertical(30)),
                             BtnUI(
-                              height: 55,
+                              height: 55.w,
                               isLoading: false,
                               textColor: Colors.white,
                               color: AppColor.primary,
@@ -174,7 +178,8 @@ class _PermissionForNotification extends State<PermissionForNotification>
                               },
                             ),
                             SizedBox(
-                                height: SizeConfig.calculateBlockVertical(20)),
+                                height:
+                                    SizeConfig.calculateBlockVertical(20.h)),
                             InkWell(
                               splashColor: Colors.transparent,
                               onTap: () {
@@ -189,8 +194,9 @@ class _PermissionForNotification extends State<PermissionForNotification>
                                 padding: const EdgeInsets.all(5),
                                 child: Text(
                                   getTranslated(context, 'no_permission'),
+                                  // textScaleFactor: SizeConfig.textScaleFactor(),
                                   style: TextStyle(
-                                    fontSize: 16.0,
+                                    fontSize: 16.0.sp,
                                     fontWeight: FontWeight.normal,
                                     // fontFamily: 'Arial',
                                     color: const Color(0xFF758084),
@@ -209,6 +215,8 @@ class _PermissionForNotification extends State<PermissionForNotification>
                                     var textWidget = Text(
                                       "The permission status is ${snapshot.data}",
                                       softWrap: true,
+                                      // textScaleFactor:
+                                      // SizeConfig.textScaleFactor(),
                                       textAlign: TextAlign.center,
                                     );
                                     // The permission is granted, then just show the text
@@ -242,7 +250,7 @@ class _PermissionForNotification extends State<PermissionForNotification>
               _userData.setEmail(value.email ?? ''),
               _userData.setPhoneNumber(value.phone ?? ''),
               _userData.setAvatar(value.avatar ?? ""),
-              // _userData.setUserType(value.points ?? ""),
+              _userData.setUserType(value.type ?? ""),
             })
         .catchError((onError) {
       ToastUtils.toastErrorGeneral("Error $onError", context);

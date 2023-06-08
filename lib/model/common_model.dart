@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:charity_app/model/data.dart';
 import 'package:charity_app/utils/utils.dart';
 
@@ -11,12 +13,21 @@ class CommonModel {
   CommonModel.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
       data = <Data>[];
-      json['data'].forEach((v) {
-        data.add(new Data.fromJson(v));
-      });
+      json['data'].forEach(
+        (v) {
+          data.add(
+            new Data.fromJson(
+              v,
+            ),
+          );
+        },
+      );
     }
     page = toInt(json['page']);
     pages = toInt(json['pages']);
+
+    log("page: $page");
+    log("pages: $pages");
   }
 
   Map<String, dynamic> toJson() {

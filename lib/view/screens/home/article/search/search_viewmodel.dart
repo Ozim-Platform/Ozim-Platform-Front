@@ -52,4 +52,6 @@ class SearchViewModel extends BaseViewModel {
       print("Error: $error", level: 1);
     }).whenComplete(() => {notifyListeners()});
   }
+
+  paginate() {}
 }

@@ -41,6 +41,7 @@ class InputMessageField extends StatelessWidget {
               controller: _textController,
               textInputAction: TextInputAction.send,
               onSubmitted: callback,
+              style: AppThemeStyle.normalText,
               decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),
@@ -54,13 +55,15 @@ class InputMessageField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),
                 ),
-                contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                contentPadding:
+                    const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 hintText: getTranslated(context, hint),
                 hintStyle: AppThemeStyle.normalText,
+                // style
                 hintMaxLines: 1,
                 fillColor: Colors.white,
               ),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class HiveBoxes {
@@ -13,5 +14,7 @@ class Notif {
 
   Future<void> clear() async => await box.put(_id, 0);
 
-  Future<void> increment() async => await box.put(_id, box.get(_id) + 1);
+  Future<void> increment() async {
+    await box.put(_id, box.get(_id) + 1);
+  }
 }

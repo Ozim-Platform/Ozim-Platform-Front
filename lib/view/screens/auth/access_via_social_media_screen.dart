@@ -100,18 +100,18 @@ class _AccessViaSocialMediaScreen extends State<AccessViaSocialMediaScreen> {
                         )),
                       ),
                       SizedBox(height: SizeConfig.calculateBlockVertical(30.0)),
-                      FittedBox(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 80,
-                          ),
-                          child: SvgPicture.asset(
-                            'assets/svg/family.svg',
-                            width: SizeConfig.calculateBlockHorizontal(318),
-                            height: SizeConfig.calculateBlockVertical(318),
-                          ),
-                        ),
-                      ),
+                      // FittedBox(
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.symmetric(
+                      //       horizontal: 80,
+                      //     ),
+                      //     child: SvgPicture.asset(
+                      //       'assets/svg/family (2).svg',
+                      //       width: SizeConfig.calculateBlockHorizontal(318),
+                      //       height: SizeConfig.calculateBlockVertical(318),
+                      //     ),
+                      //   ),
+                      // ),
                       Padding(
                         padding: EdgeInsets.all(
                             SizeConfig.calculateBlockHorizontal(20)),
@@ -239,6 +239,7 @@ class _AccessViaSocialMediaScreen extends State<AccessViaSocialMediaScreen> {
                         opacity: 0.5,
                         child: Text(
                           getTranslated(context, 'confidential'),
+                          // textScaleFactor: SizeConfig.textScaleFactor(),
                           style: TextStyle(
                             fontSize: SizeConfig.calculateTextSize(14),
                             fontWeight: FontWeight.w500,
@@ -353,6 +354,7 @@ class _AccessViaSocialMediaScreen extends State<AccessViaSocialMediaScreen> {
               },
               child: Text(
                 getTranslated(context, 'forgot_password'),
+                // textScaleFactor: SizeConfig.textScaleFactor(),
                 style: TextStyle(
                     color: AppColor.sometimes,
                     decoration: TextDecoration.underline,

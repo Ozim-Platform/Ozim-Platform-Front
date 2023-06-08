@@ -1,4 +1,6 @@
+import 'package:charity_app/utils/device_size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BtnUI extends StatefulWidget {
   const BtnUI(
@@ -84,7 +86,7 @@ class _BtnUIState extends State<BtnUI> with SingleTickerProviderStateMixin {
               widget.isLoading == false
                   ? Padding(
                       padding: widget.align != null
-                          ? const EdgeInsets.only(left: 20)
+                          ? EdgeInsets.only(left: 20.h)
                           : const EdgeInsets.all(1),
                       child: Align(
                         alignment: widget.align != null
@@ -92,9 +94,12 @@ class _BtnUIState extends State<BtnUI> with SingleTickerProviderStateMixin {
                             : Alignment.center,
                         child: Text(
                           widget.text,
+
+                          // textScaleFactor: SizeConfig.textScaleFactor(),
+
                           style: TextStyle(
                             color: widget.textColor,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

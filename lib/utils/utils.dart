@@ -11,6 +11,8 @@ import 'package:charity_app/persistance/api_provider.dart';
 import 'package:charity_app/persistance/hive_boxes.dart';
 import 'package:charity_app/utils/constants.dart';
 import 'package:charity_app/utils/toast_utils.dart';
+import 'package:charity_app/view/screens/home/bottom_navigation.dart';
+import 'package:charity_app/view/screens/home/profile/profile_screen.dart';
 import 'package:charity_app/view/theme/app_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -30,7 +32,7 @@ class Utils {
     UserData userData = UserData();
     userData.setLang(language);
     Locale _locale = await setLocale(language);
-    // MyApp.setLocale(context, _locale);
+    MyApp.setLocale(context, _locale);
     // BottomNavigationState.rebuild = true;
     Constants.listnablemodels.forEach((element) {
       element.getCategory();
@@ -211,16 +213,32 @@ String getCatUrl(Category category) {
   return url;
 }
 
+String getCatUrls(List<Category> category) {
+  String url = '';
+  if (category != null) {
+    category.forEach(
+      (element) {
+        url += '&category=' + element.sysName;
+      },
+    );
+  }
+  return url;
+}
+
 List getListOfInstancesByCategory(List instances, String category) {
   List list = [];
   if (instances == null) return list;
 
-  instances.forEach((element) {
-    var instance = element.toJson();
-    if (instance['category'] == category) {
-      list.add(element);
-    }
-  });
+  instances.forEach(
+    (element) {
+      var instance = element.toJson();
+      instance["category"];
+      category;
+      if (instance['category'] == category) {
+        list.add(element);
+      }
+    },
+  );
   return list;
 }
 
@@ -275,9 +293,51 @@ initFCM() async {
         sound: true,
       );
 
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        ///Do some thing when FCM is coming for foreground
-      });
+      final box = await Hive.openBox<int>(HiveBoxes.countBox);
+      final n = Notif(box);
+
+      FirebaseMessaging.onMessage.listen(
+        (RemoteMessage message) {
+          // _showLocalNotification(channel, message);
+          if (message.data['child_id'] == null) {
+            n.increment();
+            log("n is incremented");
+          }
+        },
+      );
+
+      FirebaseMessaging.onMessageOpenedApp.listen(
+        (RemoteMessage message) async {
+          var initialMessage =
+              await FirebaseMessaging.instance.getInitialMessage();
+
+          if (initialMessage != null) {
+            if (initialMessage.data["child_id"] != null) {
+              navigatorKey.currentState.push(
+                MaterialPageRoute(
+                  builder: (context) => BottomNavigation(
+                    childId: int.parse(initialMessage.data['child_id']),
+                    isFromNotification: true,
+                  ),
+                ),
+              );
+            }
+          }
+
+          if (message.data['child_id'] != null) {
+            navigatorKey.currentState.push(
+              MaterialPageRoute(
+                builder: (context) => BottomNavigation(
+                  childId: int.parse(message.data['child_id']),
+                  isFromNotification: true,
+                ),
+              ),
+            );
+          } else {
+            n.increment();
+          }
+        },
+      );
 
       ///Allow foreground notifications for Android
     } else if (Platform.isAndroid) {
@@ -285,39 +345,109 @@ initFCM() async {
       const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_importance_channel_id', // id
         'High Importance Notifications', // title
-        description: 'This channel is used for important notifications.', // description
+        description:
+            'This channel is used for important notifications.', // description
         importance: Importance.max,
+      );
+
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+        alert: true, // Required to display a heads up notification
+        badge: true,
+        sound: true,
       );
 
       final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
           FlutterLocalNotificationsPlugin();
 
       await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
           .createNotificationChannel(channel);
+
       final box = await Hive.openBox<int>(HiveBoxes.countBox);
       final n = Notif(box);
 
       ///Create local notification when FCM is coming for foreground
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        _showLocalNotification(channel, message);
-        n.increment();
-      });
+      FirebaseMessaging.onMessage.listen(
+        (RemoteMessage message) {
+          _showLocalNotification(channel, message);
+          if (message.data['child_id'] == null) {
+            n.increment();
+          }
+        },
+      );
+
+      FirebaseMessaging.onMessageOpenedApp.listen(
+        (RemoteMessage message) async {
+          var initialMessage =
+              await FirebaseMessaging.instance.getInitialMessage();
+
+          if (initialMessage != null) {
+            if (initialMessage.data["child_id"] != null) {
+              navigatorKey.currentState.push(
+                MaterialPageRoute(
+                  builder: (context) => BottomNavigation(
+                    childId: int.parse(initialMessage.data['child_id']),
+                    isFromNotification: true,
+                  ),
+                ),
+              );
+            }
+          }
+
+          if (message.data['child_id'] != null) {
+            navigatorKey.currentState.push(
+              MaterialPageRoute(
+                builder: (context) => BottomNavigation(
+                  childId: int.parse(message.data['child_id']),
+                  isFromNotification: true,
+                ),
+              ),
+            );
+          } else {
+            n.increment();
+          }
+        },
+      );
+      // FirebaseMessaging.onBackgroundMessage((message) {
+
+      // });
     }
 
     var fcmToken = await messaging.getToken();
     print('TOKEN IS: $fcmToken');
+
     if (fcmToken != null) {
       await saveFCM(fcmToken);
     }
 
     messaging.onTokenRefresh.listen(saveFCM);
-  } catch (e) {}
+  } catch (e) {
+    log(e.toString());
+  }
 }
 
 _showLocalNotification(channel, message) {
+// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  final DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings();
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
+  );
+
+  flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
+
   RemoteNotification notification = message.notification;
   AndroidNotification android = message.notification.android;
   if (notification != null && android != null) {
@@ -327,10 +457,14 @@ _showLocalNotification(channel, message) {
         notification.title,
         notification.body,
         NotificationDetails(
-          android: AndroidNotificationDetails(channel.id, channel.name, channelDescription :channel.description,
-              icon: android.smallIcon, color: AppColor.primary
-              // other properties...
-              ),
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channelDescription: channel.description,
+            // icon: "@mipmap/ic_launcher-playstore",
+            color: AppColor.primary,
+            importance: Importance.max,
+          ),
         ),
       );
     }

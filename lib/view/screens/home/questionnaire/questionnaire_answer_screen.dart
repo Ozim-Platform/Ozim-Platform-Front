@@ -1,14 +1,17 @@
-import 'dart:developer';
-
 import 'package:charity_app/localization/language_constants.dart';
 import 'package:charity_app/model/questionnaire.dart';
 import 'package:charity_app/utils/device_size_config.dart';
-import 'package:charity_app/utils/toast_utils.dart';
+import 'package:charity_app/view/components/btn_ui_icon.dart';
+import 'package:charity_app/view/components/text_field_ui.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_screen.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionnaire_viewmodel.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:charity_app/view/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_app/view/screens/home/questionnaire/questionaire_appbar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:charity_app/model/child/child.dart';
+import 'package:charity_app/utils/formatters.dart';
 
 class QuestionaireAnswerScreen extends StatefulWidget {
   QuestionnaireData data;
@@ -27,18 +30,29 @@ class QuestionaireAnswerScreen extends StatefulWidget {
 }
 
 class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppbarForQuestionaire(
         context: context,
-        appBarTitle: '',
-        appBarIncome: "Опросник",
+        appBarTitle: getTranslated(context, "questionnaire"),
+        appBarIncome: getTranslated(context, "result"),
+        appBarIncome2: getTranslated(context, "for_age") +
+            " " +
+            getAgeString(
+              context,
+              ChildAge.fromInteger(widget.data.age),
+            ),
+        callback: () =>
+            Navigator.of(context).popUntil((route) => route.isFirst),
+        age: widget.data.age,
       ),
-
       backgroundColor: Colors.white,
       body: ListView.builder(
-        padding: EdgeInsets.all(16),
+        physics: BouncingScrollPhysics(),
+        padding: EdgeInsets.only(top: 16, left: 24.w, right: 24.w),
         itemCount: widget.data.questionList.length + 2,
         itemBuilder: (BuildContext context, index) {
           if (index < 5) {
@@ -46,13 +60,13 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                  padding: EdgeInsets.only(left: 6.0.w),
                   child: Text(
                     widget.data.questionList[index].title != null
                         ? widget.data.questionList[index].title
                         : "No title",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w500,
                       color: Color(0XFF6CBBD9),
                     ),
@@ -69,17 +83,6 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
           } else if (index == 6) {
             return Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "General",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0XFFF1BC62),
-                    ),
-                  ),
-                ),
                 QuestionWithCommentWidget(
                   questions: widget.data.questionList[5],
                   answers: widget.questionaireAnswers[5],
@@ -90,42 +93,19 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
             );
           } else {
             return InkWell(
-              splashColor: Colors.transparent,
               onTap: () async {
-                CupertinoAlertDialog(
-                  title: const Text("points_exchange_confirmation"),
-                  actions: <CupertinoDialogAction>[
-                    CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        getTranslated(context, 'no'),
-                      ),
-                    ),
-                    CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        getTranslated(context, 'no'),
-                      ),
-                    ),
-                  ],
-                );
-                bool status = await widget.model.submitQuestionnaire(context);
-                if (status == true) {
-                  ToastUtils.toastSuccessGeneral("success", context);
-                  Navigator.of(context).pop();
-                } else {
-                  ToastUtils.toastErrorGeneral("error", context);
-                }
+                await widget.model.getUserEmail();
+                getEmailFromUser(context, widget.model);
               },
               child: Container(
-                margin: EdgeInsets.only(bottom: 16, left: 32, right: 32),
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                    left: 32.w,
+                    right: 32.w),
                 child: Center(
                   child: Text(
-                    getTranslated(context, "send_results_to_email"),
+                    getTranslated(context, "send_results_to_email")
+                        .toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
@@ -134,9 +114,11 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
                     ),
                   ),
                 ),
-                height: 50,
+                height: 50.w,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(
+                    25.w,
+                  ),
                   color: Color(0XFFF1BC62),
                 ),
               ),
@@ -144,9 +126,77 @@ class _QuestionaireAnswerScreenState extends State<QuestionaireAnswerScreen> {
           }
         },
       ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton:
     );
+  }
+
+  void getEmailFromUser(
+    BuildContext _context,
+    QuestionnaireViewModel model,
+  ) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Container(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      SizeConfig.calculateBlockHorizontal(24.0),
+                      SizeConfig.calculateBlockVertical(24.0),
+                      SizeConfig.calculateBlockHorizontal(24.0),
+                      0.0,
+                    ), // content padding
+                    child: Column(
+                      children: [
+                        Form(
+                          child: TextFieldUI(
+                            controller: model.emailController,
+                            inputAction: TextInputAction.done,
+                            text: getTranslated(_context, 'email'),
+                            hintText: getTranslated(
+                                _context, 'send_reset_pass_email'),
+                          ),
+                        ),
+                        SizedBox(height: SizeConfig.calculateBlockVertical(25)),
+                        BtnUIIcon(
+                          height: SizeConfig.calculateBlockVertical(55),
+                          isLoading: _isLoading,
+                          textColor: Colors.white,
+                          color: AppColor.gmail,
+                          text: getTranslated(_context, 'send_email'),
+                          icon: SvgPicture.asset('assets/svg/auth/gmail.svg'),
+                          onTap: () async {
+                            if (model.emailController.text.isNotEmpty &&
+                                _isLoading == false) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              await model.sendResultsToEmail(
+                                _context,
+                              );
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          height: SizeConfig.calculateBlockVertical(
+                            25,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ) // From with TextField inside
+
+                  ),
+            );
+          });
+        },
+        context: _context);
   }
 }
 
@@ -170,38 +220,39 @@ class ResultSlider extends StatelessWidget {
         _paddingValue += element.value;
       },
     );
-
-    _paddingValue = (_paddingValue /
-        60 *
-        SizeConfig.screenWidth /
-        MediaQuery.of(context)
-            .devicePixelRatio); // -32 because of padding at the parent widget with value 32
-
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: EdgeInsets.only(bottom: 11.0.w),
       child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(16)),
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            16.w,
+          ),
+        ),
         child: Stack(
           children: [
             Container(
-              height: 20,
+              height: 20.w,
               width: SizeConfig.screenWidth,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(
+                  16.w,
+                ),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       itemCount: 3,
                       itemBuilder: (BuildContext context, index) {
                         return Container(
-                          height: 20,
-                          width: double.parse(
-                                  question.ranges.values.elementAt(index)) /
-                              60 *
-                              SizeConfig.screenWidth,
+                          height: 20.w,
+                          width: ((SizeConfig.screenWidth - 48.w) *
+                              double.parse(
+                                question.ranges.values.elementAt(index),
+                              ) /
+                              60),
                           color: colors[index],
                         );
                       },
@@ -210,14 +261,23 @@ class ResultSlider extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: _paddingValue),
-              child: Icon(
-                Icons.circle,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: (_paddingValue > 0
+                      ? ((MediaQuery.of(context).size.width - 48.w) *
+                              _paddingValue /
+                              60) -
+                          20.w
+                      : 0),
+                ),
+                Icon(
+                  Icons.circle,
+                  color: Colors.white,
+                  size: 20.w,
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -237,36 +297,37 @@ class InformationHolderWidget extends StatelessWidget {
           color: Color(0XFF777F83),
         ),
         children: [
+          //Егер баланың жалпы ұпайы жасыл ұяшықта болса, ол шекті мәннен жоғары.  Баланың дамуы кестеге сай.
           TextSpan(
-            text: 'Если общий балл ребенка находится в ',
+            text: getTranslated(context, "result_description_text_1"),
           ),
           TextSpan(
-              text: 'зеленом поле', style: TextStyle(color: Color(0XFF79BCB7))),
+              text: getTranslated(context, "result_description_text_2"),
+              style: TextStyle(color: Color(0XFF79BCB7))),
+          TextSpan(text: getTranslated(context, "result_description_text_3")),
+
+          // Егер баланың жалпы ұпайы қызғылт сары ұяшықта болса, ол шекке жақын.
+          // Оқу әрекетін қамтамасыз ету және өзгерістерді қадағалау қажет.
+          TextSpan(text: getTranslated(context, "result_description_text_4")),
           TextSpan(
-            text:
-                ', он выше порогового значения, и развитие ребенка идет по графику.\n',
-          ),
-          TextSpan(
-            text: '\nЕсли общий балл ребенка находится в ',
-          ),
-          TextSpan(
-            text: 'оранжевом поле',
+            text: getTranslated(context, "result_description_text_5"),
             style: TextStyle(
               color: Color(0XFFF2C477),
             ),
           ),
+          // Егер баланың жалпы ұпайы көк ұяшықта болса, ол шекті мәннен төмен.
+          // Маманға жүгінуге кеңес береміз.
           TextSpan(
-            text:
-                ', он близок к пороговому значению. Обеспечьте учебную деятельность и контролируйте.\n',
+            text: getTranslated(context, "result_description_text_6"),
           ),
           TextSpan(
-            text: '\nЕсли общий балл ребенка находится в ',
+            text: getTranslated(context, "result_description_text_7"),
           ),
           TextSpan(
-              text: 'голубом поле', style: TextStyle(color: Color(0XFF6CBBD9))),
+              text: getTranslated(context, "result_description_text_8"),
+              style: TextStyle(color: Color(0XFF6CBBD9))),
           TextSpan(
-            text:
-                ', он ниже порогового значения. Может потребоваться дополнительная оценка профессионала.\n',
+            text: getTranslated(context, "result_description_text_9"),
           ),
         ],
       ),

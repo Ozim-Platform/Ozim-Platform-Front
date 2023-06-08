@@ -49,7 +49,8 @@ class _SplashScreenState extends State<SplashScreen> {
             {
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen()),
+                MaterialPageRoute(
+                    builder: (BuildContext context) => WelcomeScreen()),
                 (Route<dynamic> route) => false,
               ),
             }
@@ -57,7 +58,8 @@ class _SplashScreenState extends State<SplashScreen> {
             {
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => BottomNavigation()),
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => BottomNavigation()),
                   (Route<dynamic> route) => false),
             }
         });
@@ -65,7 +67,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
+      
       body: Container(
         color: Colors.white,
         child: new Stack(
@@ -84,11 +88,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 SizedBox(height: SizeConfig.calculateBlockVertical(32.0)),
                 CupertinoActivityIndicator(),
-                Expanded(child: SizedBox()),
-                Image.asset(
-                  'assets/image/welcome_bottom.jpg',
-                  height: 80,
-                ),
+                Expanded(child: SizedBox(),),
+                
                 SizedBox(
                   height: 50,
                 )
