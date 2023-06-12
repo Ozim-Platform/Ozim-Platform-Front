@@ -111,3 +111,6 @@ If you discover a security vulnerability within Ozim Platform, please send an e-
 ## License
 
 The Ozim Platform framework is open-sourced software licensed under the [BSD 3-Clause](https://github.com/flutter/flutter/blob/master/LICENSE).
+
+## Copyright
+You can find copyright documents [here](https://github.com/Ozim-Platform/Ozim-Platform-Front/blob/main/Свидетельство_авторское%20право.pdf) and notary [translation](https://github.com/Ozim-Platform/Ozim-Platform-Front/blob/main/Copyright_notary%20translation_Ozim%20Platform.pdf)
